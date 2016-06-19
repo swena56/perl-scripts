@@ -8,23 +8,4 @@ my @words = qw(This is a test);
 
 say foreach @words;
 
-my %hash = ( $x => 'x', $y => 'y', $z => 'z');
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+my %hash = ( 1 => 'x', 2 => 'y', 3 => 'z');

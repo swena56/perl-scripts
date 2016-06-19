@@ -6,7 +6,7 @@ use warnings;
 use 5.18.0;
 use Data::Dumper;
 
-open(FH, "../dictionary.txt");
+open(FH, "regex-dictionary/dictionary.txt");
 my @lines = <FH>;
 close(FH);
 
