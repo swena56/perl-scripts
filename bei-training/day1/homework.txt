@@ -1,0 +1,39 @@
+homework.txt
+
+- Welcome!
+  * Has the Employee Handbook been signed and mailed to Chad Chapman?
+ * Have you completed your tax-information documents and mailed them to Chad Chapman?
+ 
+- BEI Overview
+ 
+- Discuss Daily Workflow requirements & expectations
+ 
+- Setting Up your Mac OS X
+- x Office365 ~ Office 2016 for Mac
+- x Skype
+- x VituralBox ~ IE Virtual Machines []
+- Hombrew
++ MySQL - brew install mysql; You may need to look into having this service start automatically
++ Postgres - brew install postgres
++ wget - brew install wget
++ subversion - brew install svn
++ git - brew install git
+- Perl
+-- CPAN -:- cpan.org
+-- App::cpanminus
+-- Hello World
+-- Connect to a database - Download & Install DBI
+ 
+- Homework Assignment
+Create a .csv file, with the following schema: [ 10 records max ]
+ 
+FirstName, LastName, BirthDay, Title
+ 
+Write a perl script that will perform the following actions:
+- Create a table in a MySQL database that will 'house' this information.
+- Read data from the .csv file
+- Insert that data into the database-table
+- Return the number of rows inserted and validate it by performing a "SELECT COUNT(*)" query against the table and printing the results of the query in perl
+ 
+Extra Credit:
+Configure apache to run CGI perl scripts

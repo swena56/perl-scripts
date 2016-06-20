@@ -1,15 +1,10 @@
-#set up workspaces its not enabled by default in Ubuntu
-
-#bash incasesenstive tab comeplete
+#enviromentSetup
 echo 'set completion-ignore-case On' >> ~/.inputrc
 
 sudo add-apt-repository -y ppa:webupd8team/sublime-text-2
-sudo apt-get install sublime-text git perltidy perl-doc subversion postgresql wget apache2
+sudo apt-get install sublime-text git perltidy perl-doc cpanminus, mysql-server
 
-#install skype
-
-
-subl # so the packages directory can get initalized
+subl # so the packages directory of sublime can get initalized
 cd .config/sublime-text-2/Packages
 echo '{ "cmd": ["perl", "-w", "$file"], "file_regex": ".* at (.) line ([0-9])", "selector": "source.perl" }' > Perl/Perl.sublime-build
 git clone https://github.com/wbond/sublime_alignment
@@ -20,5 +15,3 @@ git clone https://github.com/cockscomb/SublimePerldoc
 
 git clone https://github.com/tushortz/Perl-Completions
 git clone https://github.com/vifo/SublimePerlTidy PerlTidy
-
-

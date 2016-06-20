@@ -1,0 +1,7 @@
+questions.txt
+interactive perl commandline?   (perl -del)
+  -multilined code
+  -export session to file
+
+
+Best way to comment/doc subroutines?
