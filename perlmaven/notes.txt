@@ -1,0 +1,3 @@
+execution of perl scripts directly from bash require changing permissions
+
+chmod u+x hello.pl

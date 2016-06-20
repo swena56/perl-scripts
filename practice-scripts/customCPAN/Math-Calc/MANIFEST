@@ -1,0 +1,6 @@
+MANIFEST
+Makefile.PL
+lib/Math/Calc.pm
+t/01_basic.t
+META.yml
+META.json
