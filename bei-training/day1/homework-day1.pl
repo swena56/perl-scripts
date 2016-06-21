@@ -4,7 +4,7 @@
 use warnings;
 use strict;
 use DBI;
-use Text::CSV;
+use Parse::CSV;
 use Data::Dumper;
 use Data::Faker;
 
@@ -15,7 +15,7 @@ my $faker = Data::Faker->new();
 
 print "Generating $numPeople fake records for: $csv_file ";
 open FH,  '>', $csv_file;
-print FH "FirstName, LastName, BirthDay, Title, ";
+#print FH "FirstName,LastName,BirthDay,Title\n";
 
 for(1..$numPeople)
 {
@@ -25,30 +25,30 @@ for(1..$numPeople)
 	my $birthDate = $faker->date;
 	my $title = $faker->job_title;
 
-	print FH "$first_name, $last_name, $birthDate, $title, ";
+	print FH "$first_name,$last_name,$birthDate,$title\n";
 }
+
 close FH;
 print "...done\n\n";
 
-#open csv 
+#open and parse csv 
 print "Opening CSV file: $csv_file\n";
 open FH, $csv_file;
 	my @lines = <FH>;
 close FH;
-print Dumper(@lines) , "\n";;
+#print Dumper(@lines) , "\n";;
+
+my $parser = Parse::CSV->new(
+								file       => 'data.csv',
+								sep_char   => ',',
+								#names      => [ 'FirstName', 'LastName', 'BirthDay', 'Title'],								
+							);
+#my $column_count = 4;
 
 
-# create table in mysql to house this information
-# FirstName, LastName, BirthDay, Title
 
 
-
-
-
-
-#create person object
-
-#save person object
+ 
 
 
 # establish database connection
@@ -64,25 +64,49 @@ my $dbh = DBI->connect($dsn, $user, $password,  {RaiseError => 1})
 if($dbh)
 {
 	print "Connected successfully to: mysql://$user:$password@".$hostname .":$port/$user\n\n";
+	
+	#data base drivers
+	#my @ary = DBI->available_drivers;
+	#my %drivers = DBI->installed_drivers();
 
-	my $createTableSql = "CREATE TABLE IF NOT EXISTS " . $dbh->quote($database) . " (
-									'id' int(11) NOT NULL auto_increment,
-									'first_name' varchar(100) NULL,
-									'last_name' varchar(100) NULL,
-									'birthdate' varchar(100) NULL,
-									'title' varchar(100) NULL,
-									PRIMARY KEY ('id')
-
-	);";
-
-
+	my $createTableSql = "CREATE TABLE IF NOT EXISTS users (
+									id int(11) NOT NULL auto_increment,
+									first_name varchar(100) NULL,
+									last_name varchar(100) NULL,
+									birth_date varchar(100) NULL,
+									title varchar(100) NULL,
+									PRIMARY KEY (id));";
 
 	print "Create database: $createTableSql\n";
-	$dbh->do($createTableSql);
-	
+	$dbh->do($createTableSql) or die("Cannot create database");	
+
+	while(my $value = $parser->fetch)
+	{
+	 	my $first_name = @$value[0];
+		my $last_name = @$value[1];
+		my $birth_date = @$value[2];
+		my $title = @$value[3];
+
+		#insert data
+		my $sth = $dbh->prepare("INSERT INTO users( first_name, last_name, birth_date, title ) 
+			values ('$first_name', '$last_name', '$birth_date', '$title')" );
+		$sth->execute() or die $DBI::errstr;
+		print "Inserted Person: $first_name, $last_name, $birth_date, $title\n\n";
+	}
+
+	#count rows
+	my $sth = $dbh->prepare("SELECT COUNT(*) FROM users");
+	$sth->execute() or die $DBI::errstr;
+	while (my @row = $sth->fetchrow_array())
+	{
+		print "Number of rows in DB: @row\n";
+	}
+	$sth->finish();
+
+	$dbh->disconnect(); 
 }
 
-$dbh->disconnect(); 
+
 
 =pod
 	

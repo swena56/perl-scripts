@@ -15,3 +15,8 @@ git clone https://github.com/cockscomb/SublimePerldoc
 
 git clone https://github.com/tushortz/Perl-Completions
 git clone https://github.com/vifo/SublimePerlTidy PerlTidy
+
+#mysql create user
+#CREATE USER 'newuser'@'localhost' IDENTIFIED BY 'password';
+#GRANT ALL PRIVILEGES ON * . * TO 'newuser'@'localhost';
+#FLUSH PRIVILEGES;
