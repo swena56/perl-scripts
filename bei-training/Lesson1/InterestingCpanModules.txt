@@ -1,0 +1,12 @@
+Suggested cpan modules
+
+ap-cpanminus a wrapper, its easier
+DB and DBI - https://metacpan.org/pod/DBI
+DBD::mysql
+DBD::pgsql
+
+String::Util
+DateTime
+POSIX
+Data::Dumper
+
