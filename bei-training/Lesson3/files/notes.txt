@@ -26,3 +26,12 @@ Here’s an overview of today’s training-schedule:  You are free to explore th
 
 
 What are the other files - for ETL - Fixserel.pm
+
+special variables add to notes
+    "_
+    $_
+    @_  
+    
+
+#am i repeating tasks
+#more generic functions, the more generic the better

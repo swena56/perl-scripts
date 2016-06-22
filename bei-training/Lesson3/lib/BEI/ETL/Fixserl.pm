@@ -1,57 +1,33 @@
 package BEI::ETL::Fixserl;
 
 use constant TABLE_NAME => 'fixserl';
-use Exporter 'import';
-@EXPORT_OK = qw(parse_scrub_csv import_fixserl create_fixserl_table drop_fixserl_table); 
+use constant DB_NAME => 'fixserl';
 
+use Exporter 'import';
+@EXPORT_OK = qw(		
+					scrub_csv
+					import_csv
+					create_table 
+					drop_table
+				); 
+
+#optional dev imports
 use strict;
 use warnings;
 no warnings 'uninitialized';
+
+#imports
 use Parse::CSV;
 use Data::Dumper;
-=pod 
-	parse_scrub_csv takes in a csv file and returns a scrubbed csv
-			my $serial 							= "@$value[0]";
-			my $machine_description 			= "@$value[1]";
-			my $initial_meter_reading 			= "@$value[2]";		
-			my $date_sold_or_rented 			= "@$value[3]";					#needs scrubbing
-			my $model_number 					= "@$value[4]";
-			my $source_code 					= "@$value[5]";
-			my $meter_reading 					= "@$value[6]";		
-			my $null_placeholder 				= "@$value[7]";				
-			my $date_of_last_service_call 		= "@$value[8]";
-			my $customer_number 				= "@$value[9]";
-			my $program_type_code 				= "@$value[10]";
-			my $product_category_code 			= "@$value[11]";
-			my $sales_rep_id 					= "@$value[12]";
-			my $connectivity_code 				= "@$value[13]";
-			my $postal_code 					= "@$value[14]";
-			my $sic_number 						= "@$value[15]";
-			my $equipment_id 					= "@$value[16]";
-			my $primary_technician_id 			= "@$value[17]";
-			my $facility_management_equip 		= "@$value[18]";
-			my $is_under_contract 				= "@$value[19]";
-			my $branch_id 						= "@$value[20]";
-			my $customer_bill_to_number 		= "@$value[21]";
-			my $customer_type 					= "@$value[22]";
-			my $territory_field 				= "@$value[23]";
 
-			
-			#my @line_data = ( "$serial", "$machine_description", "$initial_meter_reading", "$date_sold_or_rented", "$model_number", "$source_code", "$meter_reading", "$null_placeholder", 
-			#			"$date_of_last_service_call", "$customer_number", "$program_type_code", "$program_type_code", "$product_category_code", "$sales_rep_id", "$connectivity_code",
-			#			"$postal_code", "$sic_number", "$equipment_id", "$primary_technician_id", "$facility_management_equip", "$is_under_contract", "$branch_id", "$customer_bill_to_number",
-			#			"$customer_type", "$territory_field" );
 
-			#my $line = "$serial|$machine_description|$initial_meter_reading|$date_sold_or_rented|$model_number|$source_code|$meter_reading|$null_placeholder".
-						#"$date_of_last_service_call|$customer_number|$program_type_code|$program_type_code|$product_category_code|$sales_rep_id|$connectivity_code".
-						#"$postal_code|$sic_number|$equipment_id|$primary_technician_id|$facility_management_equip|$is_under_contract|$branch_id|$customer_bill_to_number".
-						#"$customer_type|$territory_field\n";
-
+=pod
+	=head1
 =cut
-sub parse_scrub_csv {
+sub scrub_csv{
 	
-	my $input_csv = shift || die("[!] Missing input_file.csv as parameter 1.\n");
-	my $dbh 	  = shift || die("[!] Missing database handler as parameter 2\n");
+	my $input_csv = shift || die("[!] " . DB_NAME . " Missing input_file.csv as parameter 1.\n");
+	my $dbh 	  = shift || die("[!] " . DB_NAME . " Missing database handler as parameter 2\n");
 
 	if ($dbh) {	
 
@@ -63,11 +39,8 @@ sub parse_scrub_csv {
 		my $output_file = "$input_csv.scrubbed";
 
 		open FH, ">", $output_file;
-			
-		
-		while ( my $value = $parser->fetch )
-		{
-			
+				
+		while ( my $value = $parser->fetch ) {	
 		 	my $serial 							= "@$value[0]";
 			my $machine_description 			= "@$value[1]";
 			my $initial_meter_reading 			= "@$value[2]";	
@@ -93,8 +66,6 @@ sub parse_scrub_csv {
 			my $customer_type 					= "@$value[22]";
 			my $territory_field 				= "@$value[23]";
 
-			
-
 			my $line = "$serial|$machine_description|$initial_meter_reading" .
 					   "|$date_sold_or_rented|$model_number|$source_code".
 					   "|$meter_reading|$null_placeholder|$date_of_last_service_call".
@@ -103,68 +74,60 @@ sub parse_scrub_csv {
 					   "|$sic_number|$equipment_id|$primary_technician_id|$facility_management_equip".
 					   "|$is_under_contract|$is_under_contract|$branch_id".
 					   "|$customer_bill_to_number|$customer_type|$territory_field\n";
+
 			my $valid_data = 1;
 
 			#print scrubbed data to file if it is valid
 			if($valid_data){
-				#print "[+] Line: $line\n";
 				print FH "$line";
 			}else{
 				print "[!] Not valid data \n";
 			}
-
-			#print "[+] Line: $line\n";
-			#-remove empty lines
-			#if valid data push it
 		}
-		close FH;
+		close FH;	#close scrubbed output csv file
 
-		#open scrubbed file in gedit
-		#File::Spec->rel2abs( $input_csv.scrubbed );
-		system("gedit $input_csv.scrubbed > /dev/null");
+		#system("gedit $input_csv.scrubbed");  #open scrubbed file in gedit -> useful for debugging
 
-		print "[+] Success Importing $input_csv\n";
+		print "[+] (" . DB_NAME . ") Successfully scrubbed $input_csv => $input_csv.scrubbed\n";
+
 		return  "$input_csv.scrubbed";
 	}
 
-	print  "[!] Failed to parse and scrub csv file \n";
+	print  "[!] (" . DB_NAME . ") Failed to parse and scrub csv file \n";
 	return '';
 }
 
 =pod
-	=head1 import_fixserl
+	=head1 Import Fixserl
 	
-	The import fixserl function makes a connection to the database, 
-	and imports a csv file into the fixserl table
+	Parameters -> Database handle
+			   -> Fixserl CSV file
 
-	LOAD DATA LOCAL INFILE 'filename.csv' INTO TABLE my_table
-	FIELDS TERMINATED BY ','
-	ENCLOSED BY ''
-	LINES TERMINATED BY '\n'
-
-	#TODO creating the fixserl table
-	special variables add to notes
-		"_
-		$_
-		@_  
-
+	Makes a connection to the database, 
+	
+	Imports a scrubbed copy of the csv file into the fixserl table
 =cut
-sub import_fixserl {
+sub import_csv {
 	my ($dbh, $file) = @_;
 
 	#error checking
-	die("[!] File does not exist: $file\n") if(!(-e $file));
+	die("[!] Fixserl File does not exist: $file\n") if(!(-e $file));
 	die("[!] Database handler does not exist\n") if(!$dbh);
 
+	#remove all table and create new
+	drop_table($dbh);
+	create_table($dbh);
+	
+	print "[+] Attempting to scrub csv $file\n";
 	#parse and scrub data
-	my $scrubbed_csv = parse_scrub_csv($file, $dbh);  
+	my $scrubbed_csv = scrub_csv($file, $dbh);  
 
-	print "[+] File being imported: $file\n";
+	print "[+] Scrubbed File being imported: $scrubbed_csv\n";
 
 	my $bulk_load_sql = "LOAD DATA INFILE ? INTO TABLE " . TABLE_NAME . " " .  
 						"FIELDS TERMINATED BY '|' " .
 						"ENCLOSED BY '' " .
-						"LINES TERMINATED BY '\n'";
+						"LINES TERMINATED BY '\\n'";
 
     print "[+] Attempting to process bulk load query: $bulk_load_sql \n";
 	$dbh->do($bulk_load_sql, undef, $scrubbed_csv )  || die("[!] Failed to do Bulk load into: " . TABLE_NAME . "\n");	
@@ -174,12 +137,8 @@ sub import_fixserl {
 	$sth->execute();
 	my ($cnt) = $sth->fetchrow_array();
 
-	
-
-	unlink $scrubbed_csv;
-	print "[+] Successfully imported $file\n";
-	print "[+] Number of lines added: ($cnt)\n";
-	return ($cnt);
+	#unlink $scrubbed_csv;
+	print "[+] Successfully imported $file -($cnt) items added to " . TABLE_NAME ."\n";	
 }
 
 =pod
@@ -216,7 +175,7 @@ sub import_fixserl {
 	23 Territory Field VARCHAR(15)
 
 =cut
-sub create_fixserl_table {
+sub create_table {
 	my $dbh 			= shift or die("missing parameters");
 	my $database_name 	= shift || TABLE_NAME;
 
@@ -250,22 +209,10 @@ sub create_fixserl_table {
 	
 	$dbh->do($create_fixserl_table_sql) or die("[!] Cannot create $database_name database\n");	
 
-	print "[+] Successfully created $database_name database: $create_fixserl_table_sql\n";
+	print "[+] Successfully created " . DB_NAME .", refer to schema if necessary.\n";
+	#print "[+] SQL: $sql\n";
 }
 
 
-=pod 
-
-=cut
-sub drop_fixserl_table {
-	my $dbh 			= shift or die("[!] Database handler as parameter\n");
-	my $database_name 	= shift || TABLE_NAME;
-
-	#drop table
-	my $drop_fixserl_sql = "DROP TABLE $database_name";
-	$dbh->do($drop_fixserl_sql) or die("[!] Cannot drop $database_name database\n");	
-
-	print "[+] Successfully dropped $database_name database\n";
-}
 
 1;

@@ -1,0 +1,14 @@
+Notes
+
+
+foreach my $inc (@INC)
+{
+	print "INC: $inc\n";
+}
+
+push (@INC,'pwd');
+Bless 
+
+Creating a base class
+@ISA array
+AUTOLOAD()

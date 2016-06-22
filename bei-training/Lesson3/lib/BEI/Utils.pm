@@ -23,11 +23,20 @@ use Data::Dumper;
 sub verify_zip {
 	
 	#collect parameters, the absolute path is trusted from unzip
-	my $file 		= shift or die("[!] Missing input_file.zip as parameter 1.\n");
+	my $zip_file 		= shift || die("[!] Missing input_file.zip as parameter 1.\n");
 
-	print "[+] Testing Zip file for errors\n";
-	print "[+] unzip -t $file \n";
-	my $output = `unzip -t $file`; 
+	print "[+] Attempting to verify zip file: $zip_file ";
+
+	#does file exist
+	if (-e $zip_file){
+	print ".....File Exists.\n";
+	} else {
+		die("[!] File does not exist!   \n");		#check if file exists
+	} 
+
+	print "[+] Testing Zip $zip_file for errors\n";
+	print "    unzip -t $zip_file \n";
+	my $output = `unzip -t $zip_file`; 
 	
 	#now parse results for errors 
 	 if($output =~ m/no errors/i)
@@ -37,44 +46,36 @@ sub verify_zip {
 	 		
 	 }
 
-	die("unzip failed");
 	return '';
 }
 
 #create temp directory if not exists
+# not usng -p flag for mkdir
 sub make_temp_directory {
-	
 	if (-e TEMP_DIR ){
 		print "[+] Temp Directory Exists: " . TEMP_DIR ."\n";
 	} else {
-		mkdir TEMP_DIR || die ("[!] Failed to create temp directory for Utils::unzip \n");
+		mkdir TEMP_DIR || die ("[!] Failed to create temp directory: " . TEMP_DIR . "\n");
 	}
-
 }
 
 sub normalize_file_names {
-
 	#open temp directory and rename files to not include spaces.
 	my @files = get_temp_file_listing();
 
 	foreach my $file (@files){
 		my $orginal = $file;
 		if($file =~ s/ /-/g)
-		{
-			print "[!] File contains spaces, renaming to: $file \n";	
-			#rename (TEMP_DIR/$filename","$temp_dir/$valid_file_name");
-			print "$orginal\n";
-			my $cmd = "mv \"$orginal\" $file";
-			print "$cmd\n";
+		{		
+			my $cmd = "mv \"$orginal\" $file";		
+			print "[!] File Normalized: $cmd \n";
 			system("$cmd");
 		}
 	} 									
 }
 
-sub get_temp_file_listing {
-	
-	#array of extracted files
-	my @extracted_files = ();
+sub get_temp_file_listing {		
+	my @extracted_files = ();													#array of extracted files
 
  		#list files
  		opendir ( DIR, TEMP_DIR ) || die "[!] Error opening directory\n";
@@ -83,31 +84,26 @@ sub get_temp_file_listing {
  		while (my $filename = readdir(DIR)){
  			chomp $filename;
 
- 			if($filename ne '..' && $filename ne '.'){
-
- 					#add file names to array
- 					print "[+] File: $filename \n";	
- 					push @extracted_files, (TEMP_DIR . "$filename"); 	
- 								
+ 			if($filename ne '..' && $filename ne '.'){							#do not want to show current directory (.) and parent directory (..)
+ 					
+ 					print "     $filename \n";	
+ 					push @extracted_files, (TEMP_DIR . "$filename"); 			#add file names to array				
  			}
  		}
-
  	return @extracted_files;
 }
 
 sub cleanup_temp_directory {
-
 	#empty temp dir
-	print "[+] Cleanup time...emptying contents of " . TEMP_DIR . " directory...failed\n";
+	print "[+] Cleanup time...emptying contents of " . TEMP_DIR . " directory\n";
 
-	system("rm -rf " . TEMP_DIR);
-	# rm TEMP_DIR \ *.*
-
-	print "[Done]\n";
+	system("rm -rf " . TEMP_DIR);	#this deletes the entire directory
+	# rm TEMP_DIR \ *.*             #might want to consider an option to just remove the files
 }
 
-=pod
 
+=pod
+	=head1 Extract Zip
 	The zip files contain names with spaces, fix them
 	loop files - rename with out spaces
 
@@ -115,7 +111,6 @@ sub cleanup_temp_directory {
 
 	TODO
 		rename to extract
-		mkdir -p 
 		needed to do a chown on zip file, should this be handled automatically?
 		add current file special parameter to debug statements
 =cut
@@ -123,27 +118,22 @@ sub extract_zip {
 
 	my $zip_file = shift || die("[!] Missing input.zip as parameter.  \n");
 	   $zip_file = File::Spec->rel2abs( $zip_file );
-	   print "[+] Requested Zip File: $zip_file \n";
+	   
+	print "[+] Requested Zip File: $zip_file \n";
 
-	   #does file exist
-		if (-e $zip_file){
-		print "[+] File Exists.\n";
-		} else {
-			die("[!] File does not exist!   \n");		#check if file exists
-		} 
-
+	#check if valid zip
+	die("[!] Failed to validate zip: $zip_file \n") if(!verify_zip("$zip_file"));
+	   
 	make_temp_directory();
-
-	my $temp_dir = shift || "/tmp/bei-tmp/";
 	
 	#check if valid zip, if it is extract it
 	if( verify_zip ($zip_file,$temp_dir))
 	{
 		#command used for extraction
-		my $cmd = "unzip -xjoq $zip_file -d $temp_dir";
+		my $cmd = "unzip -xjoq $zip_file -d " . TEMP_DIR;
 
-		print "[+] Attempting to unzip \n";
-		print "[+] Extracting with cmd: $cmd\n";
+		print "[+] Attempting to unzip: $cmd \n";
+		
 		my $results = `$cmd`;
 		
 		#could the extraction fail, and what would it look like?
@@ -151,21 +141,9 @@ sub extract_zip {
  		
  		normalize_file_names();
 
-		print "[+] Unzip complete. \n";
-
+		print "[+] Unzip successful - $zip_file \n";
 		return get_temp_file_listing();
 	}
 	return '';
 }
-
-
-
 1;
-
-=pod
-
- =head1 unzip_test 
- 	file needs to be absolute
-
-	my $abs_path = File::Spec->rel2abs( $rel_path ) ;
-=cut

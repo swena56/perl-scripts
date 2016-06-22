@@ -209,19 +209,10 @@ sub create_table {
 	
 	$dbh->do($create_fixserl_table_sql) or die("[!] Cannot create $database_name database\n");	
 
-	print "[+] Successfully created $database_name database: $create_fixserl_table_sql\n";
+	print "[+] Successfully created " . DB_NAME .", refer to schema if necessary.\n";
+	#print "[+] SQL: $sql\n";
 }
 
-sub drop_table {
 
-	my $dbh 			= shift or die("[!] Database handler as parameter\n");
-	my $database_name 	= shift || TABLE_NAME;
-
-	#drop table
-	my $drop_fixserl_sql = "DROP TABLE $database_name";
-	$dbh->do($drop_fixserl_sql) or die("[!] Cannot drop $database_name database\n");	
-
-	print "[+] Successfully dropped $database_name database\n";
-}
 
 1;
