@@ -1,0 +1,12 @@
+TODO.txt
+-implement code profilings
+-convert each bei::etl fix transform into a class
+-convert_date bei::util
+
+
+
+-not all my date fields are varchar(8) - correct this.
+
+merge args and hash structure for import_zip
+
+-moose classes?

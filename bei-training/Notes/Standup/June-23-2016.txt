@@ -1,7 +1,7 @@
 June-23-2016.txt
 - lunch tommorrow in minneaplois
 
-I have training at 1030.  
+I have training at 1030, but this could be 11-1130.  
 
 What did I do yesterday.
 -I cleaned up my existing code, and tested it.
@@ -20,7 +20,16 @@ I had a bit of interest in profiling my code, but I will wait until I am dealing
 
 I want to run some cat5e
 
+Structure of my base class:
+-set sql
+-set columns
+-create table
+-drop table
+-parse n scrub data.  -all dates need to be scrubbed the same way
 
+Structure of actual class
+-set sql
+-set columns
 
 DAVE - meters meters
 -tunning issues.
@@ -36,3 +45,5 @@ Chad - Settings problems
 accountability today. 
 
 Brett, both chad and brett are working with AIM.
+
+

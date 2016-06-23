@@ -25,13 +25,15 @@ use BEI::Utils qw(
 					 cleanup_temp_directory
 				);
 
-use BEI::ETL;
-
+use BEI::ETL::Fixserl ();
+use BEI::ETL::Fixparla ();
+use BEI::ETL::Fixserv ();
+use BEI::ETL::Fixmeter ();
 use constant TEMP_DIR => "/tmp/bei-tmp";
 
 my $num_args = $#ARGV+1;
 my @zip_files = ();
-my %extracted_files = (); 
+my @extracted_files = ();
 
 #process zip files provided by arguments if there are none lets use our test data
 if($num_args > 0) {
@@ -46,44 +48,25 @@ if($num_args > 0) {
 }
 
 #clean up clutter in temp directory
-&cleanup_temp_directory();			# i might need to prove that this works
+&cleanup_temp_directory();
 
 #extract data and its content files to an array for processing
 foreach my $zip (@zip_files)
 {
-	my @files = &extract_zip($zip, TEMP_DIR);
-
-	$extracted_files{$zip} = \@files;
-	#push @extracted_files, \@files;
+	push @extracted_files, &extract_zip($zip, TEMP_DIR);
 }
 
 #connect to database
 my $dbh = &connect();
 
-foreach my $zip (keys %extracted_files){
-
-	#process each file that was extracted
-	foreach my $file ( @{$extracted_files{$zip}} ) {
-
-		my $obj = BEI::ETL->Factory($dbh, $file);
-		if($obj)
-		{
-			$obj->run();
-
-		}
-#		if($file =~ m/serl/i){
-#			my $obj = BEI::ETL::Fixserl->new($dbh, $file);
-#			$obj->run();
-#		} elsif($file =~ m/parla/i){
-#			my $obj = BEI::ETL::Fixparla->new($dbh, $file);
-#			$obj->run();
-#		}
-		
-	
-	}
-
-
+#process each file that was extracted
+foreach my $file (@extracted_files) {
+	(BEI::ETL::Fixserl::import_csv($dbh, $file)  && print "\n[+] Detected Fixserl: $file\n") 	if($file =~ m/fixserl/i);	
+	(BEI::ETL::Fixparla::import_csv($dbh, $file) && print "\n[+] Detected Fixparla: $file\n") 	if($file =~ m/fixparla/i);	
+	(BEI::ETL::Fixserv::import_csv($dbh, $file)  && print "\n[+] Detected Fixserv: $file\n") 	if($file =~ m/fixserv/i);	
+	(BEI::ETL::Fixmeter::import_csv($dbh, $file) && print "\n[+] Detected Fixmeter: $file\n")	if($file =~ m/meter/i);	
+	(BEI::ETL::Fixploc::import_csv($dbh, $file)  && print "\n[+] Detected Fixploc: $file\n")	if($file =~ m/fixploc/i);	
+	(BEI::ETL::Fixaddr::import_csv($dbh, $file)  && print "\n[+] Detected Fixaddr: $file\n")	if($file =~ m/fixaddr/i);	
 }
-
 
 print "[+] Finished Successfully\n";

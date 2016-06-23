@@ -1,14 +1,14 @@
-package BEI::ETL::Fixmeter;
+package BEI::ETL::Fixmdesc;
 
-use constant TABLE_NAME => 'fixmeter';
-use constant DB_NAME => 'fixmeter';
+use constant TABLE_NAME => 'fixmdesc';
+use constant DB_NAME => 'fixmdesc';
 
 use Exporter 'import';
-@EXPORT = qw(
+@EXPORT_OK = qw(		
 					scrub_csv
 					import_csv
-				 	create_table
-				 	drop_table
+					create_table 
+					drop_table
 				); 
 
 #optional dev imports
@@ -16,35 +16,15 @@ use strict;
 use warnings;
 no warnings 'uninitialized';
 
+#imports
 use Parse::CSV;
 use Data::Dumper;
 
-=pod
-		=head1 
-
-				FIXMETER
-
-		=head1 Schema
-		Multiple meter service call information
-
-				FIXMETER consists of six PIPE delimited fields.
-
-				Position	Field Description		Format
-				0		Call ID				VARCHAR(15)
-				1		Model				VARCHAR(30)
-				2		Serial Number			VARCHAR(30)
-				3		Completion Date		BEI Date [MM/DD/YY]
-				4		Meter Code			VARCHAR (20)
-				5		Meter Reading			INT(10)
-=cut
-
 sub scrub_csv{
-	
 	my $input_csv = shift || die("[!] " . DB_NAME . " Missing input_file.csv as parameter 1.\n");
 	my $dbh 	  = shift || die("[!] " . DB_NAME . " Missing database handler as parameter 2\n");
 
 	if ($dbh) {	
-
 		my $parser    = Parse::CSV->new(
 								file       => "$input_csv",
 								sep_char   => '|',						
@@ -55,14 +35,10 @@ sub scrub_csv{
 		open FH, ">", $output_file;
 				
 		while ( my $value = $parser->fetch ) {	
-		 	my $call_id 					= "@$value[0]";
-			my $model 						= "@$value[1]";
-			my $serial_number 				= "@$value[2]";
-			my $completion_date 			= "@$value[3]";
-			my $meter_code	 				= "@$value[4]";
-			my $meter_reading				= "@$value[5]";
-					
-			my $line = "$call_id|$model|$serial_number|$completion_date|$meter_code|$meter_reading\n";
+		 	my $meter_code 							= "@$value[0]";
+			my $meter_code_description 				= "@$value[1]";
+			
+			my $line = "\n";
 
 			my $valid_data = 1;
 
@@ -77,7 +53,7 @@ sub scrub_csv{
 
 		#system("gedit $input_csv.scrubbed");  #open scrubbed file in gedit -> useful for debugging
 
-		print "[+] (" . DB_NAME .") Successfully scrubbed $input_csv => $input_csv.scrubbed\n";
+		print "[+] (" . DB_NAME . ") Successfully scrubbed $input_csv => $input_csv.scrubbed\n";
 
 		return  "$input_csv.scrubbed";
 	}
@@ -86,13 +62,22 @@ sub scrub_csv{
 	return '';
 }
 
-sub import_csv {
+=pod
+	=head1 Import Fix Multiple Meter Codes and Descriptions
+	
+	Parameters -> Database handle
+			   -> Fixmdesc CSV file
 
+	Makes a connection to the database, 
+	
+	Imports a scrubbed copy of the csv file into the Fixmdesc table
+=cut
+sub import_csv {
 	my ($dbh, $file) = @_;
 
 	#error checking
-	die("[!] " . DB_NAME . " File does not exist: $file\n") if(!(-e $file));
-	die("[!] " . DB_NAME . " Database handler does not exist\n") if(!$dbh);
+	die("[!] " . DB_NAME . " File does not exist: $file\n") 		if(!(-e $file));
+	die("[!] " . DB_NAME . " Database handler does not exist\n") 	if(!$dbh);
 
 	#remove all table and create new
 	drop_table($dbh);
@@ -121,21 +106,31 @@ sub import_csv {
 	print "[+] Successfully imported $file -($cnt) items added to " . TABLE_NAME ."\n";	
 }
 
-sub create_table {
+=pod
+	 
+	=head1	FIXMDESC - Multiple meter codes and descriptions
 
-	my $dbh 			= shift || die("[!] Missing database handle for parameter 1");
+	FIXMDESC consists of two PIPE delimited fields.
+
+	Position	Field Description 			Format
+	0		Meter Code				VARCHAR(20)
+	1		Meter Code Description			VARCHAR(100)
+
+*this file is used to store dealer meter codes and map them to standard BEI meter codes.  
+This enables BEI to import multiple meters and create BEI reports based off this data.
+
+=cut
+sub create_table {
+	my $dbh 			= shift or die("missing parameters");
+	my $database_name 	= shift || TABLE_NAME;
 
 	#create fixserl table
-	my $sql =  "CREATE TABLE IF NOT EXISTS ".DB_NAME." (
-					call_id 					varchar(15),
-					model 						varchar(30),
-					serial_number 				varchar(30),
-					completion_date 			varchar(10),
-					meter_code 					varchar(20),
-					meter_reading 				INT(10)
-					);";
+	my $create_fixserl_table_sql =  "CREATE TABLE IF NOT EXISTS $database_name (
+		meter_code varchar(20),
+		meter_code_description varchar(100),		
+	);";
 	
-	$dbh->do($sql) || die("[!] Cannot create " . DB_NAME ." database\n");	
+	$dbh->do($create_fixserl_table_sql) or die("[!] Cannot create $database_name database\n");	
 
 	print "[+] Successfully created " . DB_NAME .", refer to schema if necessary.\n";
 	#print "[+] SQL: $sql\n";
@@ -151,4 +146,5 @@ sub drop_table {
 
 	print "[+] Successfully dropped " . DB_NAME ." database\n";
 }
+
 
