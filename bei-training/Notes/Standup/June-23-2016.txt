@@ -1,0 +1,38 @@
+June-23-2016.txt
+- lunch tommorrow in minneaplois
+
+I have training at 1030.  
+
+What did I do yesterday.
+-I cleaned up my existing code, and tested it.
+- I finished up with all of my New Hire Information
+- Finished up writing the start of fixmeter, fixparla, fixserl, and fixserv.  Now I need to find a change them into classes.  
+
+Today I will write my bio, I will most likely save that for after work.  But if I get stuck in a rut Ill switch my taskes up a bit.
+
+The schedule for today is mentioning Moose, but I still have a bit of work do with structuring my classes.
+
+I recently just decieded to check out other peoples ETL perl code on github.
+-I saw one example of a person putting there create table queries in text files, and reading them in.  
+export data?
+
+I had a bit of interest in profiling my code, but I will wait until I am dealing with a bit more data. - matt sent me information on this.
+
+I want to run some cat5e
+
+
+
+DAVE - meters meters
+-tunning issues.
+-agragete error score.
+1 or above.  measuring the error score?
+comparing billing to service
+-supoort day for him, Makes me curious how my support day will work. - hours remaining for hours.
+reducing the false positives.
+
+JERMEY - 
+
+Chad - Settings problems
+accountability today. 
+
+Brett, both chad and brett are working with AIM.

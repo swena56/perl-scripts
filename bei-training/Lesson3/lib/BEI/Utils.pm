@@ -127,7 +127,7 @@ sub extract_zip {
 	make_temp_directory();
 	
 	#check if valid zip, if it is extract it
-	if( verify_zip ($zip_file,$temp_dir))
+	if( verify_zip ($zip_file,TEMP_DIR))
 	{
 		#command used for extraction
 		my $cmd = "unzip -xjoq $zip_file -d " . TEMP_DIR;
@@ -146,4 +146,3 @@ sub extract_zip {
 	}
 	return '';
 }
-1;

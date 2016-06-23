@@ -213,6 +213,15 @@ sub create_table {
 	#print "[+] SQL: $sql\n";
 }
 
+sub drop_table {
+
+	my $dbh 			= shift or die("[!] Missing database handler as parameter 1\n");
+	
+	#drop table
+	my $drop_fixserl_sql = "DROP TABLE IF EXISTS " . DB_NAME;
+	$dbh->do($drop_fixserl_sql) or die("[!] Cannot drop " . DB_NAME ." database\n");	
+
+	print "[+] Successfully dropped " . DB_NAME ." database\n";
+}
 
 
-1;

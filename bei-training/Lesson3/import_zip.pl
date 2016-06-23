@@ -61,10 +61,10 @@ my $dbh = &connect();
 
 #process each file that was extracted
 foreach my $file (@extracted_files) {
-	print "\n[+] Detected Fixserl: $file\n" && BEI::ETL::Fixserl::import_csv($dbh, $file)		if($file =~ m/fixserl/i);	
-	print "\n[+] Detected Fixparla: $file\n" && BEI::ETL::Fixparla::import_csv($dbh, $file)	if($file =~ m/fixparla/i);	
-	print "\n[+] Detected Fixserv: $file\n" && BEI::ETL::Fixserv::import_csv($dbh, $file)		if($file =~ m/fixserv/i);	
-	print "\n[+] Detected Fixmeter: $file\n" && BEI::ETL::Fixmeter::import_csv($dbh, $file)	if($file =~ m/fixmeter/i);	
+	(BEI::ETL::Fixserl::import_csv($dbh, $file)  && print "\n[+] Detected Fixserl: $file\n") 	if($file =~ m/fixserl/i);	
+	(BEI::ETL::Fixparla::import_csv($dbh, $file) && print "\n[+] Detected Fixparla: $file\n") 	if($file =~ m/fixparla/i);	
+	(BEI::ETL::Fixserv::import_csv($dbh, $file)  && print "\n[+] Detected Fixserv: $file\n") 	if($file =~ m/fixserv/i);	
+	(BEI::ETL::Fixmeter::import_csv($dbh, $file) && print "\n[+] Detected Fixmeter: $file\n")	if($file =~ m/meter/i);	
 }
 
 print "[+] Finished Successfully\n";

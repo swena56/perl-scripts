@@ -174,4 +174,3 @@ sub drop_table {
 	print "[+] Successfully dropped " . DB_NAME ." database\n";
 }
 
-1;
