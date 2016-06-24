@@ -1,16 +1,15 @@
 package BEI::Utils;
 
-use constant TEMP_DIR => '/tmp/bei-tmp/';
-
 use Exporter 'import';
 @EXPORT_OK = qw ( 
-					 convert_date
-					 verify_zip 
-					 extract_zip 
-					 make_temp_directory 
-					 normalize_file_names
-					 get_temp_file_listing
-					 cleanup_temp_directory
+				 verify_and_convert_date
+				 verify_zip 
+				 extract_zip 
+				 make_temp_directory 
+				 normalize_file_names
+				 get_temp_file_listing
+				 get_file_line_count
+				 cleanup_temp_directory
 				);
 
 use strict;
@@ -18,12 +17,15 @@ use warnings;
 
 use File::Spec;
 use File::Copy qw(move);
-
 use Data::Dumper;
 use POSIX qw(strftime);
+#use Date::Manip;
+use DateTime;
+use Date::Calc qw/check_date/;
 
 
-#TODO
+use constant TEMP_DIR => '/tmp/bei-tmp/';
+
 =pod
 	=head1 Convert Date
 
@@ -33,22 +35,50 @@ use POSIX qw(strftime);
 	- All dates should be ASCII Gregorian dates, in the following format: VARCHAR(8) [MM/DD/YY] 
 
 	POSIX str
+
+	=head2 a different way
+	my $month;
+	my $day;
+	my $year;
+
+	my $dt; 
+
+    eval { $dt = DateTime->new( 
+        year => $year, 
+        month => $month, 
+        day => $day);
+    }; 
+
+    print "Error: $@" if $@;
+
 =cut
-sub convert_date {
+sub verify_and_convert_date {
+
 	my $date = shift || die("[!] Please provide a date to the convert date function for parameter 1 \n" );
 
-	print "[+] Date conversion for $date is ";
-	
-	
-	print "unknown\n";
 
-	# is this even a date string?
+	#parse date out
+	if( $date =~ /^\d{4}-\d{1,2}-\d{1,2}$/ ){
+		return 1;
+	}
 
-	#check out what date we are dealing with.
+	if ( $date =~  /^[0-9]{2}-[0-9]{2}-[0-9]{4}$/ ) 	#[MM-DD-YY]
+	{
+		
+		return 1;
+	} 
+	if ( $date =~  /^[0-9]{2}[0-9]{2}[0-9]{4}$/ ) 	#[MMDDYY]
+	{
+		
+		return 1;
+	}
 
-	#what format does the date need to be in?
+	if ($date =~ /\d{2}\d{2}?-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])/)
+	{
+		return '1';
+	}
 
-
+	return '';
 }
 
 sub verify_zip {
@@ -56,23 +86,18 @@ sub verify_zip {
 	#collect parameters, the absolute path is trusted from unzip
 	my $zip_file 		= shift || die("[!] Missing input_file.zip as parameter 1.\n");
 
-	print "[+] Attempting to verify zip file: $zip_file ";
+	print "[+] Attempting to verify zip file: $zip_file \n";
 
 	#does file exist
-	if (-e $zip_file){
-	print ".....File Exists.\n";
-	} else {
-		die("[!] File does not exist!   \n");		#check if file exists
-	} 
+	die("[!] File does not exist!\n") if (!-e $zip_file);
 
-	print "[+] Testing Zip $zip_file for errors\n";
-	print "    unzip -t $zip_file \n";
-	my $output = `unzip -t $zip_file`; 
+	print "    unzip -t $zip_file ";
+	my $output = `unzip -t $zip_file`;
 	
 	#now parse results for errors 
 	 if($output =~ m/no errors/i)
 	 {
-	 	print "[+] Valid Zip.\n";
+	 	print "..............Valid Zip.\n";
 	 	return 1;
 	 		
 	 }
@@ -83,6 +108,7 @@ sub verify_zip {
 #create temp directory if not exists
 # not usng -p flag for mkdir
 sub make_temp_directory {
+
 	if (-e TEMP_DIR ){
 		print "[+] Temp Directory Exists: " . TEMP_DIR ."\n";
 	} else {
@@ -91,6 +117,7 @@ sub make_temp_directory {
 }
 
 sub normalize_file_names {
+
 	#open temp directory and rename files to not include spaces.
 	my @files = get_temp_file_listing();
 
@@ -99,13 +126,13 @@ sub normalize_file_names {
 		if($file =~ s/ /-/g)
 		{		
 			my $cmd = "mv \"$orginal\" $file";		
-			print "[!] File Normalized: $cmd \n";
 			system("$cmd");
 		}
 	} 									
 }
 
-sub get_temp_file_listing {		
+sub get_temp_file_listing {	
+
 	my @extracted_files = ();													#array of extracted files
 
  		#list files
@@ -117,16 +144,26 @@ sub get_temp_file_listing {
 
  			if($filename ne '..' && $filename ne '.'){							#do not want to show current directory (.) and parent directory (..)
  					
- 					print "     $filename \n";	
+ 					print "     $filename\n";
  					push @extracted_files, (TEMP_DIR . "$filename"); 			#add file names to array				
  			}
  		}
  	return @extracted_files;
 }
 
+sub get_file_line_count {
+
+	my $file = shift || die("[!] File does not exist can not perform line count!\n");
+
+	# might be missing the commandline util wc so plan for that.
+
+	return `wc -l '$file'`;
+}
+
 sub cleanup_temp_directory {
+
 	#empty temp dir
-	print "[+] Cleanup time...emptying contents of " . TEMP_DIR . " directory\n";
+	print "[+] Cleanup time...emptying contents of " . TEMP_DIR . " directory\n\n";
 
 	system("rm -rf " . TEMP_DIR);	#this deletes the entire directory
 	# rm TEMP_DIR \ *.*             #might want to consider an option to just remove the files
@@ -150,10 +187,7 @@ sub extract_zip {
 	my $zip_file = shift || die("[!] Missing input.zip as parameter.  \n");
 	   $zip_file = File::Spec->rel2abs( $zip_file );
 	   
-	print "[+] Requested Zip File: $zip_file \n";
-
-	#check if valid zip
-	die("[!] Failed to validate zip: $zip_file \n") if(!verify_zip("$zip_file"));
+	print "[+] Requested Zip File: $zip_file\n";
 	   
 	make_temp_directory();
 	
@@ -169,11 +203,35 @@ sub extract_zip {
 		
 		#could the extraction fail, and what would it look like?
  		die("[!] Extraction Errors!\n") if($results =~ m/error/i);
+ 		print "[+] Unzip successful - $zip_file \n\n";	
  		
- 		normalize_file_names();
 
-		print "[+] Unzip successful - $zip_file \n";
+ 		normalize_file_names();
+ 		print "[+] Normalizing file names.\n";
+
 		return get_temp_file_listing();
+	} else {
+		die("[!] Failed to validate zip: $zip_file \n");
+		return '';
 	}
-	return '';
+
+	return '1';
 }
+
+
+
+
+
+#test data
+my $date = "10-23-99";
+chomp($date);
+
+if(verify_and_convert_date($date)){
+
+	print "Date: $date is valid\n";
+} else {
+
+	print "Date: $date is not valid\n";
+}
+
+1;

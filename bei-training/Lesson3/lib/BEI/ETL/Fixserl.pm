@@ -6,20 +6,44 @@ use warnings;
 use base 'BEI::ETL';
 no warnings 'uninitialized';
 
+=pod 
+
+=head1 FIXSERL -Complete machine list of all serial numbers.
+
+	FIXSERL consists of 20 PIPE delimited fields.
+
+=head2 Schema
+
+	Position	Field Description	 			Format
+	0			Serial Number					VARCHAR(30)
+	1			Machine Description (model desc)VARCHAR(32)
+	2			Initial Meter Reading			INT(10)
+	3			Date Sold / Rented				BEI Date [MM/DD/YY]
+	4			Model Number					VARCHAR(30)
+	5			Source Code						CHAR(1)
+	6			Meter Reading Last Service Call	INT(10)
+	7			NULL FIELD						NULL
+	8			Date of Last Service Call		BEI Date [MM/DD/YY]
+	9			Customer Number					VARCHAR(32)
+	10			Program Type/Contract 	Code	VARCHAR(10) *********
+	11			Product Code/Item Category		VARCHAR(6)
+	12			Sales Rep ID					VARCHAR(6)
+	13			Connectivity Code				CHAR(2)
+	14			Postal Code						VARCHAR(10)
+	15			SIC Number						VARCHAR(6)
+	16			Equipment ID					VARCHAR(10)
+	17			Primary Technician ID Number	VARCHAR(10)
+	18			Facility Management Equip		VARCHAR(15)
+	19			Is Under Contract				INT(1) 0=false 1=true   TINYINT(1)
+	20			Branch ID						VARCHAR(10)
+	21			Customer Bill To Number			VARCHAR(32)
+	22			Customer Type					VARCHAR(15)
+	23			Territory Field					VARCHAR(15)
+=cut 
+
 sub table_name {
 
 	return "fixserl";  
-}
-
-sub bulk_load_sql {
-	my $self = shift;
-	my $table = $self->table_name();
-	my $sql =  "LOAD DATA INFILE ? INTO TABLE " . $table . " " .  
-						"FIELDS TERMINATED BY '|' " .
-						"ENCLOSED BY '' " .
-						"LINES TERMINATED BY '\\n'";
-
-	return $sql;
 }
 
 sub scrub_line {
@@ -54,6 +78,8 @@ sub scrub_line {
 	my $customer_type 					= "$array[22]";
 	my $territory_field 				= "$array[23]";
 
+	#$date_sold_or_rented = BEI::Utils::verify_and_convert_date($date_sold_or_rented);
+
 	$line = "$serial|$machine_description|$initial_meter_reading" .
 			   "|$date_sold_or_rented|$model_number|$source_code".
 			   "|$meter_reading|$null_placeholder|$date_of_last_service_call".
@@ -73,32 +99,33 @@ sub create_table_sql {
 
 	#create fixserl table
 	my $sql =  "CREATE TABLE IF NOT EXISTS $table (
-		serial varchar(30),
-		machine_description varchar(32),
-		initial_meter_reading int(10),
-		date_sold_or_rented varchar(10),
-		model_number varchar(30),
-		source_code varchar(1),
-		meter_reading_on_last_service_call int(10),
-		null_placeholder varchar(25),
-		date_of_last_service_call varchar(10),
-		customer_number varchar(32),
-		program_type_code varchar(10),
-		product_category_code varchar(6),
-		sales_rep_id varchar(6),
-		connectivity_code varchar(2),
-		postal_code varchar(10),
-		sic_number varchar(6),
-		equipment_id varchar(10),
-		primary_technician_id varchar(10),
-		facility_management_equip varchar(15),
-		is_under_contract bool,
-		branch_id varchar(10),
-		customer_bill_to_number varchar(32),
-		customer_type varchar(15),
-		territory_field varchar(15)
+					serial 							VARCHAR(30),
+					machine_description 			VARCHAR(32),
+					initial_meter_reading 			INT(10),
+					date_sold_or_rented 			VARCHAR(10),
+					model_number 					VARCHAR(30),
+					source_code 					VARCHAR(1),
+					meter_reading_on_last_service_call INT(10),
+					null_placeholder 				VARCHAR(25),
+					date_of_last_service_call 		VARCHAR(10),
+					customer_number 				VARCHAR(32),
+					program_type_code 				VARCHAR(10),
+					product_category_code 			VARCHAR(6),
+					sales_rep_id 					VARCHAR(6),
+					connectivity_code 				VARCHAR(2),
+					postal_code 					VARCHAR(10),
+					sic_number 						VARCHAR(6),
+					equipment_id 					VARCHAR(10),
+					primary_technician_id 			VARCHAR(10),
+					facility_management_equip 		VARCHAR(15),
+					is_under_contract 				TINYINT(1),
+					branch_id 						VARCHAR(10),
+					customer_bill_to_number 		VARCHAR(32),
+					customer_type 					VARCHAR(15),
+					territory_field 				VARCHAR(15)
 	);";
 	
 	return $sql;
 }
+
 1;

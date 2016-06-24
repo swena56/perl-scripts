@@ -22,6 +22,7 @@ use BEI::Utils qw(
 					 make_temp_directory 
 					 normalize_file_names
 					 get_temp_file_listing
+					 get_file_line_count
 					 cleanup_temp_directory
 				);
 
@@ -60,30 +61,24 @@ foreach my $zip (@zip_files)
 #connect to database
 my $dbh = &connect();
 
+#print Dumper(%extracted_files);   #debug code
+
 foreach my $zip (keys %extracted_files){
 
-	#process each file that was extracted
-	foreach my $file ( @{$extracted_files{$zip}} ) {
+	my $num_files = (scalar @{$extracted_files{$zip}});
 
-		my $obj = BEI::ETL->Factory($dbh, $file);
+	for (my $index = 0; $index < $num_files; $index++ ){
+
+		my $current_file = @{$extracted_files{$zip}}[$index];
+		print "[+] (" .( $index + 1) . "/$num_files) files to be processed.\n";
+
+		BEI::Utils::get_file_line_count($current_file);
+		
+		my $obj = BEI::ETL->Factory($dbh, $current_file);
 		if($obj)
 		{
 			$obj->run();
-
 		}
-#		if($file =~ m/serl/i){
-#			my $obj = BEI::ETL::Fixserl->new($dbh, $file);
-#			$obj->run();
-#		} elsif($file =~ m/parla/i){
-#			my $obj = BEI::ETL::Fixparla->new($dbh, $file);
-#			$obj->run();
-#		}
-		
-	
 	}
-
-
 }
-
-
-print "[+] Finished Successfully\n";
+print "[+] Done.\n";

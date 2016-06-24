@@ -29,10 +29,8 @@ sub connect {
 	my $dbh = DBI->connect($dsn, $user, $password,  {RaiseError => 1})
 	              or die $DBI::errstr;	
 
-	print "...success\n\n";
+	print "...connection established.\n\n";
 	return $dbh;
 }
-
-	
 
 1;
