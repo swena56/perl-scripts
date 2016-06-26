@@ -2,7 +2,8 @@ sudo apt-get update
 sudo apt-get install sublime-text git perltidy perl-doc subversion postgresql wget apache2 cpanminus
 sudo cpanm FindBin Moose DBI DBD::mysql Data::Faker 
 
-add /tmp/** rwk to /etc/apparmor.d/usr.sbin.mysqld
+echo 'add /tmp/** rwk', << /etc/apparmor.d/usr.sbin.mysqld
+sudo /etc/init.d/apparmor reload
 
 #set up workspaces its not enabled by default in Ubuntu
 
