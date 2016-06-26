@@ -1,5 +1,5 @@
 Notes
-
+https://en.wikipedia.org/wiki/Factory_method_pattern
 
 foreach my $inc (@INC)
 {

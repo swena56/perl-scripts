@@ -1,0 +1,18 @@
+June-24-2016.txt
+
+Today we will be meeting up in person down in Minneapolis.
+
+1) Perl moose... what is it.
+2) Bio - think about what I might write.  
+	a) Find a picture that makes me appear like I havent lost my people skills to a computer terminal.
+3) Ubuntu server - mount on to AWS machine for development.
+4) run cat5e for better connection.  This may require drilling a hole in the wall.
+5) Date module- turn my utils into an object.
+6) verify data.
+
+
+1) Perl Moose
+	a) How to install.   ''' sudo cpanm Moose '''
+	b)
+
+	#around - look into this http://search.cpan.org/dist/Moose/lib/Moose/Manual/MethodModifiers.pod

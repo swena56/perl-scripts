@@ -1,0 +1,2 @@
+#show the amount of ram a linux machine has
+sudo lshw -class memory

@@ -1,14 +1,14 @@
-package BEI::ETL::Fixmeter;
+package BEI::ETL::Fixploc;  #not done
 
-use constant TABLE_NAME => 'fixmeter';
-use constant DB_NAME => 'fixmeter';
+use constant TABLE_NAME => 'fixploc';
+use constant DB_NAME => 'fixploc';
 
 use Exporter 'import';
-@EXPORT = qw(
+@EXPORT_OK = qw(		
 					scrub_csv
 					import_csv
-				 	create_table
-				 	drop_table
+					create_table 
+					drop_table
 				); 
 
 #optional dev imports
@@ -16,35 +16,33 @@ use strict;
 use warnings;
 no warnings 'uninitialized';
 
+#imports
 use Parse::CSV;
 use Data::Dumper;
 
-=pod
-		=head1 
+=pod 
 
-				FIXMETER
+	=head1 FIXADDR - Customer Number Address Information
 
-		=head1 Schema
-		Multiple meter service call information
+		FIXADDR consists of five PIPE delimited fields.
 
-				FIXMETER consists of six PIPE delimited fields.
+	=head2	Schema
+		Position	Field Description		Format
+		0		Customer Number		VARCHAR(32)
+		1		Address			VARCHAR(200)
+		2		City				VARCHAR(200)
+		3		State / Province			VARCHAR(200)
+		4		Postal Code			VARCHAR(10)
 
-				Position	Field Description		Format
-				0		Call ID						VARCHAR(15)
-				1		Model						VARCHAR(30)
-				2		Serial Number				VARCHAR(30)
-				3		Completion Date				BEI Date [MM/DD/YY]
-				4		Meter Code					VARCHAR (20)
-				5		Meter Reading				INT(10)
+FIXADDR Customer Number field should match the Customer Number field in the FIXSERL file, which can be mapped back to a serial number – model number entity.
+
 =cut
 
 sub scrub_csv{
-	
 	my $input_csv = shift || die("[!] " . DB_NAME . " Missing input_file.csv as parameter 1.\n");
 	my $dbh 	  = shift || die("[!] " . DB_NAME . " Missing database handler as parameter 2\n");
 
 	if ($dbh) {	
-
 		my $parser    = Parse::CSV->new(
 								file       => "$input_csv",
 								sep_char   => '|',						
@@ -55,14 +53,13 @@ sub scrub_csv{
 		open FH, ">", $output_file;
 				
 		while ( my $value = $parser->fetch ) {	
-		 	my $call_id 					= "@$value[0]";
-			my $model 						= "@$value[1]";
-			my $serial_number 				= "@$value[2]";
-			my $completion_date 			= "@$value[3]";
-			my $meter_code	 				= "@$value[4]";
-			my $meter_reading				= "@$value[5]";
-					
-			my $line = "$call_id|$model|$serial_number|$completion_date|$meter_code|$meter_reading\n";
+			my $customer_number	 			= "@$value[0]";
+			my $address			 			= "@$value[1]";
+			my $city			 			= "@$value[2]";
+			my $state_or_province 			= "@$value[3]";
+			my $postal_code		 			= "@$value[4]";
+
+			my $line = "$customer_number|$address|$city|$state_or_province|$postal_code\n"
 
 			my $valid_data = 1;
 
@@ -77,7 +74,7 @@ sub scrub_csv{
 
 		#system("gedit $input_csv.scrubbed");  #open scrubbed file in gedit -> useful for debugging
 
-		print "[+] (" . DB_NAME .") Successfully scrubbed $input_csv => $input_csv.scrubbed\n";
+		print "[+] (" . DB_NAME . ") Successfully scrubbed $input_csv => $input_csv.scrubbed\n";
 
 		return  "$input_csv.scrubbed";
 	}
@@ -87,12 +84,11 @@ sub scrub_csv{
 }
 
 sub import_csv {
-
 	my ($dbh, $file) = @_;
 
 	#error checking
-	die("[!] " . DB_NAME . " File does not exist: $file\n") if(!(-e $file));
-	die("[!] " . DB_NAME . " Database handler does not exist\n") if(!$dbh);
+	die("[!] " . DB_NAME . " File does not exist: $file\n") 		if(!(-e $file));
+	die("[!] " . DB_NAME . " Database handler does not exist\n") 	if(!$dbh);
 
 	#remove all table and create new
 	drop_table($dbh);
@@ -122,20 +118,17 @@ sub import_csv {
 }
 
 sub create_table {
-
-	my $dbh 			= shift || die("[!] Missing database handle for parameter 1");
-
-	#create fixserl table
-	my $sql =  "CREATE TABLE IF NOT EXISTS ".DB_NAME." (
-					call_id 					varchar(15),
-					model 						varchar(30),
-					serial_number 				varchar(30),
-					completion_date 			varchar(10),
-					meter_code 					varchar(20),
-					meter_reading 				INT(10)
-					);";
+	my $dbh 				= shift || 	die("[!] " . DB_NAME . " - Missing database handle for parameter 1");
+	my $database_name 		= shift || 	TABLE_NAME;
+	my $create_table_sql 	= shift || 	"CREATE TABLE IF NOT EXISTS " . TABLE_NAME . "(
+												customer_number		VARCHAR(32)
+												address				VARCHAR(200)
+												city				VARCHAR(200)
+												state_or_province	VARCHAR(200)
+												postal_code			VARCHAR(10)
+										);";
 	
-	$dbh->do($sql) || die("[!] Cannot create " . DB_NAME ." database\n");	
+	$dbh->do($create_table_sql) or die("[!] Cannot create $database_name database\n");	
 
 	print "[+] Successfully created " . DB_NAME .", refer to schema if necessary.\n";
 	#print "[+] SQL: $sql\n";
@@ -151,4 +144,5 @@ sub drop_table {
 
 	print "[+] Successfully dropped " . DB_NAME ." database\n";
 }
+
 

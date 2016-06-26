@@ -13,6 +13,7 @@ use constant DB_NAME => 'bei_training';
 
 	TODO
 		-rewrite so connect will optionally allow any connection details passed
+		-create database if it does not exist
 =cut
 sub connect {
 
@@ -29,10 +30,8 @@ sub connect {
 	my $dbh = DBI->connect($dsn, $user, $password,  {RaiseError => 1})
 	              or die $DBI::errstr;	
 
-	print "...success\n\n";
+	print "...connection established.\n\n";
 	return $dbh;
 }
-
-	
 
 1;
