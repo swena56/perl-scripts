@@ -1,0 +1,3 @@
+
+/var/cgi-bin/echo.pl
+http http://localhost/cgi-bin/echo.pl

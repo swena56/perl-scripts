@@ -136,12 +136,14 @@ sub run {
 								GROUP BY fixserv.problem_code ) AS fixserv
 					LEFT JOIN problem_codes ON fixserv.problem_code = problem_codes.problem_code
 					WHERE 
-						problem_codes.problem_code_id IS NULL;") 		|| die("[!] Failed to insert data into table.\n");
+						problem_codes.problem_code_id IS NULL
+						AND fixserv.problem_code IS NOT NULL
+						AND fixserv.problem_code != '';") 		|| die("[!] Failed to insert data into table.\n");
 
 		$dbh->do("CREATE TABLE IF NOT EXISTS correction_codes (
 				    correction_code_id 			INT(10) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-				    correction_code 			VARCHAR(32) NOT NULL,
-				    correction_code_desc 		VARCHAR(32) NOT NULL
+				    correction_code 			VARCHAR(32),
+				    correction_code_desc 		VARCHAR(32)
 				);") 													|| die("[!] Failed to create table.\n");
 
 		$dbh->do("INSERT INTO correction_codes ( correction_code ) 
@@ -149,7 +151,10 @@ sub run {
 					    (SELECT fixserv.correction_code FROM fixserv
 					    	GROUP BY fixserv.correction_code) AS fixserv
 					     LEFT JOIN correction_codes ON fixserv.correction_code = correction_codes.correction_code
-					WHERE correction_codes.correction_code_id IS NULL AND NOT EXISTS(SELECT * FROM correction_codes));") || die("[!] Failed to insert data into table.\n");
+					WHERE correction_codes.correction_code_id IS NULL 
+					  AND fixserv.correction_code IS NOT NULL 
+					  AND fixserv.correction_code != ''
+					  AND NOT EXISTS(SELECT * FROM correction_codes));") || die("[!] Failed to insert data into table.\n");
 
 		$dbh->do("CREATE TABLE IF NOT EXISTS calltypes (
 			    calltype_id	 				INT(10) NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -182,7 +187,7 @@ sub run {
 					  GROUP BY fs.serial_id, fs.model_number
 					) AS src
 					LEFT JOIN serials AS s ON src.serial_number = s.serial_number AND src.model_id = s.model_id
-					WHERE s.serial_id IS NULL AND NOT EXISTS(SELECT * FROM serials));") || die("[!] Failed to insert data into table.\n");
+					WHERE  src.serial_number IS NOT NULL AND src.serial_number != '' AND s.serial_id IS NULL AND NOT EXISTS(SELECT * FROM serials));") || die("[!] Failed to insert data into table.\n");
 
 		$dbh->do("CREATE TABLE IF NOT EXISTS service (
 				    service_id 			INT(10) NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -200,15 +205,15 @@ sub run {
 				);") || die("Could not create services");
 					
 		$dbh->do("INSERT INTO service (call_date, date_dispatched, arrival_time, completion_date, serial_number, technician_number, problem_code_id)
-				SELECT src.call_date, src.date_dispatched, src.arrival_time, src.completion_date, src.serial_number , src.technician_id, src.problem_code_id FROM (
-				SELECT call_date, date_dispatched, arrival_time, completion_date, s.serial_id as serial_number , t.technician_id, p.problem_code_id  FROM 
-	                fixserv AS fsv
-	                    JOIN serials AS s ON fsv.serial_number = s.serial_number
-	                    JOIN technicians AS t ON fsv.technician_id_number = t.technician_number
-	                    JOIN problem_codes AS p ON fsv.problem_code = p.problem_code                 
-	            GROUP BY fsv.serial_number) as src 
+					SELECT src.call_date, src.date_dispatched, src.arrival_time, src.completion_date, src.serial_number , src.technician_id, src.problem_code_id FROM (
+						SELECT call_date, date_dispatched, arrival_time, completion_date, s.serial_id as serial_number , t.technician_id, p.problem_code_id  FROM 
+		                	fixserv AS fsv  
+		                    JOIN serials AS s ON fsv.serial_number = s.serial_number
+		                    JOIN technicians AS t ON fsv.technician_id_number = t.technician_number
+		                    JOIN problem_codes AS p ON fsv.problem_code = p.problem_code
+	            	GROUP BY fsv.serial_number) as src 
 					  LEFT JOIN service AS s ON src.serial_number = s.serial_number
-					  WHERE s.service_id IS NULL;") || die();
+					  WHERE s.service_id IS NULL ;") || die();
 # services  * service ( call-datetime, dispatch-datetime, arrival-datetime, complete-datetime, FK_serials.serial_id, FK_techs.tech_id, FK_calltypes.calltype_id, FK_problem_codes.problem_code_id, FK_location_codes.location_code_id )
  #                               [ Source: FIXSERV, serials, models, techs, calltypes, problem-codes, location-codes ]
   #                              PrimaryKey ( service_id )

@@ -70,23 +70,27 @@ sub scrub_line {
 	my $call_completion_time 		= "$array[8]";
 	my $call_type 					= "$array[9]";
 	my $problem_code 				= "$array[10]";
-	my $location_code 				= "$array[12]";
-	my $reason_code 				= "$array[13]";
-	my $correction_code 			= "$array[14]";
-	my $date_dispatched 			= "$array[15]";
-	my $time_dispatched 			= "$array[16]";
-	my $completion_date 			= "$array[17]";
-	my $meter_reading_total 		= "$array[18]";
-	my $meter_reading_prior_call 	= "$array[19]";
-	my $date_of_prior_call 			= "$array[20]";
-	my $pc_type 					= "$array[21]";
-	my $lc_type 					= "$array[22]";
-	my $null_field2 				= "$array[23]";
-	my $machine_status 				= "$array[24]";
-	my $technician_id_number 		= "$array[25]";
-	my $customer_number 			= "$array[26]";
-	my $miles_driven 				= "$array[27]";
-	my $response_time 				= "$array[28]";
+	my $location_code 				= "$array[11]";
+	my $correction_code 			= "$array[12]";
+	my $reason_code 				= "$array[13]";	
+	my $date_dispatched 			= "$array[14]";  
+	my $time_dispatched 			= "$array[15]";	 #
+	my $completion_date 			= "$array[16]";
+	my $meter_reading_total 		= "$array[17]";
+	my $meter_reading_prior_call 	= "$array[18]";
+	my $date_of_prior_call 			= "$array[19]";
+	my $pc_type 					= "$array[20]";
+	my $lc_type 					= "$array[21]";
+	my $null_field2 				= "$array[22]";
+	
+	my $machine_status 				= "$array[23]";
+	my $technician_id_number 		= "$array[24]";
+	my $customer_number 			= "$array[25]";
+	my $miles_driven 				= "$array[26]";
+	my $response_time 				= "$array[27]";
+
+
+	
 
 	$line = "$null_field1|$call_id|$model_number|$serial_number|$call_date|$call_time|$customer_time".
 			"|$arrival_time|$call_completion_time|$call_type|$problem_code|$location_code|$reason_code".
@@ -115,7 +119,7 @@ sub create_table_sql {
 					call_type 					VARCHAR(10),
 					problem_code				VARCHAR(4),
 					location_code				VARCHAR(4),
-					reason_code 				VARCHAR(4),
+					reason_code 				VARCHAR(100),
 					correction_code 			VARCHAR(4),
 					date_dispatched 			VARCHAR(10),
 					time_dispatched 			VARCHAR(4),
@@ -126,7 +130,7 @@ sub create_table_sql {
 					pc_type 					VARCHAR(4),
 					lc_type 					VARCHAR(4),
 					null_field2 				VARCHAR(10),
-					machine_status 				VARCHAR(1),
+					machine_status 				VARCHAR(25),
 					technician_id_number 		VARCHAR(10),
 					customer_number 			VARCHAR(32),
 					miles_driven				INT(10),
