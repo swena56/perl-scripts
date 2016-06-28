@@ -1,0 +1,35 @@
+June-28-2016.txt
+
+
+I struggled with query errors yesturday.  I my service INSERT query setup, but I get no data back due to not having calltype data.
+
+
+Today I plan on initially glancing through my DB base to give my self peace of mind that everything works.  Then I am going to start diving into CGI and the template toolkit.
+CGI
+TEMPLATE
+
+Skype contact information.
+
+
+Matt, 75 percent through branch 1.9
+
+Dave - meter project. flagging things incorrectly.
+	slopping algorithm.
+	PM
+	flotech questions.
+
+Chad - 
+
+Brett-  phase 2 of milestone 2.
+		tech assess
+
+
+TODO
+- correct services table
+- calltype for services
+- date formating.
+- CGI setup
+- Template toolkit
+
+
+

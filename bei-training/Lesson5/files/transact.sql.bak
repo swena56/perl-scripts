@@ -13,6 +13,8 @@
                 * FIXPARLA -> [ parts, service-parts ]
                 * FIXBILLING -> [ billing-meters ]
  
+
+
 DROP TABLE IF EXISTS model;
 DROP TABLE IF EXISTS branch;
 DROP TABLE IF EXISTS part;
@@ -29,46 +31,21 @@ DROP TABLE IF EXISTS serial_number;
 */						
 						/*  FIXSERL -> [ serials, models, customers, branches, program-types ]*/
 
+
+
+
 /*  Fixserl models create table */
 CREATE TABLE IF NOT EXISTS models (
     model_id 					INT(10) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    model_number 				VARCHAR(32),
-    model_description			VARCHAR(100)
-);  
-
-INSERT INTO models SELECT 
-    fixserl.model_number, model_description
-FROM
-    (SELECT 
-        fixserl.model_number, model_description
-    FROM
-        fixserl
-    GROUP BY fixserl.model_number) AS fixserl
-        LEFT JOIN
-    models ON fixserl.model_number = models.model_number
-WHERE
-    models.model_id IS NULL;
+    model_number 				VARCHAR(32) NOT NULL UNIQUE KEY,
+    model_description			VARCHAR(100) NOT NULL UNIQUE KEY
+);
 
 /*  Fixserl branches create table */
 CREATE TABLE IF NOT EXISTS branches (
     branch_id 					INT(10) NOT NULL AUTO_INCREMENT PRIMARY KEY,
     branch_number 				VARCHAR(32) NOT NULL UNIQUE KEY
 );
-
-/*  Fixserl branches load data*/
-INSERT INTO branches
-SELECT 
-    fixserl.branch_id
-FROM
-    (SELECT 
-        fixserl.branch_id
-    FROM
-        fixserl
-    GROUP BY fixserl.branch_id) AS fixserl
-        LEFT JOIN
-    branches ON fixserl.branch_id = branches.branch_id
-WHERE
-    branches.branch_id IS NULL;
 
 /*  Fixparla parts create table */
 CREATE TABLE IF NOT EXISTS parts (
@@ -77,41 +54,11 @@ CREATE TABLE IF NOT EXISTS parts (
     part_description 			VARCHAR(100) NOT NULL UNIQUE KEY
 );
 
-/*  Fixparla parts load data */
-INSERT INTO parts
-SELECT 
-    fixparla.part_number, fixparla.part_description
-FROM
-    (SELECT 
-        fixparla.part_number, fixparla.part_description
-    FROM
-        fixparla
-    GROUP BY fixparla.part_number) AS fixparla
-        LEFT JOIN
-    parts ON fixparla.part_number = parts.part_number
-WHERE
-    parts.part_id IS NULL;
-
 /* fixserv technicians - create table*/
 CREATE TABLE IF NOT EXISTS technicians (
     technician_id 				INT(10) NOT NULL AUTO_INCREMENT PRIMARY KEY,
     technician_number 			VARCHAR(32) NOT NULL UNIQUE KEY
 );
-
-/* fixserv technicians - load data*/
-INSERT INTO technicians
-SELECT 
-    technician_id_number
-FROM
-    (SELECT 
-        technician_id_number
-    FROM
-        fixserv
-    GROUP BY fixserv.technician_id_number) AS fixserv
-        LEFT JOIN
-    technicians ON fixserv.technician_id_number = technicians.technician_number
-WHERE
-    technicians.technician_id IS NULL;
 
 /*  meter_codes - create table*/
 CREATE TABLE IF NOT EXISTS meter_codes (
@@ -120,62 +67,17 @@ CREATE TABLE IF NOT EXISTS meter_codes (
     meter_description			VARCHAR(32) NOT NULL UNIQUE KEY
 );
 
-/* meter_codes - load data from fixmdesc*/
-INSERT IGNORE INTO meter_codes (meter_code, meter_description)
-SELECT 
-    fixmdesc.meter_code, fixmdesc.meter_code_description
-FROM
-    (SELECT 
-        fixmdesc.meter_code, fixmdesc.meter_code_description
-    FROM
-        fixmdesc
-    GROUP BY meter_code) AS fixmdesc
-        LEFT JOIN
-    meter_codes ON fixmdesc.meter_code = meter_codes.meter_code
-WHERE
-    meter_codes.meter_code_id IS NULL;
-
 /*  customers - create table*/
 CREATE TABLE IF NOT EXISTS customers (
     customer_id 				INT(10) NOT NULL AUTO_INCREMENT PRIMARY KEY,
     customer_number 			VARCHAR(32) NOT NULL UNIQUE KEY
 );
 
-/* customers - load data from fixserl*/
-INSERT IGNORE INTO customers ( customer_number )
-SELECT 
-    fixserl.customer_number
-FROM
-    (SELECT 
-        fixserl.customer_number
-    FROM
-        fixserl
-    GROUP BY fixserl.customer_number) AS fixserl
-        LEFT JOIN
-    customers ON fixserl.customer_number = customers.customer_number
-WHERE
-    customers.customer_id IS NULL;
-
 /* program-types create table */
 CREATE TABLE IF NOT EXISTS programs (
     program_id 					INT(10) NOT NULL AUTO_INCREMENT PRIMARY KEY,
     program_number 				VARCHAR(32) NOT NULL UNIQUE KEY
 );
-
-/* program types - load data from fixserl*/
-INSERT IGNORE INTO programs ( program_number )
-SELECT 
-    program_type_code
-FROM
-    (SELECT 
-        program_type_code
-    FROM
-        fixserl
-    GROUP BY fixserl.program_type_code) AS fixserl
-        LEFT JOIN
-    programs ON fixserl.program_type_code = programs.program_number
-WHERE
-    programs.program_id IS NULL;
 
 /* problem-codes load data from fixserv */
 CREATE TABLE IF NOT EXISTS problem_codes (
@@ -184,17 +86,6 @@ CREATE TABLE IF NOT EXISTS problem_codes (
     problem_description 		VARCHAR(32) NOT NULL UNIQUE KEY
 );
 
- /*problem_codes - load data from fixserl*/
-INSERT IGNORE INTO problem_codes ( problem_code, problem_description ) 
-SELECT fixserv.problem_code
-FROM (
-		SELECT fixserv.problem_code
-		FROM fixserv
-		GROUP BY fixserv.problem_code
-) AS fixserv
-LEFT JOIN problem_codes ON fixserv.problem_code = problem_codes.problem_code
-WHERE problem_codes.problem_code_id IS NULL;
-
 /* correction_codes create table * correction-codes ( correction-code, correction-code-desc ) [ Source: FIXSERV ] */ 
 CREATE TABLE IF NOT EXISTS correction_codes (
     correction_code_id 			INT(10) NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -202,49 +93,17 @@ CREATE TABLE IF NOT EXISTS correction_codes (
     correction_code_desc 		VARCHAR(32) NOT NULL UNIQUE KEY
 );
 
-/* program types - load data from fixserl*/
-INSERT IGNORE INTO correction_codes ( correction_code, correction_code_desc ) 
-SELECT 
-    fixserv.correction_code
-FROM
-    (SELECT 
-        fixserv.correction_code
-    FROM
-        fixserv
-    GROUP BY fixserv.correction_code) AS fixserv
-        LEFT JOIN
-    correction_codes ON fixserv.correction_code = correction_codes.correction_code
-WHERE
-    correction_codes.correction_code_id IS NULL;
-
-
-/* call types    * calltypes ( calltype, calltype-desc ) [ Source: FIXSERV ]
+/* call types    * calltypes ( calltype, calltype-desc ) [ Source: FIXSERV ]*/
 CREATE TABLE IF NOT EXISTS calltypes (
     calltype_id	 				INT(10) NOT NULL AUTO_INCREMENT PRIMARY KEY,
     calltype 					VARCHAR(32) NOT NULL UNIQUE KEY,
     calltype_desciption			VARCHAR(32) NOT NULL UNIQUE KEY
 );
 
-/* load serial data*/
-/*
-SELECT 
-    fixcallt.calltype
-FROM
-    (SELECT 
-        fixcallt.calltype
-    FROM
-        fixcallt
-    GROUP BY  fixcallt.calltype) AS fixcallt
-        LEFT JOIN
-    calltypes ON fixcallt.call_type = calltypes.calltype
-WHERE
-    calltypes.calltype_id IS NULL;
-
-
 /*  Fixserl serials  * serials ( serial-number, FK_models.model_id, FK_customers.customer_id, FK_branches.branch_id, FK_program-types.program_type_id ) [ Source: FIXSERL ] */
 CREATE TABLE IF NOT EXISTS serials (
     serial_id 					INT(10) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    serial_number 				VARCHAR(32),
+    serial_number 				VARCHAR(32) NOT NULL UNIQUE KEY,
 	model_id 					INT(10),
 	customer_id 				INT(10),
 	branch_id 					INT(10),
@@ -254,21 +113,6 @@ CREATE TABLE IF NOT EXISTS serials (
     FOREIGN KEY ( branch_id ) 	REFERENCES branches	 ( branch_id ),
     FOREIGN KEY ( program_id ) 	REFERENCES programs  ( program_id )
 );
-
-/* load serial data*/
-INSERT IGNORE INTO serials ( serial_number )
-SELECT 
-    fixserl.serial_id
-FROM
-    (SELECT 
-        fixserl.serial_id
-    FROM
-        fixserl
-    GROUP BY fixserl.serial_id) AS fixserl
-        LEFT JOIN
-    serials ON fixserl.serial_id = serials.serial_number
-WHERE
-    serials.serial_id IS NULL;
 
 /* services  * service ( call-datetime, dispatch-datetime, arrival-datetime, complete-datetime, FK_serials.serial_id, FK_techs.tech_id, FK_calltypes.calltype_id, FK_problem_codes.problem_code_id, FK_location_codes.location_code_id )
                                 [ Source: FIXSERV, serials, models, techs, calltypes, problem-codes, location-codes ]
@@ -296,7 +140,6 @@ CREATE TABLE IF NOT EXISTS services (
 /* service-meters ( FK_service.service_id, FK_meter-codes.meter_code_id, meter ) [ Source: FIXMETER; Link FIXMETER TO FIXSERV based on model, serial, call_id, comp_date -- called meter_date in fixmeter ]
                                 PrimaryKey ( service_id, meter_code_id ) // See Example Below
 */
-
 CREATE TABLE IF NOT EXISTS service_meters (
 	service_id 						INT(10),
 	meter_code_id 					INT(10),
@@ -311,35 +154,16 @@ CREATE TABLE IF NOT EXISTS service_meters (
 /* service parts  * service-parts ( FK_service.service_id, FK_parts.part_id, qty, cost, addsub ) [ Source: FIXPARLA; Link FIXPARLA TO FIXSERV based on model, serial, call_id, install_date ( to comp_date ) ]
                                 PrimaryKey ( service_id, part_id, addsub )
 */
-DROP TABLE IF EXISTS service_parts;
 CREATE TABLE IF NOT EXISTS service_parts (
 	service_part_id			    VARCHAR(32),
 	service_id 					INT(10),
 	part_id 					INT(32),
 	qty 						INT(11),
 	cost 						NUMERIC(15,4),
-	add_sub_indicator			CHAR(1),
 	FOREIGN KEY ( service_id )	REFERENCES services ( service_id ),
 	FOREIGN KEY ( part_id ) 	REFERENCES parts ( part_id ),
-	PRIMARY KEY service_part_id ( service_id, part_id, add_sub_indicator)
+	PRIMARY KEY service_part_id ( service_id, part_id)
 );
-
-
-/* load service parts data*/
-/*
-INSERT IGNORE INTO service_parts ( serial_number )
-SELECT 
-    fixserl.serial_id
-FROM
-    (SELECT 
-        fixserl.serial_id
-    FROM
-        fixserl
-    GROUP BY fixserl.serial_id) AS fixserl
-        LEFT JOIN
-    serials ON fixserl.serial_id = serials.serial_number
-WHERE
-    serials.serial_id IS NULL;
 
 /* billing    * billing-meters [ FK_serials.serial_id, bill-date, FK_meter-codes.meter_code_id, meter ]
                                 PrimaryKey ( serial_id, meter_code_id, bill_date )*/

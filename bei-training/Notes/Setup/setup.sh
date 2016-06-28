@@ -2,8 +2,19 @@ sudo apt-get update
 sudo apt-get install sublime-text \
 					 git \
 					 mysql-server \
-					 perltidy perl-doc subversion postgresql wget apache2 cpanminus 
-sudo cpanm FindBin Moose
+					 perltidy \
+					 perl-doc \
+					 subversion \
+					 postgresql \
+					 wget \
+					 apache2 \
+					 cpanminus \
+
+
+sudo cpanm FindBin Moose \
+			CGI \
+			Template \
+			Univerisal::Require 
 
 
 #mysql-workbench

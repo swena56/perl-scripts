@@ -1,0 +1,96 @@
+Date: 10-23-99 is not valid
+[+] Using default test data.
+[+] Cleanup time...emptying contents of /tmp/bei-tmp/ directory
+
+[+] Requested Zip File: /home/ubuntu/perl-scripts/bei-training/Lesson3/files/50600516_DLAvPgzytc_webftp.zip
+[+] Attempting to verify zip file: /home/ubuntu/perl-scripts/bei-training/Lesson3/files/50600516_DLAvPgzytc_webftp.zip 
+    unzip -t /home/ubuntu/perl-scripts/bei-training/Lesson3/files/50600516_DLAvPgzytc_webftp.zip ..............Valid Zip.
+[+] Attempting to unzip: unzip -xjoq /home/ubuntu/perl-scripts/bei-training/Lesson3/files/50600516_DLAvPgzytc_webftp.zip -d /tmp/bei-tmp/ 
+[+] Unzip successful - /home/ubuntu/perl-scripts/bei-training/Lesson3/files/50600516_DLAvPgzytc_webftp.zip 
+
+[+] Contents of /tmp/bei-tmp/:
+     KochBrothers 06062016 1125 TT FIXSERV
+     KochBrothers 06062016 1125 TT FIXPARLA
+     KochBrothers 06062016 1125 TT FIXLABOR
+     KochBrothers 06062016 1125 TT FIXBILLING
+     KochBrothers 06062016 1125 TT updmdesc
+     KochBrothers 06062016 1125 TT updploc
+     KochBrothers 06062016 1125 TT updmeter
+     KochBrothers 06062016 1125 TT FIXSERL
+[+] Normalizing file names.
+[+] Contents of /tmp/bei-tmp/:
+     KochBrothers-06062016-1125-TT-updmeter
+     KochBrothers-06062016-1125-TT-updploc
+     KochBrothers-06062016-1125-TT-FIXSERV
+     KochBrothers-06062016-1125-TT-FIXSERL
+     KochBrothers-06062016-1125-TT-FIXBILLING
+     KochBrothers-06062016-1125-TT-FIXPARLA
+     KochBrothers-06062016-1125-TT-updmdesc
+     KochBrothers-06062016-1125-TT-FIXLABOR
+[+] Attempting to connect to DB at: mysql://bei-training:bei-training@localhost:3306/bei-training...connection established.
+
+[+] (1/8) files to be processed.
+[+] Detected meter in file: /tmp/bei-tmp/KochBrothers-06062016-1125-TT-updmeter 
+[+] Dropped all pre-existing fixmeter data.
+[+] Created fixmeter table, refer to schema in the corresponding ETL class for additional details.
+[+] Scrub CSV: /tmp/bei-tmp/KochBrothers-06062016-1125-TT-updmeter.scrubbed has 713 lines of valid data.
+[+] Processing bulk load query: LOAD DATA INFILE ? INTO TABLE fixmeter FIELDS TERMINATED BY '|' ENCLOSED BY '' LINES TERMINATED BY '\n' 
+[+] Table fixmeter updated with 713 records. 
+
+[+] (2/8) files to be processed.
+[+] Detected ploc in file: /tmp/bei-tmp/KochBrothers-06062016-1125-TT-updploc 
+[+] Dropped all pre-existing fixploc data.
+[+] Created fixploc table, refer to schema in the corresponding ETL class for additional details.
+[+] Scrub CSV: /tmp/bei-tmp/KochBrothers-06062016-1125-TT-updploc.scrubbed has 2574 lines of valid data.
+[+] Processing bulk load query: LOAD DATA INFILE ? INTO TABLE fixploc FIELDS TERMINATED BY '|' ENCLOSED BY '' LINES TERMINATED BY '\n' 
+[+] Table fixploc updated with 2574 records. 
+
+[+] (3/8) files to be processed.
+[+] Detected serv in file: /tmp/bei-tmp/KochBrothers-06062016-1125-TT-FIXSERV 
+[+] Dropped all pre-existing fixparla data.
+[+] Created fixparla table, refer to schema in the corresponding ETL class for additional details.
+[+] Scrub CSV: /tmp/bei-tmp/KochBrothers-06062016-1125-TT-FIXSERV.scrubbed has 1117 lines of valid data.
+[+] Processing bulk load query: LOAD DATA INFILE ? INTO TABLE fixparla FIELDS TERMINATED BY '|' ENCLOSED BY '' LINES TERMINATED BY '\n' 
+[+] Table fixparla updated with 1117 records. 
+
+[+] (4/8) files to be processed.
+[+] Detected serl in file: /tmp/bei-tmp/KochBrothers-06062016-1125-TT-FIXSERL 
+[+] Dropped all pre-existing fixserl data.
+[+] Created fixserl table, refer to schema in the corresponding ETL class for additional details.
+[+] Scrub CSV: /tmp/bei-tmp/KochBrothers-06062016-1125-TT-FIXSERL.scrubbed has 13154 lines of valid data.
+[+] Processing bulk load query: LOAD DATA INFILE ? INTO TABLE fixserl FIELDS TERMINATED BY '|' ENCLOSED BY '' LINES TERMINATED BY '\n' 
+[+] Table fixserl updated with 13154 records. 
+
+[+] (5/8) files to be processed.
+[+] Detected billing in file: /tmp/bei-tmp/KochBrothers-06062016-1125-TT-FIXBILLING 
+[+] Dropped all pre-existing fixbilling data.
+[+] Created fixbilling table, refer to schema in the corresponding ETL class for additional details.
+[+] Scrub CSV: /tmp/bei-tmp/KochBrothers-06062016-1125-TT-FIXBILLING.scrubbed has 2460 lines of valid data.
+[+] Processing bulk load query: LOAD DATA INFILE ? INTO TABLE fixbilling FIELDS TERMINATED BY '|' ENCLOSED BY '' LINES TERMINATED BY '\n' 
+[+] Table fixbilling updated with 2460 records. 
+
+[+] (6/8) files to be processed.
+[+] Detected parla in file: /tmp/bei-tmp/KochBrothers-06062016-1125-TT-FIXPARLA 
+[+] Dropped all pre-existing fixparla data.
+[+] Created fixparla table, refer to schema in the corresponding ETL class for additional details.
+[+] Scrub CSV: /tmp/bei-tmp/KochBrothers-06062016-1125-TT-FIXPARLA.scrubbed has 606 lines of valid data.
+[+] Processing bulk load query: LOAD DATA INFILE ? INTO TABLE fixparla FIELDS TERMINATED BY '|' ENCLOSED BY '' LINES TERMINATED BY '\n' 
+[+] Table fixparla updated with 606 records. 
+
+[+] (7/8) files to be processed.
+[+] Detected mdesc in file: /tmp/bei-tmp/KochBrothers-06062016-1125-TT-updmdesc 
+[+] Dropped all pre-existing fixmdesc data.
+[+] Created fixmdesc table, refer to schema in the corresponding ETL class for additional details.
+[+] Scrub CSV: /tmp/bei-tmp/KochBrothers-06062016-1125-TT-updmdesc.scrubbed has 8 lines of valid data.
+[+] Processing bulk load query: LOAD DATA INFILE ? INTO TABLE fixmdesc FIELDS TERMINATED BY '|' ENCLOSED BY '' LINES TERMINATED BY '\n' 
+[+] Table fixmdesc updated with 8 records. 
+
+[+] (8/8) files to be processed.
+[+] Detected labor in file: /tmp/bei-tmp/KochBrothers-06062016-1125-TT-FIXLABOR 
+[+] Dropped all pre-existing fixlabor data.
+[+] Created fixlabor table, refer to schema in the corresponding ETL class for additional details.
+[+] Scrub CSV: /tmp/bei-tmp/KochBrothers-06062016-1125-TT-FIXLABOR.scrubbed has 1116 lines of valid data.
+[+] Processing bulk load query: LOAD DATA INFILE ? INTO TABLE fixlabor FIELDS TERMINATED BY '|' ENCLOSED BY '' LINES TERMINATED BY '\n' 
+[+] Table fixlabor updated with 1116 records. 
+
+[+] Done.

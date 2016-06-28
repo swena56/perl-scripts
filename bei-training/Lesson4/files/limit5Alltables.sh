@@ -1,0 +1,1 @@
+mysql -Nse 'show tables' bei_training | while read table; do mysql -e "select * from $table limit 2 \G;"  bei_training; done

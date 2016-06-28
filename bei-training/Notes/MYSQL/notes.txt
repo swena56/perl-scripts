@@ -1,0 +1,2 @@
+#drop all tables - have to run it a couple times in the event of foreign keys
+mysql -Nse 'show tables' bei_training | while read table; do mysql -e "drop table $table" bei_training; done

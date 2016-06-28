@@ -12,3 +12,11 @@ Bless
 Creating a base class
 @ISA array
 AUTOLOAD()
+
+my $schema_file = "files/temp.sql";
+		open my $schema, '<', $schema_file 	|| die("[!] Failed to open Schema SQL file: $schema_sql_file\n");
+				while (<$schema>) {
+					my $line = ($_);
+					print "$line\n";
+				}
+		close $schema;

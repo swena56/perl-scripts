@@ -1,0 +1,49 @@
+June 27 2016
+Jermey you certianly missed out on a fun time at Matt's BBQ.
+
+Friday and parts of this weekend I have been working on contructing my database.
+
+I ran into a a variety of problems such as naming convention and consistency for columns and table names.  example serials and code tables really messed up my consistency for naming.  The dilemma of naming a table with singular or plural names.  
+
+Constructing my database in the appropriate order was more of an issue than I expected. As well as some of the relationships for permentant storage required .  When I needed to reference a my serial_id foriegn key which also was a foriegn key from fixserl I started to have issues.  
+-It bugged me enough that I loaded a few mysql books on  on my kindle and sent myself to w3schools for a refresher on mysql syntax.
+
+I am nearly done constructing my permanent storage database queries and I have a start to a Datawarehouse layer of abstraction for creating and interacting with this storage.  I just need to really prove to my self that I have my queries correct.
+
+I still need to write my BIO.
+
+And I also need to run some cat5e.  But honestly I an temped to be lazy and go buy an 800 mhz base station to do the job instead of drilling a hole in the wall.I have always wanted one of those!  
+
+We have a meeting at 10.
+chad- refactored code, Milestone 2.  
+brett - global settings tool for the last week and a half.  Milestone 2 next step?  Working with Chad.  
+dave - Error scores to graph. Unreadable when data is clustered.
+Jermey - explain select.  Joining on a primary key.
+		ANALYZE and OPTIMIZE TABLE tableName 
+		query planner.
+		might not automatically create an index for primary key.
+
+Matt stated that my table name convention should follow a plural naming style.
+
+Meeting at 10.
+Greg Moseley - Mentions BEI's largest client.  
+				Tech assesment.
+				Dave and greg - Meeting with RECO?  Export utility.
+				TBS
+Matthew Peters - BBQ, continued training.  Accountability module.
+Turning AIM on and off for dealships
+
+
+Me - My growth for learning the development enviroment is explosive.  I do have the urge to question everything, thankfully this is turning out to be a good thing due to the patience and willingness of the team to teach.  
+I am how ever experiencing a slight bottleneck due to my lack of understanding in reguards of the scope of how BEI works.  But I have faith that I will get there.  
+
+Dan - tech assessment, quality of work statements.
+
+Greg M - TBS bonus tech revenue.
+
+chad
+
+What is flowtech?
+90 percent printer 10 percent copier.
+
+I need to work on checking my meeting comments for typos a bit more carefuly
