@@ -1,3 +1,7 @@
 
 /var/cgi-bin/echo.pl
 http http://localhost/cgi-bin/echo.pl
+
+nano /etc/apache2/sites-enabled/000-default.conf
+
+sudo ln -s /home/ubuntu/perl-scripts/bei-training/Lesson5/lib/ /var/cgi-bin/

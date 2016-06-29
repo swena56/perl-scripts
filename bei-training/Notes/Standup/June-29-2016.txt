@@ -1,0 +1,21 @@
+June-29-2016.txt
+
+What I did yesturday 
+-Wired my self into the network instead of using an omni-directional wifi adapter expontentially improving my connection.  http://www.speedtest.net/my-result/5439000653
+
+
+FOR TODAY
+- call_types table	 
+- locations table
+- service_meters
+- INSERT INTO service_meters
+- service_parts
+- INSERT INTO service_parts
+- billing_meters
+- INSERT INTO billing_meters
+- write a script that looks at my permant 
+- storage matches my raw data.
+- run cat5e
+- start of cgi setup.
+- questions buffer.
+- reset database script

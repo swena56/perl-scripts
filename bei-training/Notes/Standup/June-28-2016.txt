@@ -1,6 +1,5 @@
 June-28-2016.txt
 
-
 I struggled with query errors yesturday.  I my service INSERT query setup, but I get no data back due to not having calltype data.
 
 
@@ -8,22 +7,35 @@ Today I plan on initially glancing through my DB base to give my self peace of m
 CGI
 TEMPLATE
 
+FOR TODAY
+- call_types table	 
+- locations table
+- service_meters
+- INSERT INTO service_meters
+- service_parts
+- INSERT INTO service_parts
+- billing_meters
+- INSERT INTO billing_meters
+- write a script that looks at my permant 
+- storage matches my raw data.
+- run cat5e
+- start of cgi setup.
+- questions buffer.
+- reset database script
+
+
+Hard realization that I had was that I am moving to fast...
+
+
+---------------------------------------------------
 Skype contact information.
-
-
 Matt, 75 percent through branch 1.9
-
 Dave - meter project. flagging things incorrectly.
 	slopping algorithm.
 	PM
 	flotech questions.
-
 Chad - 
-
-Brett-  phase 2 of milestone 2.
-		tech assess
-
-
+Brett-  phase 2 of milestone 2. tech assess
 TODO
 - correct services table
 - calltype for services
