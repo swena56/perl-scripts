@@ -88,8 +88,9 @@ meter_description			VARCHAR(32)
 );") || die("[!] Failed to create table.\n");
 
 $dbh->do("INSERT INTO meter_codes (meter_code, meter_description)
-SELECT fixmdesc.meter_code, fixmdesc.meter_code_description FROM
-(SELECT 
+SELECT fixmdesc.meter_code, fixmdesc.meter_code_description 
+FROM (
+	SELECT 
     fixmdesc.meter_code, fixmdesc.meter_code_description
 FROM
     fixmdesc
@@ -143,27 +144,24 @@ programs.program_id IS NULL;") || die("[!] Failed to insert data into table.\n")
 $dbh->do("CREATE TABLE IF NOT EXISTS problem_codes (
 problem_code_id 			INT(10) NOT NULL AUTO_INCREMENT PRIMARY KEY,
 problem_code 				VARCHAR(32),
-location_code				VARCHAR(32),
-reason_code					VARCHAR(32)
+UNIQUE KEY (problem_code)
+
 );") || die("[!] Failed to create table.\n");
 
-$dbh->do("INSERT INTO problem_codes ( problem_code, location_code, reason_code ) 
-SELECT fixserv.problem_code, fixserv.location_code, fixserv.reason_code
-FROM ( SELECT 
-fixserv.problem_code, fixserv.location_code, fixserv.reason_code
-FROM fixserv
-GROUP BY fixserv.problem_code ) AS fixserv
-LEFT JOIN problem_codes ON fixserv.problem_code = problem_codes.problem_code
-WHERE 
-problem_codes.problem_code_id IS NULL
-AND fixserv.problem_code IS NOT NULL
-AND fixserv.problem_code != '';") 		|| die("[!] Failed to insert data into table.\n");
+$dbh->do("INSERT INTO problem_codes ( problem_code ) 
+SELECT src.problem_code
+FROM (
+  SELECT problem_code
+  FROM fixserv
+  GROUP BY problem_code 
+  ) AS src
+LEFT JOIN problem_codes ON src.problem_code = problem_codes.problem_code
+WHERE problem_codes.problem_code_id IS NULL;") 		|| die("[!] Failed to insert data into table.\n");
 
 #correction codes
 $dbh->do("CREATE TABLE IF NOT EXISTS correction_codes (
 correction_code_id 			INT(10) NOT NULL AUTO_INCREMENT PRIMARY KEY,
 correction_code 			VARCHAR(32),
-#reason_code
 correction_code_desc 		VARCHAR(32)
 );") 													|| die("[!] Failed to create table.\n");
 
@@ -193,27 +191,27 @@ LEFT JOIN location_codes AS l ON src.location_code = l.location_code
 WHERE l.location_code_id IS NULL;
 ") || die("[!] Failed to insert data into table.\n");
 
+
+
 #call types
 $dbh->do("
 CREATE TABLE IF NOT EXISTS call_types (
 call_type_id INT(10) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-call_id VARCHAR(10),
 call_type VARCHAR(10),
-call_date VARCHAR(10),
-call_completion_time VARCHAR(10),
-call_desciption	VARCHAR(32));
+call_type_description	VARCHAR(32),
+UNIQUE KEY (call_type));
 ") || die("[!] Failed to create table.\n");
 
 $dbh->do("
-INSERT INTO call_types (call_id, call_type,  call_date, call_completion_time) 
-SELECT src.call_id, src.call_type, src.call_date, src.call_completion_time
+INSERT INTO call_types (call_type) 
+SELECT src.call_type
 FROM (
-  SELECT call_id, call_type, call_date, call_completion_time
+  SELECT  call_type
   FROM fixserv
-  GROUP BY fixserv.call_id
+  GROUP BY fixserv.call_type
   ) AS src
-LEFT JOIN call_types AS ct ON src.call_id = ct.call_id
-WHERE ct.call_id IS NULL;
+LEFT JOIN call_types AS ct ON src.call_type = ct.call_type
+WHERE ct.call_type_id IS NULL;
 ") || die("[!] Failed to insert data into table.\n");
 
 #serials table
@@ -258,46 +256,44 @@ serial_id INT(10),
 technician_id INT(10),
 problem_code_id INT(10),
 location_code_id INT(10),
-call_id VARCHAR(10) NOT NULL,
+call_id_not_call_type VARCHAR(10) NOT NULL,
 call_type_id INT(10),
 FOREIGN KEY (serial_id) REFERENCES serials (serial_id),
 FOREIGN KEY (technician_id) REFERENCES technicians (technician_id),
 FOREIGN KEY (problem_code_id) REFERENCES problem_codes (problem_code_id),
 FOREIGN KEY (location_code_id) REFERENCES location_codes (location_code_id),
 FOREIGN KEY (call_type_id) REFERENCES call_types (call_type_id),
-UNIQUE KEY (serial_id, completion_datetime, call_id) );
+UNIQUE KEY (serial_id, completion_datetime, call_id_not_call_type) );
 ") || die("Could not create services call_id");
 
 
 #* service ( call-datetime, dispatch-datetime, arrival-datetime, complete-datetime, FK_serials.serial_id, FK_techs.tech_id, FK_calltypes.calltype_id, FK_problem_codes.problem_code_id, FK_location_codes.location_code_id )
 $dbh->do("
-INSERT INTO service (call_datetime, dispatched_datetime, arrival_datetime, completion_datetime, serial_id, technician_id, problem_code_id, location_code_id, call_id, call_type_id)		
-SELECT src.call_datetime, src.dispatched_datetime, src.arrival_datetime, src.completion_datetime, src.serial_id , src.technician_id, src.problem_code_id, src.location_code_id, src.call_id, src.call_type_id
+INSERT INTO service (call_datetime, dispatched_datetime, arrival_datetime, completion_datetime, serial_id, technician_id, problem_code_id, call_id_not_call_type, call_type_id)		
+SELECT src.call_datetime, src.dispatched_datetime, src.arrival_datetime, src.completion_datetime, src.serial_id , src.technician_id, src.problem_code_id, src.call_id_not_call_type, src.call_type_id
 FROM (
 SELECT 
   CONCAT(str_to_date(fsv.call_date, '%m/%d/%y'),' ', SUBSTRING(fsv.call_time, 1, 2),':', SUBSTRING(fsv.call_time, 3, 4), ':00') AS call_datetime,
   CONCAT(str_to_date(date_dispatched, '%m/%d/%y'),' ', SUBSTRING(time_dispatched, 1, 2),':', SUBSTRING(time_dispatched, 3, 4),':00') AS dispatched_datetime,
   CONCAT(str_to_date(completion_date, '%m/%d/%y'), ' ',SUBSTRING(arrival_time, 1, 2),':',    SUBSTRING(arrival_time, 3, 4),':00') as arrival_datetime,
   CONCAT(str_to_date(fsv.completion_date, '%m/%d/%y'), ' ',SUBSTRING(fsv.call_completion_time, 1, 2), ':', SUBSTRING(fsv.completion_date, 3, 4), ':00') AS completion_datetime,
-  s.serial_id as serial_id,
+  s.serial_id,
   t.technician_id,
   p.problem_code_id,
-  l.location_code_id,
-  ct.call_id, 
+  fsv.call_id AS call_id_not_call_type, 
   ct.call_type_id
 FROM fixserv AS fsv
   JOIN models AS m ON fsv.model_number = m.model_number 
-   JOIN serials AS s ON m.model_id = s.model_id AND fsv.serial_number = s.serial_number
+  JOIN serials AS s ON m.model_id = s.model_id AND fsv.serial_number = s.serial_number
   JOIN technicians AS t ON fsv.technician_id_number = t.technician_number
   JOIN problem_codes AS p ON fsv.problem_code = p.problem_code
-  JOIN call_types AS ct ON fsv.call_id = ct.call_id 
-  JOIN location_codes AS l ON fsv.location_code = l.location_code
-
+  JOIN call_types AS ct ON fsv.call_type = ct.call_type
+  GROUP BY s.serial_id, completion_datetime, call_id
 ) as src 
-LEFT JOIN service AS ser ON src.serial_id = ser.serial_id AND src.completion_datetime = ser.completion_datetime AND  src.call_id = ser.call_id
-WHERE ser.service_id IS NULL;
+LEFT JOIN service AS ser ON src.serial_id = ser.serial_id  
+WHERE service_id IS NULL;
 ") || die();
-	#GROUP BY fsv.serial_id, completion_datetime, call_id
+	#
 #GROUP BY fsv.serial_id, completion_datetime, call_id
 
 
@@ -309,38 +305,36 @@ WHERE ser.service_id IS NULL;
 $dbh->do("
 CREATE TABLE IF NOT EXISTS service_meters (
 service_id INT(10) NOT NULL,
-serial_id INT(10) NOT NULL,
 meter_code_id INT(10) NOT NULL,
-meter_code VARCHAR(20),   
+meter INT(10),
 FOREIGN KEY ( service_id )  REFERENCES service ( service_id ),
-FOREIGN KEY ( serial_id )  REFERENCES serials ( serial_id ),
 FOREIGN KEY ( meter_code_id ) REFERENCES meter_codes ( meter_code_id ),
-PRIMARY KEY service_meter_id (service_id, meter_code_id ));
+PRIMARY KEY service_meter_id ( service_id, meter_code_id ));
 ");
 
 #TODO completion data
 #AND service.service_id = fixmeter.call_id 
 #AND DATE(service.completion_datetime) = fixmeter.completion_date
+
 $dbh->do("
-INSERT INTO service_meters ( service_id, serial_id, meter_code_id, meter_code )
-SELECT src.service_id,	src.serial_id, 	src.meter_code_id, 	src.meter_code
+INSERT INTO service_meters ( service_id, meter_code_id, meter )
+SELECT src.service_id, 	src.meter_code_id,  src.meter_reading	
 FROM (
 SELECT service_id, 
-  serials.serial_id, 
   meter_codes.meter_code_id, 
-  fixmeter.meter_code
+  meter_reading
 FROM service
 JOIN serials ON service.serial_id = serials.serial_id
 JOIN models ON serials.model_id = models.model_id
 JOIN fixmeter ON serials.serial_number = fixmeter.serial_number 
   AND models.model_number = fixmeter.model 
+  AND service.call_id_not_call_type = fixmeter.call_id AND DATE(service.completion_datetime) = str_to_date(fixmeter.completion_date, '%m/%d/%y')
 JOIN meter_codes ON fixmeter.meter_code = meter_codes.meter_code
-GROUP BY service.serial_id
 ) as src
 LEFT JOIN service_meters AS sm ON sm.service_id = src.service_id  AND sm.meter_code_id = src.meter_code_id 
 WHERE sm.service_id IS NULL AND sm.meter_code_id IS NULL;
 ");
-
+ 
 #billing		
 $dbh->do("CREATE TABLE IF NOT EXISTS billing_meters (
 serial_id INT(10) NOT NULL,
@@ -374,31 +368,32 @@ WHERE bm.serial_id IS NULL;
 
 #service_parts  #model, serial, call_id, install_date ( to comp_date ) ]
 $dbh->do("CREATE TABLE IF NOT EXISTS service_parts (
-part_id  INT(10) NOT NULL,
 service_id  INT(10) NOT NULL,
-addsub INT(10) NOT NULL,
-cost INT(10),
-comp_date VARCHAR(10),
+part_id  INT(10) NOT NULL,
+addsub CHAR(1) NOT NULL,
+cost DECIMAL(12,4),
 FOREIGN KEY ( part_id )  REFERENCES parts ( part_id ),
 FOREIGN KEY ( service_id )  REFERENCES service ( service_id ),
 PRIMARY KEY service_parts_id ( service_id, part_id, addsub ));
 ");
 
 $dbh->do("
-INSERT INTO service_parts ( part_id, service_id, addsub, cost, comp_date ) 
-SELECT src.part_id, src.service_id, src.addsub, src.cost, src.comp_date
+INSERT INTO service_parts ( service_id, part_id, addsub, cost ) 
+SELECT src.service_id, src.part_id, src.addsub, src.cost
 FROM (
-	SELECT parts.part_id, 
-	service.service_id, 
+	SELECT service.service_id, 
+	parts.part_id, 
 	fixparla.add_sub_indicator AS addsub, 
-	fixparla.parts_cost        AS cost,
-	fixparla.installation_date AS comp_date
+	fixparla.parts_cost        AS cost
 	FROM service  
 	JOIN serials  ON service.serial_id          = serials.serial_id
 	JOIN models   ON serials.model_id           = models.model_id
-	JOIN fixparla ON fixparla.model_number      = models.model_number
+
+JOIN fixparla ON serials.serial_number = fixparla.serial_number 
+  AND models.model_number = fixparla.model_number
+  AND service.call_id_not_call_type = fixparla.call_id AND DATE(service.completion_datetime) = str_to_date(fixparla.installation_date, '%m/%d/%y')
 	JOIN parts    ON parts.part_number          = fixparla.part_number
-	GROUP BY models.model_number, parts.part_number
+
 ) AS src
 LEFT JOIN service_parts AS sp ON sp.service_id = src.service_id  AND sp.part_id = src.part_id AND sp.addsub = src.addsub  
 WHERE sp.part_id IS NULL AND sp.service_id IS NULL AND sp.addsub IS NULL;
