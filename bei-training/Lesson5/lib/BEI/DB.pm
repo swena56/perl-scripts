@@ -36,5 +36,11 @@ sub connect {
 	return $dbh;
 }
 
+sub drop_temp {
+
+	my $dbh = shift || die("[+] Needs database handle for parameter 1\n");
+	$dbh->do("DROP TABLE fixserl");
+}
+
 
 1;

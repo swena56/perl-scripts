@@ -82,23 +82,6 @@ CREATE TABLE IF NOT EXISTS service_meters (
 );
 
 
-SELECT * 
-FROM (
-	SELECT 
-		fm.meter_code
-
-	FROM fixmeter AS fm
-		#JOIN models AS m ON fm.model = m.model_number
-		JOIN fixserv as fs ON  fs.serial_number = fm.serial_number 
-		AND fs.call_id = fm.call_id 
-		AND fs.completion_date = fm.completion_date 
-		AND fs.model_number = fm.model
-		#JOIN fixserv AS fs ON fs.model = m.model_number
-	GROUP BY fm.call_id AND fm.model AND fm.serial_number AND fm.completion_date
-) AS src;
-#LEFT JOIN service_meters AS sm ON src.service_meter_id = sm.service_meter_id
-
-
 
 
 #LEFT JOIN service_meters AS sm ON src.service_meter_id = sm.service_meter_id
@@ -116,7 +99,52 @@ FROM (
 	
 ) AS src;
 */
+How am I suppose to get fixmeter linked to fixserv.  Why would I link them in the first place, arnt these suppose to be tempary tables.
 
+SELECT *
+FROM fixmeter AS fm
+JOIN fixserv AS fs ON fs.model_number = fm.model AND
+fs.call_id = fm.call_id AND
+fs.serial_number = fm.serial_number AND
+fs.completion_date = fm.completion_date
+GROUP BY fs.model_number, fs.call_id, fs.serial_number, fs.completion_date;
+
+fm.meter_code
+
+SELECT *
+FROM fixmeter AS fm
+JOIN models AS m ON fm.model = m.model_number
+JOIN serials AS s ON fm.serial_number = s.serial_id
+GROUP BY m.model_number;
+
+SELECT fm.meter_code
+FROM fixmeter AS fm
+JOIN models AS m ON fm.model = m.model_number
+JOIN serials AS s ON fm.serial_number = s.serial_id
+GROUP BY  fm.meter_code, m.model_number;
+# link by call_id why I already have the call_id
+#JOIN service AS ser ON s.serial_id = ser.serial_id
+
+
+GROUP BY fs.model_number, fs.call_id, fs.serial_number, fs.completion_date;
+
+
+#fixserv and fixmeter FIXMETER TO FIXSERV based on model, serial, call_id, comp_date -- called meter_date in fixmeter ]
+INSERT INTO service_meters ( meter_code_id,service_id ) 
+SELECT src.meter_code
+FROM (
+	SELECT *
+	FROM fixmeter AS fm
+	JOIN fixserv AS fs ON fs.model_number = fm.model AND
+	fs.call_id = fm.call_id AND
+	fs.serial_number = fm.serial_number AND
+	fs.completion_date = fm.completion_date
+	GROUP BY fs.model_number, fs.call_id, fs.serial_number, fs.completion_date
+	) as src
+     LEFT JOIN fixserl ON fixserv.call_type = call_types.call_type
+WHERE call_types.call_type IS NULL 
+  AND fixserv.call_type IS NOT NULL 
+  AND fixserv.call_type != ''
 
 /*
 SELECT * 
@@ -144,6 +172,10 @@ CREATE TABLE IF NOT EXISTS service_parts (
 	FOREIGN KEY ( service_id )  REFERENCES service ( service_id ),
 	PRIMARY KEY service_parts_id ( service_id, part_id, addsub )
 );
+
+SELECT 
+FROM fixparla 
+JOIN services ON 
 
 /* billing-meters [ FK_serials.serial_id, bill-date, FK_meter-codes.meter_code_id, meter ]
 PrimaryKey ( serial_id, meter_code_id, bill_date )*/

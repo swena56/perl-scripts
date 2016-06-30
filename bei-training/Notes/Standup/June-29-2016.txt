@@ -3,6 +3,14 @@ June-29-2016.txt
 What I did yesturday 
 -Wired my self into the network instead of using an omni-directional wifi adapter expontentially improving my connection.  http://www.speedtest.net/my-result/5439000653
 
+I did a little work with CGI, but it was a bit premature.
+  I had incorrectly implented and lacked a few of my transaction tables, so the catch up game has been rather humbling and stressful for me.  
+  So I have have been working getting them correctly written into my schema.  After this standup I will be writing some test queries to make sure that I have the written correctly, so I can avoid any mixups today.
+
+
+
+
+
 
 FOR TODAY
 - call_types table	 
@@ -19,3 +27,5 @@ FOR TODAY
 - start of cgi setup.
 - questions buffer.
 - reset database script
+
+Dave 

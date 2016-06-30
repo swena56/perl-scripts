@@ -1,0 +1,34 @@
+June-30-2016.txt
+
+What I did yesterday?
+Yesterday was such as time crunch for me. I worked on the training projects for as much time after work as I could get.  But I needed to gather up a gift, and get ingredients for the food I am suppose to bring for my neices birthday today.  
+
+I needed to wake up at 5 so I could get the bio finished. 
+I finished my CGI homework up until I was throttled by problems with my database schema. 
+
+ It has been a great challenge for me to get the database setup correctly, and I will be coming to you guys for help as much as possible today to insure that the rest of my training is not hindered by this.  
+ Alot of this db work is rather new to me, I normally am interacting with a schema that is already constructed, so this has been quite the experience for me.  
+
+completed bio, but need picture with blue background to match the style and theme shown on the BEI website.
+
+I have the necessary queries written to get the model and part information necessary for my Serial Audit CGI project.  But My backend is having issues with my service_meters table.  
+
+
+
+Andrew Swenson 
+  Andrew Swenson's study interests stem from his education background in Computer Science and Mathematics at Minnesota State University in Mankato.  At the early stages of his career he specialized in networking, system design, and server side programming.  Upon discovering the elegance of the technologies used by BEI, Andrew made it his personal mission to figure how they deliver, interprete, and present such large quantities of data via the web. The opportunity to work with BEI's engineering team is a great part of his vision of being able to skillfully develope software full stack.  Andrew Swenson joined BEI Services in June 2016 as a web developer.
+
+  Andrew gives great thanks to his previous employment at Auction Harmony for preparing him with well rounded set of skills as a software engineer.
+
+
+
+  Process nearly 150 different dealerships
+
+  Xcode diff.
+
+  BEIadmin
+  bei app?
+
+
+  schema dump
+  sharepoint.

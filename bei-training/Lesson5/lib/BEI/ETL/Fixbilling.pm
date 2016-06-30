@@ -46,11 +46,11 @@ sub scrub_line {
 	chomp $line;
 
  	my @array = split /\|/, $line;
- 	my $model 						= "$array[0]";
-	my $serial_number 				= "$array[1]";
-	my $billing_date	 			= "$array[2]";
-	my $meter_code		 			= "$array[3]";
-	my $meter_reading 				= "$array[4]";
+ 	my $model 						= "$array[1]";
+	my $serial_number 				= "$array[2]";
+	my $billing_date	 			= "$array[3]";
+	my $meter_code		 			= "$array[4]";
+	my $meter_reading 				= "$array[5]";
 	
 	$line = "$model|$serial_number|$billing_date|$meter_code|$meter_reading\n";
 

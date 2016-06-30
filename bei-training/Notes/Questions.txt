@@ -1,3 +1,42 @@
 Questions
 What is my mysql datatype for null?
 How many branches are there?  My example dataset has two of them, how many exist in production?
+	fm.meter_code
+	SELECT *
+	FROM fixmeter AS fm
+	JOIN models AS m ON fm.model = m.model_number
+	JOIN serials AS s ON fm.serial_number = s.serial_id
+	# link by call_id why I already have the call_id
+	#JOIN services AS ser ON fm.
+	GROUP BY m.model_number;
+
+How am I suppose to get fixmeter linked to fixserv.  Why would I link them in the first place, arnt these suppose to be tempary tables.
+So the idea is that once I do a zip import, and the data is pushed to permanent storage, I can have the temp tables cleared? 
+
+
+
+How my data diffs from home4 data.
+My models table has an auto-imcrementing id as well as the model number.
+
+My serials also keeps track of model_id, customer_id
+My some of my base tables are using auto-incremented data, where the id seems to be different
+
+select * from serials where serial_id = 20002;
+select count(*) from serials;
++----------+
+| count(*) |
++----------+
+|    13117 |
++----------+
+
+
+
+PRESSING QUESTIONS
+What information should I be able to get by using a customer_id?
+Do I need a service_calls table?
+Handling duplicates in my service_parts table?
+Not sure about the behavior of my call_types table.
+
+my metercode is show as a date in fixbilling;  Fix this!
+ Bootstrap's JavaScript requires jQuery
+ How do you use jquery with perl?  I have the jquery 1.8 src

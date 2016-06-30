@@ -1,0 +1,231 @@
+* Review homework assignments
+* Perl Training:
+                - Moose
+ 
+* Discuss The Transact portion of ELT.
+ 
+                * FIXSERL -> [ serials, models, customers, branches, program-types ]
+ 
+                * FIXSERV -> [ calltypes, problem-codes, correction-codes, location-codes, reason-codes, techs, service ]
+ 
+                * FIXMDESC -> [ meter-codes ]
+ 
+                * FIXMETER -> [ service-meters ]
+ 
+                * FIXPARLA -> [ parts, service-parts ]
+ 
+                * FIXBILLING -> [ billing-meters ]
+ 
+                * From those, we create entities and can build relationships based on those entities.
+                                * branches ( branch ) [ Source: FIXSERL ]
+                                * models ( model-number, model-description ) [ Source: FIXSERL ]
+                                * parts ( part-number, part-description, part-type, part-cost, part-added-on ) [ Source: FIXPARLA ]
+                                * techs ( tech-number ) [ Source: FIXSERV ]
+                                * meter-codes ( meter-code, meter-code-description ) [ Source: FIXMETER ]
+                                * customers ( customer-number ) [ Source: FIXSERV ]
+                                * program-types ( program-type ) [ Source: FIXSERV ]
+                                * problem-codes ( problem-code, problem-code-desc ) [ Source: FIXSERV ]
+                                * correction-codes ( correction-code, correction-code-desc ) [ Source: FIXSERV ]
+                                * location-codes ( location-code, location-code-desc ) [ Source: FIXSERV ]
+                                * reason-codes ( reason-code, reason-code-desc ) [ Source: FIXSERV ]
+                                * calltypes ( calltype, calltype-desc ) [ Source: FIXSERV ]
+                                * serials ( serial-number, FK_models.model-number, FK_customers.customer-number, FK_branches.branch, FK_program-types.program-type ) [ Source: FIXSERL ]
+                                                               
+                                // transactions ( MySQL DATETIME FIELD for datetimes )
+                                * service ( call-datetime, dispatch-datetime, arrival-datetime, complete-datetime, FK_serials.serial_id, FK_techs.tech_id, FK_calltypes.calltype_id, FK_problem_codes.problem_code_id, FK_location_codes.location_code_id )
+                                [ Source: FIXSERV, serials, models, techs, calltypes, problem-codes, location-codes ]
+                                PrimaryKey ( service_id )
+                                UniqueKey ( serial_id, comp_date, call_id )
+                                * service-meters ( FK_service.service_id, FK_meter-codes.meter_code_id, meter ) [ Source: FIXMETER; Link FIXMETER TO FIXSERV based on model, serial, call_id, comp_date -- called meter_date in fixmeter ]
+                                PrimaryKey ( service_id, meter_code_id )
+                                * service-parts ( FK_service.service_id, FK_parts.part_id, qty, cost, addsub ) [ Source: FIXPARLA; Link FIXPARLA TO FIXSERV based on model, serial, call_id, install_date ( to comp_date ) ]
+                                PrimaryKey ( service_id, part_id, addsub )
+                               
+                                * billing-meters [ FK_serials.serial_id, bill-date, FK_meter-codes.meter_code_id, meter ]
+                                PrimaryKey ( serial_id, meter_code_id, bill_date )
+                               
+                                 // MySQL, how do we handle duplicates
+                                // Also consider, clearing out transactions upon reloading of data...
+                                // Consider reloading data
+                               
+                                Example:
+                                Assuming that you have created the above base tables ( branches, models, parts, etc. ), and you have created the above transactional tables ( service, service-meter, etc. ), populate base tables first ( order matters ), then
+                                  populate transactional tables ( order matters again ).
+                                 
+                                In order to bring in the appropriate foreign keys into the transactions, you will need perform joins...
+                               
+                                -- INSERT INTO service_meters ( service_id, serial_id, meter_code_id, meter_date, meter )
+                               
+                                SELECT service.service_id, serials.serial_id, meter_codes.meter_code_id, fixmeter.completion_date, fixmeter.meter
+                                FROM service
+                                JOIN serials ON service.serial_id = serials.serial_id
+                                JOIN models ON serials.model_id = models.model_id
+                                JOIN fixmeter ON serials.serial_number = fixmeter.serial_number AND models.model_number = fixmeter.model_number AND service.call_id = fixmeter.call_id AND DATE(service.complete_date) = fixmeter.completion_date
+                                JOIN meter_codes ON fixmeter.meter_code = meter_codes.meter_code
+                                WHERE fixmeter.serial = 'SN1235';
+                               
+                                Fixmeter-Sample
+                               
+                                CALLID  | MODEL | SERIAL | COMP-DATE  | METER-CODE | METER
+                                ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+                                0000001 | AF200 | SN1235 | 2015-01-31 | BW         | 11000
+                                0000001 | AF200 | SN1235 | 2015-01-31 | COL        | 30000
+                               
+                                Fixserv-Sample:
+                               
+                                CALLID  | MODEL | SERIAL | COMP-DATE  | TECH    | CALLTYPE | COMP-TIME
+                                ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+                                0000001 | AF200 | SN1235 | 2015-01-31 | TECH123 | EM       | 13:55
+                               
+                               
+                                Base-Models:
+                                MODEL-ID | MODEL
+                                ++++++++++++++++
+                                10001    | AF200
+                               
+                                Base-Serials:
+                                SERIAL-ID | SERIAL | FK-MODEL-ID
+                                ++++++++++++++++++++++++++++++++
+                                20002     | SN1235 | 10001
+                               
+                                Base-Meter-Codes:
+                                METER-CODE-ID | METER-CODE
+                                ++++++++++++++++++++++++++
+                                30003                      | BW
+                                30005                      | COL
+                               
+                                Transactional-Service
+                                SERVICE-ID | SERIAL-ID | COMPLETION-DATE  | CALLID  | TECH-ID | CALLTYPE-ID
+                                +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+                                500005     | 20002     | 2015-01-31 13:55 | 0000001 | 5001    | 5
+                               
+                                Expected Query Result:
+                                SERVICE-ID | SERIAL-ID | METER-CODE-ID | METER-DATE | METER
+                                +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+                                500005     | 20002     | 30003         | 2015-01-31 | 11000
+                                500005     | 20002     | 30005         | 2015-01-31 | 30000
+                               
+                               
+                               
+                               
+                               
+        my $cost_sql = 
+        "SELECT SUM(cost) 
+        FROM service_parts
+        JOIN service AS ser ON service_parts.service_id = ser.service_id
+        JOIN serials AS s   ON ser.serial_id = s.serial_id
+        WHERE s.serial_number = 'W422L600387';"
+            
+        my $parts = "SELECT part_number
+FROM service_parts
+JOIN service AS ser ON service_parts.service_id = ser.service_id
+JOIN serials AS s   ON ser.serial_id = s.serial_id
+JOIN parts AS p     ON service_parts.part_id = p.part_id
+WHERE s.serial_number = 'W422L600387';";
+        $sth = $dbh->prepare("SELECT SUM(cost) 
+FROM service_parts
+JOIN service AS ser ON service_parts.service_id = ser.service_id
+JOIN serials AS s   ON ser.serial_id = s.serial_id
+WHERE s.serial_number = 'W422L600387'"
+
+);
+
+                       
+                               
+ 
+* Homework:
+* Refactor existing classes into moose classes for FIX files [ serl, serv, parla, meter, billing ], use a FactoryPattern to return the proper class to preform the operation
+* Create perm. storage schema for [ techs, calltypes, models, customers, program-types, meters, serials ]
+* Create Moose Classes to handle transaction queries into perm. storage.  Make sure to handle duplicates accordingly.
+ 
+Thanks,
+Matthew Peters
+ "
+INSERT INTO service ( call_datetime, dispatch_datetime, arrival_datetime, complete_datetime, serial_id, tech_id, call_id, calltype_id, problem_id, location_id )
+SELECT src.call_datetime, src.dispatch_datetime, src.arrival_datetime, src.complete_datetime, src.serial_id, src.tech_id, src.call_id, src.calltype_id, src.problem_id, src.location_id
+FROM (
+    SELECT CONCAT_WS(' ', STR_TO_DATE(call_date, '%m/%d/%y'), CONCAT_WS(':', SUBSTR(call_time,1,2), SUBSTR(call_time,3,4), '00')) AS 'call_datetime',
+       CONCAT_WS(' ', STR_TO_DATE(date_dispatched, '%m/%d/%y'), CONCAT_WS(':', SUBSTR(time_dispatched,1,2), SUBSTR(time_dispatched,3,4), '00')) AS 'dispatch_datetime',
+       CONCAT_WS(' ', STR_TO_DATE(completion_date, '%m/%d/%y'), CONCAT_WS(':', SUBSTR(arrival_time,1,2), SUBSTR(arrival_time,3,4), '00')) AS 'arrival_datetime',
+       CONCAT_WS(' ', STR_TO_DATE(completion_date, '%m/%d/%y'), CONCAT_WS(':', SUBSTR(call_completion_time,1,2), SUBSTR(call_completion_time,3,4), '00')) AS 'complete_datetime',
+       serials.serial_id,
+       techs.tech_id,
+       fixserv.call_id_number AS 'call_id',
+       calltypes.calltype_id,
+       problem_codes.problem_id,
+       location_codes.location_id
+    FROM fixserv
+    JOIN models ON fixserv.model_number = models.model_number
+    JOIN serials ON models.model_id = serials.model_id AND fixserv.serial_number = serials.serial_number
+    JOIN techs ON fixserv.technician_id_number = techs.tech_number
+    JOIN calltypes ON fixserv.call_type = calltypes.calltype
+    JOIN problem_codes ON fixserv.problem_code = problem_codes.problem_code
+    JOIN location_codes ON fixserv.location_code = location_codes.location_code
+    GROUP BY serial_id, complete_datetime, call_id
+) AS src
+LEFT JOIN service ON src.serial_id = service.serial_id AND src.call_id = service.call_id
+    AND src.complete_datetime = service.complete_datetime 
+WHERE service.service_id IS NULL
+;"      
+
+
+
+mine
+$dbh->do("
+INSERT INTO service (call_datetime, dispatched_datetime, arrival_datetime, completion_datetime, serial_id, technician_id, problem_code_id, location_code_id, call_id, call_type_id)     
+SELECT src.call_datetime, src.dispatched_datetime, src.arrival_datetime, src.completion_datetime, src.serial_id , src.technician_id, src.problem_code_id, src.location_code_id, src.call_id, src.call_type_id
+FROM (
+SELECT 
+    CONCAT_WS(' ', STR_TO_DATE(fsv.call_date, '%m/%d/%y'), CONCAT_WS(':', SUBSTR(call_time,1,2), SUBSTR(call_time,3,4), '00')) AS 'call_datetime',
+    CONCAT_WS(' ', STR_TO_DATE(date_dispatched, '%m/%d/%y'), CONCAT_WS(':', SUBSTR(time_dispatched,1,2), SUBSTR(time_dispatched,3,4), '00')) AS 'dispatched_datetime',
+    CONCAT_WS(' ', STR_TO_DATE(completion_date, '%m/%d/%y'), CONCAT_WS(':', SUBSTR(arrival_time,1,2), SUBSTR(arrival_time,3,4), '00')) AS 'arrival_datetime',
+    CONCAT_WS(' ', STR_TO_DATE(completion_date, '%m/%d/%y'), CONCAT_WS(':', SUBSTR(fsv.call_completion_time,1,2), SUBSTR(fsv.call_completion_time,3,4), '00')) AS 'completion_datetime',
+  serials.serial_id as serial_id,
+  technicians.technician_id,
+  problem_codes.problem_code_id,
+  location_codes.location_code_id,
+  call_types.call_id, 
+  call_types.call_type_id
+FROM fixserv AS fsv
+    JOIN models ON fsv.model_number = models.model_number
+    JOIN serials ON models.model_id = serials.model_id AND fsv.serial_number = serials.serial_number
+    JOIN technicians ON fsv.technician_id_number = technicians.technician_number
+    JOIN call_types ON fsv.call_type = call_types.call_type
+    JOIN problem_codes ON fsv.problem_code = problem_codes.problem_code
+    JOIN location_codes ON fsv.location_code = location_codes.location_code
+ GROUP BY serial_id, completion_datetime, call_id
+) AS src
+LEFT JOIN service ON src.serial_id = service.serial_id AND src.call_id = service.call_id
+    AND src.completion_datetime = service.completion_datetime 
+WHERE service.service_id IS NULL
+") || die();
+
+
+orginal
+$dbh->do("
+INSERT INTO service (call_datetime, dispatched_datetime, arrival_datetime, completion_datetime, serial_id, technician_id, problem_code_id, location_code_id, call_id, call_type_id)     
+SELECT src.call_datetime, src.dispatched_datetime, src.arrival_datetime, src.completion_datetime, src.serial_id , src.technician_id, src.problem_code_id, src.location_code_id, src.call_id, src.call_type_id
+FROM (
+SELECT 
+  CONCAT(str_to_date(fsv.call_date, '%m/%d/%y'),' ', SUBSTRING(fsv.call_time, 1, 2),':', SUBSTRING(fsv.call_time, 3, 4), ':00') AS call_datetime,
+  CONCAT(str_to_date(date_dispatched, '%m/%d/%y'),' ', SUBSTRING(time_dispatched, 1, 2),':', SUBSTRING(time_dispatched, 3, 4),':00') AS dispatched_datetime,
+  CONCAT(str_to_date(completion_date, '%m/%d/%y'), ' ',SUBSTRING(arrival_time, 1, 2),':',    SUBSTRING(arrival_time, 3, 4),':00') as arrival_datetime,
+  CONCAT(str_to_date(fsv.completion_date, '%m/%d/%y'), ' ',SUBSTRING(fsv.call_completion_time, 1, 2), ':', SUBSTRING(fsv.completion_date, 3, 4), ':00') AS completion_datetime,
+  s.serial_id as serial_id,
+  t.technician_id,
+  p.problem_code_id,
+  l.location_code_id,
+  ct.call_id, 
+  ct.call_type_id
+FROM fixserv AS fsv
+  JOIN serials AS s ON fsv.serial_number = s.serial_number 
+  JOIN models AS m ON fsv.model_number = m.model_number 
+  JOIN technicians AS t ON fsv.technician_id_number = t.technician_number
+  JOIN problem_codes AS p ON fsv.problem_code = p.problem_code
+  JOIN call_types AS ct ON fsv.call_id = ct.call_id 
+  JOIN location_codes AS l ON fsv.location_code = l.location_code
+GROUP BY s.serial_id
+) as src 
+LEFT JOIN service AS ser ON src.serial_id = ser.serial_id AND src.completion_datetime = ser.completion_datetime
+WHERE ser.service_id IS NULL AND ser.completion_datetime IS NULL ;
+") || die();

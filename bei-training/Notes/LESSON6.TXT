@@ -1,0 +1,54 @@
+LESSON6.TXT
+Andrew / Jeremy,
+ 
+Training today will be limited, due to the company meeting.
+ 
+Andrew, we’ll be meeting from 2:30 – 3:30.
+ 
+Jeremey, we’ll be meeting from 3:30 – 4:00.
+ 
+Please make sure you install the following modules via cpanm:
+ 
+`CGI`
+`Template`
+ 
+Here is the text from Day 6.
+ 
+- Apache / CGI
+- Template::Toolkit
+- Twitter Bootstrap
+- Less [ lessc ]
+ 
+- Serial Audit Program
+- A form, which will allow me to drop-down search [ combo-box ] a valid serial-number.
+POST textbox
+
+
+
+- Returned result will contain a table-grid of service-calls, in descending order. 
+  - Create a modal-popup for meters and parts associated with that call.
+ 
+Homework-1: All CGI
+Homework-2: Refactor using template-toolkit.
+ 
+References:
+https://www.cs.cf.ac.uk/Dave/PERL/node185.html
+http://template-toolkit.org/docs/tutorial/Web.html
+
+
+my ($col1, $col2,$col3, $col4,$col5, $col6);
+$sth->bind_columns(\($col1, $col2,$col3, $col4,$col5, $col6));
+while ($sth->fetch) { # retrieve one row
+#    print "$col1, $col2, $col3, $col4, $col5, $col6\n";
+push $tablecontent, $q->td([$col1, $col2, $col3, $col4, $col5, $col6]);
+
+}
+print $q->table( { border => 1, -width => '100%'},  $q->Tr( $tablecontent), );
+
+
+	
+jQuery(document).ready(function($) {
+    $(".clickable-row").click(function() {
+        window.document.location = $(this).data("href");
+    });
+});

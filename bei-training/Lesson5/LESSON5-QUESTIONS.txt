@@ -1,0 +1,5 @@
+LESSON5-QUESTIONS.txt
+How many branches are found in fixserl?
+What is the mysql money datatype?
+How do I determine if my serial_id's are valid?
+Location_code_id is NULL, should it be a blank string 

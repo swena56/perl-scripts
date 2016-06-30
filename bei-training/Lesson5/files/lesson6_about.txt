@@ -1,0 +1,53 @@
+Andrew / Jeremy,
+ 
+Training today will be limited, due to the company meeting.
+ 
+Andrew, we’ll be meeting from 2:30 – 3:30.
+ 
+Jeremey, we’ll be meeting from 3:30 – 4:00.
+ 
+Please make sure you install the following modules via cpanm:
+ 
+`CGI`
+`Template`
+ 
+Here is the text from Day 6.
+ 
+- Apache / CGI
+- Template::Toolkit
+- Twitter Bootstrap
+- Less [ lessc ]
+ 
+- Serial Audit Program
+- A form, which will allow me to drop-down search [ text ] POST a valid serial-number.  accepts serial_number
+- Returned result will contain a table-grid of service-calls, in descending order. 
+	serial_number,model_number,(call_date,time alltime elements), call_type, total_parts, [meter_readings -> sum and count]
+
+	serial_audit form brings me to a search, well allow for an additional search as well as the table.
+
+  - Create a modal-popup for meters and parts associated with that call.
+ 
+  Light number of service calls, check the JOINs on this, it shoudl be similar to this count.
+
+
+   select count(*) from fixserv;
++----------+
+| count(*) |
++----------+
+|     1117 |
++----------+
+
+Homework-1: All CGI
+Homework-2: Refactor using template-toolkit.
+
+
+References:
+https://www.cs.cf.ac.uk/Dave/PERL/node185.html
+http://template-toolkit.org/docs/tutorial/Web.html
+ 
+Thanks,
+Matthew Peters
+ 
+Director of IS/IT
+BEI Services, Inc
+matt.peters@beiservices.com

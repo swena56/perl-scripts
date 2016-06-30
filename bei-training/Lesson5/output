@@ -30,59 +30,68 @@ meter_code_id	int(10)	NO	PRI	NULL
 meter_code	varchar(20)	YES		NULL	
 billing_meters Table Data
 
+*************************** 1. row ***************************
+    serial_id: 1198
+    bill_date: 1
+meter_code_id: 5
+   meter_code: BW
+*************************** 2. row ***************************
+    serial_id: 3864
+    bill_date: 1
+meter_code_id: 5
+   meter_code: BW
+*************************** 3. row ***************************
+    serial_id: 4737
+    bill_date: 1
+meter_code_id: 5
+   meter_code: BW
+*************************** 4. row ***************************
+    serial_id: 5631
+    bill_date: 1
+meter_code_id: 5
+   meter_code: BW
+*************************** 5. row ***************************
+    serial_id: 5687
+    bill_date: 1
+meter_code_id: 5
+   meter_code: BW
 Field	Type	Null	Key	Default	Extra
 branch_id	int(10)	NO	PRI	NULL	auto_increment
 branch_number	varchar(32)	NO	UNI	NULL	
  branches Table Data
 
+*************************** 1. row ***************************
+    branch_id: 1
+branch_number: 0
+*************************** 2. row ***************************
+    branch_id: 2
+branch_number: 1
 Field	Type	Null	Key	Default	Extra
 call_type_id	int(10)	NO	PRI	NULL	auto_increment
-call_id	varchar(10)	YES		NULL	
-call_type	varchar(10)	YES		NULL	
-call_date	varchar(10)	YES		NULL	
-call_completion_time	varchar(10)	YES		NULL	
-call_desciption	varchar(32)	YES		NULL	
+call_type	varchar(10)	NO		NULL	
+call_type_desciption	varchar(32)	NO		NULL	
 call_types Table Data
 
 *************************** 1. row ***************************
         call_type_id: 1
-             call_id: SC63667
-           call_type: INST
-           call_date: 04/18/16
-call_completion_time: 1448
-     call_desciption: NULL
+           call_type: APPT
+call_type_desciption: 
 *************************** 2. row ***************************
         call_type_id: 2
-             call_id: SC63705
-           call_type: APPT
-           call_date: 04/19/16
-call_completion_time: 1038
-     call_desciption: NULL
+           call_type: APPT-NET
+call_type_desciption: 
 *************************** 3. row ***************************
         call_type_id: 3
-             call_id: SC63713
-           call_type: INST
-           call_date: 04/19/16
-call_completion_time: 1122
-     call_desciption: NULL
+           call_type: CC
+call_type_desciption: 
 *************************** 4. row ***************************
         call_type_id: 4
-             call_id: SC63834
-           call_type: SH
-           call_date: 04/21/16
-call_completion_time: 1622
-     call_desciption: NULL
+           call_type: EINFO
+call_type_desciption: 
 *************************** 5. row ***************************
         call_type_id: 5
-             call_id: SC63847
-           call_type: RS-NP
-           call_date: 04/21/16
-call_completion_time: 1335
-     call_desciption: NULL
-Field	Type	Null	Key	Default	Extra
-correction_code_id	int(10)	NO	PRI	NULL	auto_increment
-correction_code	varchar(32)	YES		NULL	
-correction_code_desc	varchar(32)	YES		NULL	
+           call_type: EM
+call_type_desciption: 
 corection_codes Table Data
 
 Field	Type	Null	Key	Default	Extra
@@ -724,9 +733,6 @@ location_code_id	int(10)	NO	PRI	NULL	auto_increment
 location_code	varchar(4)	YES		NULL	
 location_codes Table Data
 
-*************************** 1. row ***************************
-location_code_id: 1
-   location_code: 
 Field	Type	Null	Key	Default	Extra
 meter_code_id	int(10)	NO	PRI	NULL	auto_increment
 meter_code	varchar(32)	YES		NULL	
@@ -866,20 +872,103 @@ branch_id	int(10)	YES	MUL	NULL
 program_id	int(10)	YES	MUL	NULL	
  Table Data
 
+*************************** 1. row ***************************
+    serial_id: 1
+serial_number: ---
+     model_id: 467
+  customer_id: 4257
+    branch_id: 1
+   program_id: 5
+*************************** 2. row ***************************
+    serial_id: 2
+serial_number: ---
+     model_id: 515
+  customer_id: 780
+    branch_id: 1
+   program_id: 1
+*************************** 3. row ***************************
+    serial_id: 3
+serial_number: 00000-000
+     model_id: 1249
+  customer_id: 4569
+    branch_id: 2
+   program_id: 30
+*************************** 4. row ***************************
+    serial_id: 4
+serial_number: 000274
+     model_id: 404
+  customer_id: 1986
+    branch_id: 1
+   program_id: 4
+*************************** 5. row ***************************
+    serial_id: 5
+serial_number: 000276
+     model_id: 404
+  customer_id: 1986
+    branch_id: 1
+   program_id: 4
 Field	Type	Null	Key	Default	Extra
 service_id	int(10)	NO	PRI	NULL	auto_increment
 call_datetime	datetime	YES		NULL	
 dispatched_datetime	datetime	YES		NULL	
 arrival_datetime	datetime	YES		NULL	
-completion_datetime	datetime	YES		NULL	
+completion_datetime	datetime	NO		NULL	
 serial_id	int(10)	YES	MUL	NULL	
 technician_id	int(10)	YES	MUL	NULL	
 problem_code_id	int(10)	YES	MUL	NULL	
 location_code_id	int(10)	YES	MUL	NULL	
-call_id	varchar(10)	NO		NULL	
-call_type_id	int(10)	YES	MUL	NULL	
  Table Data
 
+*************************** 1. row ***************************
+         service_id: 1
+      call_datetime: 2016-05-13 09:07:00
+dispatched_datetime: 2016-05-17 08:14:00
+   arrival_datetime: 2016-05-17 09:00:00
+completion_datetime: 2016-05-17 11:17:00
+          serial_id: 1002
+      technician_id: 12
+    problem_code_id: 10
+   location_code_id: NULL
+*************************** 2. row ***************************
+         service_id: 2
+      call_datetime: 2016-05-03 09:47:00
+dispatched_datetime: 2016-05-06 09:43:00
+   arrival_datetime: 2016-05-06 09:50:00
+completion_datetime: 2016-05-06 11:06:00
+          serial_id: 1150
+      technician_id: 12
+    problem_code_id: 10
+   location_code_id: NULL
+*************************** 3. row ***************************
+         service_id: 3
+      call_datetime: 2016-05-11 11:59:00
+dispatched_datetime: 2016-05-12 07:59:00
+   arrival_datetime: 2016-05-12 08:53:00
+completion_datetime: 2016-05-12 09:12:00
+          serial_id: 1198
+      technician_id: 2
+    problem_code_id: 11
+   location_code_id: NULL
+*************************** 4. row ***************************
+         service_id: 4
+      call_datetime: 2016-05-12 15:14:00
+dispatched_datetime: 2016-05-13 09:26:00
+   arrival_datetime: 2016-05-13 10:34:00
+completion_datetime: 2016-05-13 13:13:00
+          serial_id: 1302
+      technician_id: 4
+    problem_code_id: 11
+   location_code_id: NULL
+*************************** 5. row ***************************
+         service_id: 5
+      call_datetime: 2016-05-19 16:28:00
+dispatched_datetime: 2016-05-19 16:29:00
+   arrival_datetime: 2016-05-19 16:29:00
+completion_datetime: 2016-05-19 16:19:00
+          serial_id: 1691
+      technician_id: 12
+    problem_code_id: 12
+   location_code_id: NULL
 Field	Type	Null	Key	Default	Extra
 service_id	int(10)	NO	PRI	NULL	
 serial_id	int(10)	NO	MUL	NULL	
@@ -887,12 +976,36 @@ meter_code_id	int(10)	NO	PRI	NULL
 meter_code	varchar(20)	YES		NULL	
  Table Data
 
+*************************** 1. row ***************************
+   service_id: 1
+    serial_id: 1002
+meter_code_id: 1
+   meter_code: BW
+*************************** 2. row ***************************
+   service_id: 2
+    serial_id: 1150
+meter_code_id: 1
+   meter_code: BW
+*************************** 3. row ***************************
+   service_id: 3
+    serial_id: 1198
+meter_code_id: 1
+   meter_code: BW
+*************************** 4. row ***************************
+   service_id: 4
+    serial_id: 1302
+meter_code_id: 1
+   meter_code: BW
+*************************** 5. row ***************************
+   service_id: 5
+    serial_id: 1691
+meter_code_id: 1
+   meter_code: BW
 Field	Type	Null	Key	Default	Extra
 part_id	int(10)	NO	PRI	NULL	
 service_id	int(10)	NO	PRI	NULL	
 addsub	int(10)	NO	PRI	NULL	
 cost	int(10)	YES		NULL	
-comp_date	varchar(10)	YES		NULL	
  Table Data
 
 Field	Type	Null	Key	Default	Extra

@@ -95,6 +95,8 @@ foreach my $zip ( keys %extracted_files ) {
 #prepare database schema.
 BEI::CreateSchema::run($dbh);
 
+
+
 #how to handle duplicate data
 
 #close database connection
