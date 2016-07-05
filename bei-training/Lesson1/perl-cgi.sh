@@ -13,11 +13,13 @@ cat << EOT >> /etc/apache2/sites-enabled/000-default.conf
         ServerAdmin webmaster@localhost
         DocumentRoot /var/www/html
 	
+        #set the cgi bin to a different directory
 	ScriptAlias /cgi-bin/ /var/cgi-bin/
          <Directory "/var/cgi-bin">
                  AllowOverride None
                  Options +ExecCGI -MultiViews +SymLinksIfOwnerMatch
                  Require all granted
+                 Header set Access-Control-Allow-Origin "http://localhost"
          </Directory>
 
         #LogLevel info ssl:warn
@@ -41,6 +43,8 @@ ln -s /etc/apache2/mods-available/cgid.conf /etc/apache2/mods-enabled/
 
 ls -l /etc/apache2/mods-enabled/ | grep cgi
 ls -l /etc/apache2/mods-available/ | grep cgi
+a2enmod headers
+
 
 /etc/init.d/apache2 reload
 

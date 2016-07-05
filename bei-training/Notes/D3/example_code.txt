@@ -1,0 +1,24 @@
+    <!--d3 dashboard -->
+<link rel="stylesheet" type="text/css" href="http://www.ankerst.de/lib/itemExplorer_10.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>
+<script src="http://www.ankerst.de/lib/itemExplorer_10.min.js"></script>
+
+ <script type="text/javascript">
+            var circleData = [
+                { "cx": 20, "cy": 20, "radius": 20, "color": "red"},
+                { "cx": 70, "cy": 70, "radius": 20, "color": "purple"}
+            ];
+            
+            var rectData = [
+                { "rx": 110, "ry": 110, "height": 30, "width": 30, "color" : "blue" },
+                { "rx": 160, "ry": 160, "height": 30, "width": 30, "color" : "orange" }
+            ];
+            
+            var svgContainer = d3.select("#svg-container")
+                                 .append("svg")
+                                 .attr("width",1000)
+                                 .attr("height",800);
+</script>
+
+<div class="container well" id="svg-container">
+</div>

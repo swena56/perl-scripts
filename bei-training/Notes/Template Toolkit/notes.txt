@@ -1,0 +1,37 @@
+
+#create new template in cgi
+my $template = Template->new(
+	  INCLUDE_PATH => '/home/ubuntu/perl-scripts/bei-training/Lesson6/templates/'
+	
+);
+
+#process template
+  my $vars = {
+		title => "Serial Audit",
+	    about  => 'about serial audit.....',
+	    guest_welcome_message  => 'Welcome to Serial Audit Guest User ',
+	    message => $message,
+	    menu => [],
+	    table_name => $table_name,
+	    table_columns => \@columns,
+	    table_data  => \@table_data,
+	    number_results => $num_rows,
+	    footer  => 'By: Andrew Swenson',
+	};
+
+    my $output = '';
+    $template->process('serial_table.tpl', $vars,\$output)  || die $template->error();
+	    return $output;
+
+
+
+#displays file listings of a directory
+
+[% USE dir = Directory('/home/ubuntu/perl-scripts/bei-training/Lesson6/templates') %]
+
+# files returns list of regular files
+[% FOREACH file = dir.files %]
+   [% file.name %] [% file.path %] ...
+[% END %]
+
+
