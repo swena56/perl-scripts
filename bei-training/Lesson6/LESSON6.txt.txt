@@ -1,0 +1,353 @@
+Andrew / Jeremy,
+ 
+Training today will be limited, due to the company meeting.
+ 
+Andrew, we’ll be meeting from 2:30 – 3:30.
+ 
+Jeremey, we’ll be meeting from 3:30 – 4:00.
+ 
+Please make sure you install the following modules via cpanm:
+ 
+`CGI`
+`Template`
+ 
+Here is the text from Day 6.
+ 
+- Apache / CGI
+- Template::Toolkit
+- Twitter Bootstrap
+- Less [ lessc ]
+ 
+- Serial Audit Program
+- A form, which will allow me to drop-down search [ combo-box ] a valid serial-number.
+- Returned result will contain a table-grid of service-calls, in descending order. 
+  - Create a modal-popup for meters and parts associated with that call.
+ -round total cost
+ -create query for meters
+    print $template->output();
+
+
+Homework-1: All CGI
+Homework-2: Refactor using template-toolkit.
+<!-- Enter serial form -->
+        <form role="form" role="form" method="POST" accept-charset="UTF-8">
+            <div class="form-group">
+              Serial: 
+              <input  autofocus type="text" id="serial_text_input" class="form-control" name="serial_text_input" action="index.cgi" onkeyup="render_serials_table( ['serial_text_input'], ['draw_serial_table_here'] );" autocomplete="off" >
+            </div>
+        </form> 
+
+
+$(".parts_json").on('click', function(e) {
+            e.preventDefault();
+            
+            var url = $(this).attr('href');
+            $.ajax({
+                dataType: "json",
+                url: url,
+                data: {
+                    'content-type': 'json'
+                }
+            }).done(function(data) {
+                console.log(data);
+                parts_json_div.html(data);
+            }).fail(function() {
+                alert("There was a data exchange problem.");
+            });
+            
+            
+        });
+
+
+
+
+
+
+
+$html .= "<div id='parts_model' class='modal'>";
+
+			
+		$html .= "	<div class='modal-content'>";
+		$html .= "<span class='close'>x</span>";
+		$html .= "<div id='draw_parts_popup_here'></div>";
+		$html .= "</div>";
+		$html .= "</div>";
+
+		$html .= "<script type='text/javascript'>";
+		$html .= "var modal = document.getElementById('parts_model');";
+		$html .= "var btn = document.getElementById('show_parts');";
+		$html .= "var span = document.getElementsByClassName('close')[0];";
+
+		$html .= "btn.onclick = function() {";
+		$html .= "modal.style.display = 'block';";
+		$html .= "render_parts_table(['show_parts'],['draw_parts_popup_here'], 'POST');";
+		$html .= "}";
+
+			# When the user clicks on <span> (x), close the modal
+		$html .= "span.onclick = function() {";
+		$html .= "modal.style.display = 'none'";
+		$html .= "}";
+
+			# When the user clicks anywhere outside of the modal, close it
+		$html .= "window.onclick = function(event) {";
+		$html .= "if (event.target == modal) {";
+		$html .= "modal.style.display = 'none';";
+		$html .= "}}</script>";
+
+
+
+ 
+
+
+
+            elsif($serial){
+
+		$table_name = "Serials";
+		my $sth = $dbh->prepare("
+			SELECT serial_number, model_number, call_type, completion_datetime, technician_number,
+				s.call_id_not_call_type, SUM(cost) AS total_parts_cost, s.service_id
+			FROM service AS s 
+			JOIN serials ON s.serial_id = serials.serial_id
+			JOIN models AS m ON serials.model_id = m.model_id
+			JOIN technicians AS t ON s.technician_id = t.technician_id
+			JOIN call_types AS c ON s.call_type_id = c.call_type_id
+			LEFT JOIN service_parts AS sp ON s.service_id = sp.service_id
+			WHERE serial_number LIKE '%$serial%' 
+			#WHERE serial_number LIKE '%" . $dbh->quote($serial) . "%'
+			GROUP BY s.service_id
+			ORDER BY completion_datetime DESC");
+
+		$sth->execute();	
+		$num_rows = $sth->rows;
+	
+		$message = "<p> <span style='color:green;'>Matches Found $num_rows</span> for <b>$serial</b></p>"; 
+		$message = "<p> <span style='color:red;'>Matches Found $num_rows</span>  for <b>$serial</b></p>"  if($num_rows == 0);
+		#$message = "<p> <span style='color:red;'>Found $num_rows matches</span> for <b> $serial </b></p>" if($num_rows == 0);
+
+		@columns = ('Serial Number', 'Model Number', 'Call Type', 'Completion DateTime', 'Tech #',
+					'Call ID', 'Total Part Cost', 'Parts');
+		
+		while (my @row = $sth->fetchrow_array) {
+			my $link_to_parts = "<a href='index.cgi?status=service_parts&service_id=". @row[-1]. "'>Pats List</a>";
+
+			@row[-1] = $link_to_parts;  #replace service_id with link
+			push @table_data, \@row;
+		}
+
+		$sth->finish();	
+		#print Dumper(@table_data);
+	} 		
+
+
+	/*
+sub render_serials_table {
+	my $input = shift;
+	my $html = "";
+	return "<p><i>Hint: Try searching for a serial number, example X425L300013</i></p>" if( $input eq "");
+	# do something with $input
+	if($dbh){
+	    $table_name = "Serials";
+			my $sth = $dbh->prepare("
+			SELECT s.serial_id, serial_number, model_number, call_type, completion_datetime, technician_number,
+				s.call_id_not_call_type, SUM(cost) AS total_parts_cost , s.service_id
+			FROM service AS s 
+			JOIN serials ON s.serial_id = serials.serial_id
+			JOIN models AS m ON serials.model_id = m.model_id
+			JOIN technicians AS t ON s.technician_id = t.technician_id
+			JOIN call_types AS c ON s.call_type_id = c.call_type_id
+			LEFT JOIN service_parts AS sp ON s.service_id = sp.service_id
+			WHERE serial_number LIKE '%$input%' 
+			#WHERE serial_number LIKE '%" . $dbh->quote($input) . "%'
+			GROUP BY s.service_id
+			ORDER BY completion_datetime DESC");
+
+		$sth->execute();	
+		$num_rows = $sth->rows;
+	
+		@columns = ('Serial Number', 'Model Number', 'Call Type', 'Completion DateTime', 'Tech #',
+					'Call ID', 'Total Part Cost', 'Service id', 'Parts List');
+
+		#generate the table html
+		$html .= $message;
+
+		$html .= "<h3> Results </h3>";
+		$html .= "<table class='table table-hover table-responsive'>";
+	  	$html .= "<tr>";
+	  	foreach my $column (@columns){
+    		$html .= "<th> $column </th>";
+    	}
+    	$html .= "</tr>";
+       	$html .= "</table>";
+       	$html .= "<div class='bodycontainer scrollable'>";
+        $html .= "<table class='table table-hover table-responsive'>";
+
+		while (my @row = $sth->fetchrow_array) {
+			
+			my $service_id = @row[-1];
+
+			my $view_parts = " <button id='parts_json'>Parts JSON</button> ";
+			push @row, $view_parts;
+
+            foreach my $value (@row){
+				$html .= "<td>$value</td>";
+			}				
+			$html .= "</tr> ";
+		}
+	    $html .= "</table>";
+
+
+		$html .= "<script type='text/javascript'>";
+	    $html .= "$('#parts_json').on('click', function(e) {";
+	    $html .= "e.preventDefault();";
+	    $html .= "$.post('serial_json.cgi', {serial: '387'}, function(json) {";
+	    $html .= "alert(json['num_rows']);";
+	                      
+		$html .= "console.log(json);";
+		$html .= "}, 'json');";
+	    $html .= "});";
+	    $html .= "</script>";
+		$html .= "</div>";
+
+
+
+		#close database connection
+		$sth->finish();	
+	}
+
+
+	return( $html );
+}
+
+
+	*/
+
+	
+sub render_parts_table {
+	my $input = shift || die("[!] Render Parts Table needs a service_id for parameter 1");
+	my $html = "";
+	
+	if($dbh){			
+			
+			my $sth = $dbh->prepare("
+				SELECT sp.part_number, s.serial_number, service_parts.cost
+				FROM service_parts
+				JOIN parts AS sp ON service_parts.part_id = sp.part_id
+				JOIN service AS ser ON service_parts.service_id = ser.service_id
+				JOIN serials AS s ON ser.serial_id = s.serial_id
+				JOIN service_meters AS sm ON sm.service_id = ser.service_id
+				JOIN meter_codes AS mc ON sm.meter_code_id = mc.meter_code_id
+				WHERE service_parts.service_id = ?"
+			);
+
+			$sth->execute($input);				
+			$num_rows = $sth->rows;
+			
+			my $total_parts_cost = 0;
+
+			@columns = ('Part Number',  'Serial Number', 'Part Cost');
+			
+			#generate the table html	
+			$html .= "<h3> Parts List</h3>";
+
+			#set message about data found
+			my $message_text_color = ($num_rows <= 0) ? 'red' : 'green' ;					   
+			$html .= "<p> <span style='color:$message_text_color;'> Found $num_rows parts</span></p>" ;
+
+			$html .= "<table class='table table-hover table-responsive'>";
+		  	$html .= "<tr>";
+		  	foreach my $column (@columns){
+	    		$html .= "<th> $column </th>";
+	    	}
+	    	$html .= "</tr>";
+	       	$html .= "</table>";
+	       	$html .= "<div class='bodycontainer scrollable'>";
+	        $html .= "<table class='table table-hover table-responsive'>";
+
+	        my $currency_type = "\$";
+			while (my @row = $sth->fetchrow_array) {
+				$html .= "<tr>";
+
+				#static way of creating the table data
+				$html .= "<td>@row[0]</td>";	#part number
+				$html .= "<td>@row[1]</td>";    #serial number
+				$html .= "<td>$currency_type" . nearest( .01, @row[2] ) . "</td>";    #part cost
+				
+				$total_parts_cost += @row[2];
+				#dynamic way of creating the table data
+	            #foreach my $value (@row){
+				#	$html .= "<td>$value</td>";
+				#}
+
+				$html .= "</tr> ";
+			}
+		    $html .= "</table>";
+		    $html .= "<p style='right padding: 5cm;'> Total Part Cost: " . nearest( .01, $total_parts_cost ) . "</p>";
+			$html .= "</div>";
+
+			#close database connection
+			$sth->finish();	
+		}
+
+	return( $html );
+}
+
+=pod
+	Takes in a service id and returns html to generate a table based on service_id from meter_codes table
+=cut
+sub render_meter_codes_table {
+	my $input = shift;
+	my $html = "";
+	
+	# do something with $input
+	if($dbh){
+			
+			my $sth = $dbh->prepare("
+			SELECT s.serial_number, mc.meter_code, mc.meter_description
+			FROM service AS ser
+			JOIN serials AS s ON ser.serial_id = s.serial_id
+			JOIN service_meters AS sm ON ser.service_id = sm.service_id
+			JOIN meter_codes AS mc ON sm.meter_code_id = mc.meter_code_id
+			JOIN billing_meters AS bm ON ser.serial_id = bm.serial_id
+			WHERE ser.service_id =  ?"
+			);
+
+			$sth->execute($input);				
+			$num_rows = $sth->rows;
+
+			my $total_parts_cost = 0;
+
+			@columns = ('Serial Number' ,'Meter Code', 'Meter Description');
+			
+			#generate the table html
+			$html .= "<h3> Meter Codes</h3>";
+
+			#set message about data found
+			my $message_text_color = ($num_rows <= 0) ? 'red' : 'green' ;
+			my $plurality = ($num_rows < 1) ? 's' : '' ;				   
+			$html .= "<p> <span style='color:$message_text_color;'> Found $num_rows meter code$plurality </span></p>" ;
+
+			$html .= "<table class='table table-hover table-responsive'>";
+		  	$html .= "<tr>";
+		  	foreach my $column (@columns){
+	    		$html .= "<th> $column </th>";
+	    	}
+	    	$html .= "</tr>";
+	       	$html .= "</table>";
+	       	$html .= "<div class='bodycontainer scrollable'>";
+	        $html .= "<table class='table table-hover table-responsive'>";
+			while (my @row = $sth->fetchrow_array) {
+
+	            foreach my $value (@row){
+					$html .= "<td>$value</td>";
+				}				
+				$html .= "</tr> ";
+			}
+		    $html .= "</table>";
+			$html .= "</div>";
+
+			#close database connection
+			$sth->finish();	
+		}
+
+	return( $html );
+}

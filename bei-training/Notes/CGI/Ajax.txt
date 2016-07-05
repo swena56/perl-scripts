@@ -1,0 +1,13 @@
+Ajax.txt
+
+
+my $pjx = new CGI::Ajax('exported_func' => \&Show_HTML );
+
+ print $pjx->build_html( $q, \&Show_HTML);
+
+ sub get_parts_data {
+    my $input = shift;
+    # do something with $input
+    my $output = $input . " was the input!";
+    return( $output );
+  }

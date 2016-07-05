@@ -1,0 +1,46 @@
+http://perldoc.perl.org/CGI.html
+
+ print table({-border=>undef},
+	caption('Serial Data'),
+	Tr({-align=>'CENTER',-valign=>'TOP'},
+	[	           		
+	  th($columns),
+	  td(['Tomatoes' , 'no', 'yes', 'yes']),
+	  td(['Broccoli' , 'no', 'no',  'yes']),
+	  td(['Onions'   , 'yes','yes', 'yes'])
+	]
+	)
+	);
+
+
+			my @table_data = [];
+			push @table_data,th($sth->{NAME});
+
+			while (my @row = $sth->fetchrow_array) {
+				@row_array = 
+				foreach my @value (@row)
+				{
+
+				}
+			    push @table_data, td(@row);
+			}
+
+			print table({-border=>undef},
+			caption('Serial Data'),
+			Tr({-align=>'CENTER',-valign=>'TOP'},
+			@table_data
+			)
+			);
+	=pod
+			while (my @row = $sth->fetchrow_array) {
+			    print "<tr onclick='clickMe(this)'  >
+			    			<td>$row[0]</td>
+			    			<td>$row[1]</td>
+			    			<td>$row[2]</td>
+			    			<td>$row[3]</td>
+			    			<td>$row[4]</td>
+			    			<td>$row[5]</td>
+			    			<td>$row[6]</td>
+			    		</tr>";
+			}
+=cut

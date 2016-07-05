@@ -1,0 +1,6 @@
+Jquery-notes.text
+
+Setting up jquery with sublime
+
+cd ~/.config/sublime-text-2/Packages/
+git clone https://github.com/SublimeText/jQuery

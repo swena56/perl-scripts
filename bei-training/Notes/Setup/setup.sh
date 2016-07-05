@@ -14,7 +14,12 @@ sudo apt-get install sublime-text \
 sudo cpanm FindBin Moose \
 			CGI \
 			Template \
-			Univerisal::Require 
+			Univerisal::Require \
+			Jemplate \
+			JSON \
+			DBI \
+			Math::Round
+
 
 
 #mysql-workbench

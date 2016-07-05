@@ -1,0 +1,917 @@
+Tables_in_bei_training
+billing_meters
+branches
+call_types
+correction_codes
+customers
+fixbilling
+fixlabor
+fixmdesc
+fixmeter
+fixparla
+fixploc
+fixserl
+fixserv
+location_codes
+meter_codes
+models
+parts
+problem_codes
+programs
+serials
+service
+service_meters
+service_parts
+technicians
+Field	Type	Null	Key	Default	Extra
+serial_id	int(10)	NO	PRI	NULL	
+bill_date	varchar(10)	NO	PRI	NULL	
+meter_code_id	int(10)	NO	PRI	NULL	
+meter_code	varchar(20)	YES		NULL	
+billing_meters Table Data
+
+Field	Type	Null	Key	Default	Extra
+branch_id	int(10)	NO	PRI	NULL	auto_increment
+branch_number	varchar(32)	NO	UNI	NULL	
+ branches Table Data
+
+Field	Type	Null	Key	Default	Extra
+call_type_id	int(10)	NO	PRI	NULL	auto_increment
+call_id	varchar(10)	YES		NULL	
+call_type	varchar(10)	YES		NULL	
+call_date	varchar(10)	YES		NULL	
+call_completion_time	varchar(10)	YES		NULL	
+call_desciption	varchar(32)	YES		NULL	
+call_types Table Data
+
+*************************** 1. row ***************************
+        call_type_id: 1
+             call_id: SC63667
+           call_type: INST
+           call_date: 04/18/16
+call_completion_time: 1448
+     call_desciption: NULL
+*************************** 2. row ***************************
+        call_type_id: 2
+             call_id: SC63705
+           call_type: APPT
+           call_date: 04/19/16
+call_completion_time: 1038
+     call_desciption: NULL
+*************************** 3. row ***************************
+        call_type_id: 3
+             call_id: SC63713
+           call_type: INST
+           call_date: 04/19/16
+call_completion_time: 1122
+     call_desciption: NULL
+*************************** 4. row ***************************
+        call_type_id: 4
+             call_id: SC63834
+           call_type: SH
+           call_date: 04/21/16
+call_completion_time: 1622
+     call_desciption: NULL
+*************************** 5. row ***************************
+        call_type_id: 5
+             call_id: SC63847
+           call_type: RS-NP
+           call_date: 04/21/16
+call_completion_time: 1335
+     call_desciption: NULL
+Field	Type	Null	Key	Default	Extra
+correction_code_id	int(10)	NO	PRI	NULL	auto_increment
+correction_code	varchar(32)	YES		NULL	
+correction_code_desc	varchar(32)	YES		NULL	
+corection_codes Table Data
+
+Field	Type	Null	Key	Default	Extra
+customer_id	int(10)	NO	PRI	NULL	auto_increment
+customer_number	varchar(32)	NO	UNI	NULL	
+customers Table Data
+
+*************************** 1. row ***************************
+    customer_id: 1
+customer_number: 100226
+*************************** 2. row ***************************
+    customer_id: 2
+customer_number: 100228
+*************************** 3. row ***************************
+    customer_id: 3
+customer_number: 10080
+*************************** 4. row ***************************
+    customer_id: 4
+customer_number: 10157
+*************************** 5. row ***************************
+    customer_id: 5
+customer_number: 10168
+Field	Type	Null	Key	Default	Extra
+call_id	varchar(15)	YES		NULL	
+model	varchar(30)	YES		NULL	
+labor_serial	varchar(30)	YES		NULL	
+activity_code	varchar(15)	YES		NULL	
+assist	tinyint(1)	YES		NULL	
+labor_date	varchar(10)	YES		NULL	
+tech_number	varchar(10)	YES		NULL	
+dispatch_time	varchar(4)	YES		NULL	
+arrival_time	varchar(4)	YES		NULL	
+departure_time	varchar(4)	YES		NULL	
+interrupt_hours	varchar(4)	YES		NULL	
+mileage	int(10)	YES		NULL	
+fixlabor fixbilling Table Data
+
+*************************** 1. row ***************************
+        call_id:   
+          model: SC63667
+   labor_serial: MPC4503-LC
+  activity_code: E175MC62629
+         assist: 0
+     labor_date: False
+    tech_number: 05/11/16
+  dispatch_time: 2042
+   arrival_time: 1356
+ departure_time: 1412
+interrupt_hours: 1448
+        mileage: 0
+*************************** 2. row ***************************
+        call_id:   
+          model: SC63705
+   labor_serial: LDO16
+  activity_code: 78800197
+         assist: 0
+     labor_date: False
+    tech_number: 05/06/16
+  dispatch_time: 1037
+   arrival_time: 1004
+ departure_time: 1025
+interrupt_hours: 1038
+        mileage: 0
+*************************** 3. row ***************************
+        call_id:   
+          model: SC63713
+   labor_serial: MP301SPF
+  activity_code: W916P202758
+         assist: 0
+     labor_date: False
+    tech_number: 05/03/16
+  dispatch_time: 2042
+   arrival_time: 0904
+ departure_time: 0935
+interrupt_hours: 1122
+        mileage: 0
+*************************** 4. row ***************************
+        call_id:   
+          model: SC63834
+   labor_serial: MPS3537mc
+  activity_code: AK44051421
+         assist: 0
+     labor_date: False
+    tech_number: 05/05/16
+  dispatch_time: 1037
+   arrival_time: 1305
+ departure_time: 1305
+interrupt_hours: 1622
+        mileage: 0
+*************************** 5. row ***************************
+        call_id:   
+          model: SC63847
+   labor_serial: HPLJP4015
+  activity_code: CNDY101416
+         assist: 0
+     labor_date: False
+    tech_number: 05/03/16
+  dispatch_time: 2093
+   arrival_time: 1158
+ departure_time: 1243
+interrupt_hours: 1335
+        mileage: 0
+Field	Type	Null	Key	Default	Extra
+meter_code	varchar(20)	YES		NULL	
+meter_code_description	varchar(100)	YES		NULL	
+fixmdesc Table Data
+
+*************************** 1. row ***************************
+            meter_code: BW
+meter_code_description: This is to be used with black and white meters
+*************************** 2. row ***************************
+            meter_code: Color
+meter_code_description: This is to be used with color meters
+*************************** 3. row ***************************
+            meter_code: Total Count
+meter_code_description: This is to be used with Total Count meters
+*************************** 4. row ***************************
+            meter_code: Virtual
+meter_code_description: This is to be used with Virtual meters
+*************************** 5. row ***************************
+            meter_code: FEET
+meter_code_description: Linear Feet
+Field	Type	Null	Key	Default	Extra
+call_id	varchar(15)	YES		NULL	
+model	varchar(30)	YES		NULL	
+serial_number	varchar(30)	YES		NULL	
+completion_date	varchar(10)	YES		NULL	
+meter_code	varchar(20)	YES		NULL	
+meter_reading	int(10)	YES		NULL	
+fixmeter Table Data
+
+*************************** 1. row ***************************
+        call_id: SC63667
+          model: MPC4503-LC
+  serial_number: E175MC62629
+completion_date: 05/11/16
+     meter_code: BW
+  meter_reading: 0
+*************************** 2. row ***************************
+        call_id: SC63705
+          model: LDO16
+  serial_number: 78800197
+completion_date: 05/06/16
+     meter_code: BW
+  meter_reading: 0
+*************************** 3. row ***************************
+        call_id: SC63713
+          model: MP301SPF
+  serial_number: W916P202758
+completion_date: 05/03/16
+     meter_code: BW
+  meter_reading: 0
+*************************** 4. row ***************************
+        call_id: SC63834
+          model: MPS3537mc
+  serial_number: AK44051421
+completion_date: 05/05/16
+     meter_code: BW
+  meter_reading: 0
+*************************** 5. row ***************************
+        call_id: SC63847
+          model: HPLJP4015
+  serial_number: CNDY101416
+completion_date: 05/03/16
+     meter_code: BW
+  meter_reading: 0
+Field	Type	Null	Key	Default	Extra
+part_number	varchar(18)	YES		NULL	
+part_description	varchar(32)	YES		NULL	
+add_sub_indicator	char(1)	YES		NULL	
+quantity_used	int(4)	YES		NULL	
+call_id	varchar(15)	YES		NULL	
+model_number	varchar(30)	YES		NULL	
+serial_number	varchar(30)	YES		NULL	
+installation_date	varchar(10)	YES		NULL	
+init_meter_reading	varchar(10)	YES		NULL	
+parts_cost	varchar(12)	YES		NULL	
+customer_number	varchar(32)	YES		NULL	
+fixparla Table Data
+
+*************************** 1. row ***************************
+       part_number: 0106B002AB
+  part_description: ROLLER KIT DR2580C
+ add_sub_indicator: +
+     quantity_used: 1
+           call_id: SC64559
+      model_number: DR2580C
+     serial_number: 322085
+ installation_date: 05/18/16
+init_meter_reading: 0
+        parts_cost: 45.00
+   customer_number: customer_number
+*************************** 2. row ***************************
+       part_number: 0361501S
+  part_description: SPINDLE ASSY
+ add_sub_indicator: +
+     quantity_used: 1
+           call_id: SC65027
+      model_number: SCAN PRO 2000
+     serial_number: 74439
+ installation_date: 05/26/16
+init_meter_reading: 0
+        parts_cost: 75.00
+   customer_number: customer_number
+*************************** 3. row ***************************
+       part_number: 0361501S
+  part_description: SPINDLE ASSY
+ add_sub_indicator: +
+     quantity_used: 1
+           call_id: SC64080
+      model_number: SCAN PRO 2000
+     serial_number: 73917
+ installation_date: 05/05/16
+init_meter_reading: 0
+        parts_cost: 75.00
+   customer_number: customer_number
+*************************** 4. row ***************************
+       part_number: 201-0231
+  part_description: Speed adjust potentiometer 
+ add_sub_indicator: +
+     quantity_used: 1
+           call_id: SC64088
+      model_number: C931dn
+     serial_number: AL39056328
+ installation_date: 05/04/16
+init_meter_reading: 0
+        parts_cost: 36.18
+   customer_number: customer_number
+*************************** 5. row ***************************
+       part_number: 2251B003AC
+  part_description: PRINTHEAD  IPF710
+ add_sub_indicator: +
+     quantity_used: 1
+           call_id: SC64907
+      model_number: IPF8100
+     serial_number: A6000192
+ installation_date: 05/20/16
+init_meter_reading: 0
+        parts_cost: 460.34
+   customer_number: customer_number
+Field	Type	Null	Key	Default	Extra
+product_code	varchar(30)	YES		NULL	
+vendor_part_number	varchar(18)	YES		NULL	
+description	varchar(30)	YES		NULL	
+identifier	char(1)	YES		NULL	
+item_cost	varchar(12)	YES		NULL	
+record_creation_date	varchar(10)	YES		NULL	
+total_qty	int(10)	YES		NULL	
+warehouse_qty	int(10)	YES		NULL	
+warehouse_location_number	varchar(10)	YES		NULL	
+qty_on_hand	int(10)	YES		NULL	
+fixploc Table Data
+
+*************************** 1. row ***************************
+             product_code: 02008051
+       vendor_part_number: 02008051
+              description: CHARGE ROLLER CLEANING ROLLER 
+               identifier: 9
+                item_cost: 1033
+     record_creation_date: 1
+                total_qty: 2088
+            warehouse_qty: 1
+warehouse_location_number: 5001
+              qty_on_hand: 6
+*************************** 2. row ***************************
+             product_code: 02037007
+       vendor_part_number: 02037007
+              description: DRUM CONVERSION PLUG, BLACK TO
+               identifier: 1
+                item_cost: 1033
+     record_creation_date: 5
+                total_qty: 2048
+            warehouse_qty: 1
+warehouse_location_number: 2088
+              qty_on_hand: 3
+*************************** 3. row ***************************
+             product_code: 02037013
+       vendor_part_number: 02037013
+              description: DRUM GROUNDING PLATE-SET OF 4
+               identifier: 5
+                item_cost: 5001
+     record_creation_date: 5
+                total_qty: 0
+            warehouse_qty: 0
+warehouse_location_number: 
+              qty_on_hand: 0
+*************************** 4. row ***************************
+             product_code: 0315903S
+       vendor_part_number: 0315903S
+              description: SPINDLE ASSY
+               identifier: 1
+                item_cost: 5001
+     record_creation_date: 1
+                total_qty: 0
+            warehouse_qty: 0
+warehouse_location_number: 
+              qty_on_hand: 0
+*************************** 5. row ***************************
+             product_code: 0356908S
+       vendor_part_number: 0356908S
+              description: SOFTWARE DISK
+               identifier: 1
+                item_cost: 5001
+     record_creation_date: 1
+                total_qty: 0
+            warehouse_qty: 0
+warehouse_location_number: 
+              qty_on_hand: 0
+Field	Type	Null	Key	Default	Extra
+serial_id	varchar(30)	YES		NULL	
+model_description	varchar(32)	YES		NULL	
+initial_meter_reading	int(10)	YES		NULL	
+date_sold_or_rented	varchar(10)	YES		NULL	
+model_number	varchar(30)	YES		NULL	
+source_code	varchar(1)	YES		NULL	
+meter_reading_on_last_service_call	int(10)	YES		NULL	
+null_placeholder	varchar(25)	YES		NULL	
+date_of_last_service_call	varchar(10)	YES		NULL	
+customer_number	varchar(32)	YES		NULL	
+program_type_code	varchar(10)	YES		NULL	
+product_category_code	varchar(6)	YES		NULL	
+sales_rep_id	varchar(6)	YES		NULL	
+connectivity_code	varchar(2)	YES		NULL	
+postal_code	varchar(10)	YES		NULL	
+sic_number	varchar(6)	YES		NULL	
+equipment_id	varchar(10)	YES		NULL	
+primary_technician_id	varchar(10)	YES		NULL	
+facility_management_equip	varchar(15)	YES		NULL	
+is_under_contract	tinyint(1)	YES		NULL	
+branch_id	varchar(10)	YES		NULL	
+customer_bill_to_number	varchar(32)	YES		NULL	
+customer_type	varchar(15)	YES		NULL	
+territory_field	varchar(15)	YES		NULL	
+fixserl Table Data
+
+*************************** 1. row ***************************
+                         serial_id: 210210263
+                 model_description: REXELL SHREDDER
+             initial_meter_reading: 0
+               date_sold_or_rented: 06/08/05
+                      model_number: 4550S3
+                       source_code: 
+meter_reading_on_last_service_call: 0
+                  null_placeholder:     
+         date_of_last_service_call: 
+                   customer_number: 34401
+                 program_type_code: CH-110TC30
+             product_category_code: 1220
+                      sales_rep_id: 
+                 connectivity_code: 
+                       postal_code: 50265
+                        sic_number:     
+                      equipment_id: SN-2102102
+             primary_technician_id: UA
+         facility_management_equip: 
+                 is_under_contract: 0
+                         branch_id: 0
+           customer_bill_to_number:   Z
+                     customer_type: 
+                   territory_field: 
+*************************** 2. row ***************************
+                         serial_id: 210210269
+                 model_description: REXELL SHREDDER
+             initial_meter_reading: 0
+               date_sold_or_rented: 01/01/00
+                      model_number: 4550S3
+                       source_code: 
+meter_reading_on_last_service_call: 0
+                  null_placeholder:     
+         date_of_last_service_call: 
+                   customer_number: 34733
+                 program_type_code: CH-110TC30
+             product_category_code: 1220
+                      sales_rep_id: 
+                 connectivity_code: 
+                       postal_code: 52411
+                        sic_number:     
+                      equipment_id: SN-2102102
+             primary_technician_id: UA
+         facility_management_equip: 
+                 is_under_contract: 0
+                         branch_id: 0
+           customer_bill_to_number:   Z
+                     customer_type: 
+                   territory_field: 
+*************************** 3. row ***************************
+                         serial_id: 32103033
+                 model_description: CANON SYSTEM
+             initial_meter_reading: 0
+               date_sold_or_rented: 01/01/00
+                      model_number: MP50
+                       source_code: 
+meter_reading_on_last_service_call: 0
+                  null_placeholder:     
+         date_of_last_service_call: 
+                   customer_number: 12332
+                 program_type_code: CH-110TC30
+             product_category_code: 1210
+                      sales_rep_id: 
+                 connectivity_code: 
+                       postal_code: 50321
+                        sic_number:     
+                      equipment_id: SN-3210303
+             primary_technician_id: UA
+         facility_management_equip: 
+                 is_under_contract: 0
+                         branch_id: 0
+           customer_bill_to_number:   Z
+                     customer_type: 
+                   territory_field: 
+*************************** 4. row ***************************
+                         serial_id: 32102841
+                 model_description: CANON SYSTEM
+             initial_meter_reading: 0
+               date_sold_or_rented: 01/01/00
+                      model_number: MP50
+                       source_code: 
+meter_reading_on_last_service_call: 0
+                  null_placeholder:     
+         date_of_last_service_call: 
+                   customer_number: 20019
+                 program_type_code: CH-110TC30
+             product_category_code: 1210
+                      sales_rep_id: 
+                 connectivity_code: 
+                       postal_code: 52404
+                        sic_number:     
+                      equipment_id: SN-3210284
+             primary_technician_id: UA
+         facility_management_equip: 
+                 is_under_contract: 0
+                         branch_id: 0
+           customer_bill_to_number:   Z
+                     customer_type: 
+                   territory_field: 
+*************************** 5. row ***************************
+                         serial_id: 32102931
+                 model_description: CANON SYSTEM
+             initial_meter_reading: 0
+               date_sold_or_rented: 01/01/00
+                      model_number: MP50
+                       source_code: 
+meter_reading_on_last_service_call: 0
+                  null_placeholder:     
+         date_of_last_service_call: 
+                   customer_number: 12332
+                 program_type_code: CH-110TC30
+             product_category_code: 1210
+                      sales_rep_id: 
+                 connectivity_code: 
+                       postal_code: 50321
+                        sic_number:     
+                      equipment_id: SN-3210293
+             primary_technician_id: UA
+         facility_management_equip: 
+                 is_under_contract: 0
+                         branch_id: 0
+           customer_bill_to_number:   Z
+                     customer_type: 
+                   territory_field: 
+Field	Type	Null	Key	Default	Extra
+null_field1	varchar(10)	YES		NULL	
+call_id	varchar(15)	YES		NULL	
+model_number	varchar(30)	YES		NULL	
+serial_number	varchar(30)	YES		NULL	
+call_date	varchar(10)	YES		NULL	
+call_time	varchar(4)	YES		NULL	
+customer_time	varchar(4)	YES		NULL	
+arrival_time	varchar(4)	YES		NULL	
+call_completion_time	varchar(10)	YES		NULL	
+call_type	varchar(10)	YES		NULL	
+problem_code	varchar(4)	YES		NULL	
+location_code	varchar(4)	YES		NULL	
+reason_code	varchar(100)	YES		NULL	
+correction_code	varchar(4)	YES		NULL	
+date_dispatched	varchar(10)	YES		NULL	
+time_dispatched	varchar(4)	YES		NULL	
+completion_date	varchar(10)	YES		NULL	
+meter_reading_total	int(10)	YES		NULL	
+meter_reading_prior_call	int(10)	YES		NULL	
+date_of_prior_call	varchar(10)	YES		NULL	
+pc_type	varchar(4)	YES		NULL	
+lc_type	varchar(4)	YES		NULL	
+null_field2	varchar(10)	YES		NULL	
+machine_status	varchar(25)	YES		NULL	
+technician_id_number	varchar(10)	YES		NULL	
+customer_number	varchar(32)	YES		NULL	
+miles_driven	int(10)	YES		NULL	
+response_time	varchar(4)	YES		NULL	
+fixserv Table Data
+
+*************************** 1. row ***************************
+             null_field1:   
+                 call_id: SC64445
+            model_number: LD117SPF
+           serial_number: V4499407090
+               call_date: 05/06/16
+               call_time: 0847
+           customer_time: 19
+            arrival_time: 0945
+    call_completion_time: 1004
+               call_type: EM
+            problem_code: ADJU
+           location_code: 
+             reason_code: ADJUSTMENTS
+         correction_code: 
+         date_dispatched: 05/06/16
+         time_dispatched: 0926
+         completion_date: 05/06/16
+     meter_reading_total: 193794
+meter_reading_prior_call: 193405
+      date_of_prior_call: 05/02/16
+                 pc_type: 
+                 lc_type:    
+             null_field2:    
+          machine_status: 
+    technician_id_number: 1037
+         customer_number: DM
+            miles_driven: 0
+           response_time:   Z
+*************************** 2. row ***************************
+             null_field1:   
+                 call_id: SC64203
+            model_number: LD117SPF
+           serial_number: V4499407090
+               call_date: 05/02/16
+               call_time: 0809
+           customer_time: 34
+            arrival_time: 0932
+    call_completion_time: 1007
+               call_type: EM
+            problem_code: DRUM
+           location_code: 
+             reason_code: REPLACE PART(S)
+         correction_code: 
+         date_dispatched: 05/02/16
+         time_dispatched: 0907
+         completion_date: 05/02/16
+     meter_reading_total: 193405
+meter_reading_prior_call: 192709
+      date_of_prior_call: 04/21/16
+                 pc_type: 
+                 lc_type:    
+             null_field2:    
+          machine_status: 
+    technician_id_number: 1037
+         customer_number: DM
+            miles_driven: 0
+           response_time:   Z
+*************************** 3. row ***************************
+             null_field1:   
+                 call_id: SC65012
+            model_number: LD360
+           serial_number: V6905700637
+               call_date: 05/20/16
+               call_time: 1121
+           customer_time: 49
+            arrival_time: 1510
+    call_completion_time: 1600
+               call_type: EM
+            problem_code: 
+           location_code: 
+             reason_code: 
+         correction_code: 
+         date_dispatched: 05/20/16
+         time_dispatched: 1355
+         completion_date: 05/20/16
+     meter_reading_total: 1374463
+meter_reading_prior_call: 1323991
+      date_of_prior_call: 03/04/16
+                 pc_type: 
+                 lc_type:    
+             null_field2:    
+          machine_status: 
+    technician_id_number: 1047
+         customer_number: DM
+            miles_driven: 0
+           response_time:   Z
+*************************** 4. row ***************************
+             null_field1:   
+                 call_id: SC65079
+            model_number: LD425B
+           serial_number: M6485700322
+               call_date: 05/23/16
+               call_time: 1049
+           customer_time: 76
+            arrival_time: 1229
+    call_completion_time: 1345
+               call_type: EM
+            problem_code: 
+           location_code: 
+             reason_code: 
+         correction_code: 
+         date_dispatched: 05/23/16
+         time_dispatched: 1141
+         completion_date: 05/23/16
+     meter_reading_total: 379428
+meter_reading_prior_call: 367356
+      date_of_prior_call: 02/23/16
+                 pc_type: 
+                 lc_type:    
+             null_field2:    
+          machine_status: 
+    technician_id_number: 2049
+         customer_number: CR
+            miles_driven: 0
+           response_time:   Z
+*************************** 5. row ***************************
+             null_field1:   
+                 call_id: SC64174
+            model_number: IPF710
+           serial_number: AEM08743
+               call_date: 04/29/16
+               call_time: 1201
+           customer_time: 16
+            arrival_time: 0818
+    call_completion_time: 0834
+               call_type: RS-NA
+            problem_code: ADJU
+           location_code: 
+             reason_code: UNABLE TO DUP
+         correction_code: 
+         date_dispatched: 05/03/16
+         time_dispatched: 0750
+         completion_date: 05/03/16
+     meter_reading_total: 0
+meter_reading_prior_call: 0
+      date_of_prior_call: 04/29/16
+                 pc_type: 
+                 lc_type:    
+             null_field2:    
+          machine_status: 
+    technician_id_number: 1037
+         customer_number: DM
+            miles_driven: 0
+           response_time:   Z
+Field	Type	Null	Key	Default	Extra
+location_code_id	int(10)	NO	PRI	NULL	auto_increment
+location_code	varchar(4)	YES		NULL	
+location_codes Table Data
+
+*************************** 1. row ***************************
+location_code_id: 1
+   location_code: 
+Field	Type	Null	Key	Default	Extra
+meter_code_id	int(10)	NO	PRI	NULL	auto_increment
+meter_code	varchar(32)	YES		NULL	
+meter_description	varchar(32)	YES		NULL	
+meter_codes Table Data
+
+*************************** 1. row ***************************
+    meter_code_id: 1
+       meter_code: BW
+meter_description: This is to be used with black an
+*************************** 2. row ***************************
+    meter_code_id: 2
+       meter_code: Color
+meter_description: This is to be used with color me
+*************************** 3. row ***************************
+    meter_code_id: 3
+       meter_code: FEET
+meter_description: Linear Feet
+*************************** 4. row ***************************
+    meter_code_id: 4
+       meter_code: GB
+meter_description: One GB online storage
+*************************** 5. row ***************************
+    meter_code_id: 5
+       meter_code: Spot CLR1
+meter_description: Spot Color 1
+Field	Type	Null	Key	Default	Extra
+model_id	int(10)	NO	PRI	NULL	auto_increment
+model_number	varchar(30)	YES		NULL	
+model_description	varchar(100)	YES		NULL	
+ Table Data
+
+*************************** 1. row ***************************
+         model_id: 1
+     model_number: 1018D
+model_description: Ricoh 5618
+*************************** 2. row ***************************
+         model_id: 2
+     model_number: 1022
+model_description: RICOH 5622
+*************************** 3. row ***************************
+         model_id: 3
+     model_number: 1027
+model_description: RICHO 5627
+*************************** 4. row ***************************
+         model_id: 4
+     model_number: 1035
+model_description: RICOH 5635
+*************************** 5. row ***************************
+         model_id: 5
+     model_number: 1050S2
+model_description: REXELL SHREDDER
+Field	Type	Null	Key	Default	Extra
+part_id	int(10)	NO	PRI	NULL	auto_increment
+part_number	varchar(18)	YES		NULL	
+part_description	varchar(100)	YES		NULL	
+ Table Data
+
+*************************** 1. row ***************************
+         part_id: 1
+     part_number: 0106B002AB
+part_description: ROLLER KIT DR2580C
+*************************** 2. row ***************************
+         part_id: 2
+     part_number: 0361501S
+part_description: SPINDLE ASSY
+*************************** 3. row ***************************
+         part_id: 3
+     part_number: 201-0231
+part_description: Speed adjust potentiometer 
+*************************** 4. row ***************************
+         part_id: 4
+     part_number: 2251B003AC
+part_description: PRINTHEAD  IPF710
+*************************** 5. row ***************************
+         part_id: 5
+     part_number: 302H493031
+part_description: Kyocera 302H493031 Fuser (Fixing
+Field	Type	Null	Key	Default	Extra
+problem_code_id	int(10)	NO	PRI	NULL	auto_increment
+problem_code	varchar(32)	YES		NULL	
+location_code	varchar(32)	YES		NULL	
+reason_code	varchar(32)	YES		NULL	
+ Table Data
+
+*************************** 1. row ***************************
+problem_code_id: 1
+   problem_code: ADJU
+  location_code: 
+    reason_code: ADJUSTMENTS
+*************************** 2. row ***************************
+problem_code_id: 2
+   problem_code: CLEA
+  location_code: 
+    reason_code: CLEAN MACHINE
+*************************** 3. row ***************************
+problem_code_id: 3
+   problem_code: DEVE
+  location_code: 
+    reason_code: REPLACE PART(S)
+*************************** 4. row ***************************
+problem_code_id: 4
+   problem_code: DRUM
+  location_code: 
+    reason_code: REPLACE PART(S)
+*************************** 5. row ***************************
+problem_code_id: 5
+   problem_code: DUPL
+  location_code: 
+    reason_code: REPLACE PART(S)
+Field	Type	Null	Key	Default	Extra
+program_id	int(10)	NO	PRI	NULL	auto_increment
+program_number	varchar(32)	NO	UNI	NULL	
+ Table Data
+
+*************************** 1. row ***************************
+    program_id: 1
+program_number: 
+*************************** 2. row ***************************
+    program_id: 2
+program_number: CH-105_WF
+*************************** 3. row ***************************
+    program_id: 3
+program_number: CH-110TC10
+*************************** 4. row ***************************
+    program_id: 4
+program_number: CH-110TC30
+*************************** 5. row ***************************
+    program_id: 5
+program_number: CH-110TC40
+Field	Type	Null	Key	Default	Extra
+serial_id	int(10)	NO	PRI	NULL	auto_increment
+serial_number	varchar(30)	NO	MUL	NULL	
+model_id	int(10)	YES	MUL	NULL	
+customer_id	int(10)	YES	MUL	NULL	
+branch_id	int(10)	YES	MUL	NULL	
+program_id	int(10)	YES	MUL	NULL	
+ Table Data
+
+Field	Type	Null	Key	Default	Extra
+service_id	int(10)	NO	PRI	NULL	auto_increment
+call_datetime	datetime	YES		NULL	
+dispatched_datetime	datetime	YES		NULL	
+arrival_datetime	datetime	YES		NULL	
+completion_datetime	datetime	YES		NULL	
+serial_id	int(10)	YES	MUL	NULL	
+technician_id	int(10)	YES	MUL	NULL	
+problem_code_id	int(10)	YES	MUL	NULL	
+location_code_id	int(10)	YES	MUL	NULL	
+call_id	varchar(10)	NO		NULL	
+call_type_id	int(10)	YES	MUL	NULL	
+ Table Data
+
+Field	Type	Null	Key	Default	Extra
+service_id	int(10)	NO	PRI	NULL	
+serial_id	int(10)	NO	MUL	NULL	
+meter_code_id	int(10)	NO	PRI	NULL	
+meter_code	varchar(20)	YES		NULL	
+ Table Data
+
+Field	Type	Null	Key	Default	Extra
+part_id	int(10)	NO	PRI	NULL	
+service_id	int(10)	NO	PRI	NULL	
+addsub	int(10)	NO	PRI	NULL	
+cost	int(10)	YES		NULL	
+comp_date	varchar(10)	YES		NULL	
+ Table Data
+
+Field	Type	Null	Key	Default	Extra
+technician_id	int(10)	NO	PRI	NULL	auto_increment
+technician_number	varchar(32)	NO	UNI	NULL	
+ Table Data
+
+*************************** 1. row ***************************
+    technician_id: 1
+technician_number: 1031
+*************************** 2. row ***************************
+    technician_id: 2
+technician_number: 1033
+*************************** 3. row ***************************
+    technician_id: 3
+technician_number: 1037
+*************************** 4. row ***************************
+    technician_id: 4
+technician_number: 1039
+*************************** 5. row ***************************
+    technician_id: 5
+technician_number: 1047

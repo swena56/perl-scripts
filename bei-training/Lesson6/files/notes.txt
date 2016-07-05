@@ -1,0 +1,70 @@
+Here’s an overview of today’s training-schedule:  You are free to explore this if your Day1 homework is complete.
+ CGI
+ -dont do anything with fixploc file
+* Review homework assignments
+* Review Apache / CGI Execution
+* Perl Training:
+  - Modules
+  () Database Interaction
+* FixFile associations, ETL Cycle
+ 
+* Homework:
+  - Write a perl script, which uses Perl Modules, which will:
+    * Create temporary table schema based off of specifications available in Office365. ( See attachment )
+    ( Zip file is customer data file, see attachment `50600516_xxxxx.zip` )
+    * Locate, test and extract the contents of a zip file, as an input argument to the program.
+                - Test the file integrity: unzip -tqq $file | my @arr = grep(!/^\.{1,2}$/,readdir $DIR);
+                - Extract the contents of the zip file into a tmp location:
+                  * mkdir -p $dir
+                  * unzip -xjoq $file -d $dir
+                  * perldoc: opendir | https://stackoverflow.com/questions/205159/how-do-i-get-a-directory-listing-in-perl
+                                 
+    * Iterate through the contents of the zip file, matching the file to the temporary table for bulk loading.
+               
+    * Using MySQL's LOAD DATA INFILE, bulk insert the contents of [ fixserl, fixparal, fixserv, fixmeter ] into the temporary tables.
+       https://dev.mysql.com/doc/refman/5.5/en/load-data.html
+
+
+What are the other files - for ETL - Fixserel.pm
+
+special variables add to notes
+    "_
+    $_
+    @_  
+    
+
+#am i repeating tasks
+#more generic functions, the more generic the better
+
+=pod
+
+
+$dbh->do("CREATE TABLE IF NOT EXISTS service (
+service_id                      INT(10) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+call_date                   VARCHAR(10),
+date_dispatched               VARCHAR(10),
+arrival_time                  VARCHAR(4),
+completion_date                 VARCHAR(32),
+serial_number                   VARCHAR(32),
+technician_number            INT(10),
+problem_code                  VARCHAR(32),
+FOREIGN KEY ( serial_number )   REFERENCES serials ( serial_id ),
+FOREIGN KEY ( technician_number )   REFERENCES technicians ( technician_number ),   
+FOREIGN KEY ( problem_code ) REFERENCES problem_codes ( problem_code_id );") ||  die("[!] Failed to create services table\n");
+#UNIQUE KEY ( serial_number, completion_date ));
+
+#/*JOIN calltypes   AS c ON fsv.call_type = c.calltype
+#JOIN location_codes as l ON fsv.location_code = l.location_code*/
+    $dbh->do("INSERT INTO service (call_date, date_dispatched, arrival_time, completion_date, serial_number, technician_number, problem_code) 
+  SELECT src.call_date, src.date_dispatched, src.arrival_time, src.completion_date, src.serial_number, src.technician_number, src.problem_code FROM (
+SELECT call_date, date_dispatched, arrival_time, completion_date, s.serial_number, t.technician_number, p.problem_code  FROM 
+                            fixserv AS fsv
+                                JOIN serials AS s ON fsv.serial_number = s.serial_number
+                                JOIN technicians AS t ON fsv.technician_id_number = t.technician_number
+                                JOIN problem_codes AS p ON fsv.problem_code = p.problem_code                    
+                        GROUP BY fsv.serial_number) as src 
+                LEFT JOIN service AS s ON src.serial_number = s.serial_number
+            WHERE s.service_id IS NULL;") || die("[!] Failed to insert data into table.\n");
+#AND NOT EXISTS(SELECT * FROM service)
+    #$dbh->do() || die("[!] Failed to insert service table data.\n");
+ =cut

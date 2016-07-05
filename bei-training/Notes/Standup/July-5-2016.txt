@@ -1,0 +1,14 @@
+July-5-2016.txt
+
+
+What did I do?
+
+Stuggles that I had?
+I dont really understand the correct way to use padding?  I see the examples on w3 schools, I did not immedietly seen the results I wanted.  
+So, I just moved on to avoid wasting time on it.
+
+I have created the tables with appened html strings and an ajax call.
+created the tables with jquery.
+and created them with the template toolkit.
+
+Overall after doing it the with all three, and realizing how much easier the template toolkit makes things.  I would have to say, I get it.  Things are very clear.
