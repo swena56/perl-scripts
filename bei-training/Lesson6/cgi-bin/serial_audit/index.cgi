@@ -42,7 +42,6 @@ my $pjx = new CGI::Ajax( 'render_serials_table' => \&render_serials_table,
 						
 						 );
 
-
 if($status)
 {
 
@@ -51,25 +50,25 @@ if($status)
 	print $pjx->build_html( $cgi, \&Show_HTML);	
 }
 
+sub commify {
+
+	my $str = reverse shift;
+	$str =~ s/(\d\d\d)(?=\d)(?!\d*\.)/$1,/g;
+	return scalar reverse $str;
+}
+
 sub render_meter_codes_template {
 
 	my $input = shift || die("[!] Render Parts Table needs a service_id for parameter 1");
 	
 	if($dbh){
 
-		my $sql = "	SELECT s.serial_number, mc.meter_code, mc.meter_description
+		my $sql = "	SELECT s.serial_number, mc.meter_code, mc.meter_description, sm.meter
 					FROM service AS ser
 					JOIN serials AS s ON ser.serial_id = s.serial_id
 					JOIN service_meters AS sm ON ser.service_id = sm.service_id
 					JOIN meter_codes AS mc ON sm.meter_code_id = mc.meter_code_id
-					JOIN billing_meters AS bm ON ser.serial_id = bm.serial_id
 					WHERE ser.service_id = ?";
-
-		my $sql2 = "SELECT * from service 
-					JOIN serials AS s ON service.serial_id = s.serial_id
-					JOIN billing_meters AS bm ON bm.serial_id = s.serial_id
-					JOIN meter_codes AS m ON m.meter_code_id = bm.meter_code_id
-					WHERE service_id.service_id = ? ";
 
 		my $sth = $dbh->prepare($sql);
 
@@ -78,7 +77,7 @@ sub render_meter_codes_template {
 		
 		my $total_parts_cost = 0;
 
-		@columns = ('Serial Number',  'Meter Code', 'Meter Description');
+		@columns = ('Serial Number',  'Meter Code', 'Meter Description', 'Meter');
 		
 		#set message about data found
 		my $message_text_color = ($num_rows <= 0) ? 'red' : 'green' ;					   
@@ -87,9 +86,9 @@ sub render_meter_codes_template {
 		my @table_data = [];
 	    my $currency_type = "\$";
 
-		while (my @row = $sth->fetchrow_array) {
-			push @table_data, [@row];
-		
+		while (my $row = $sth->fetchrow_hashref) {
+			push @table_data, $row;
+			
 		}		  
 
 		#close database connection
@@ -103,7 +102,8 @@ sub render_meter_codes_template {
 		  	title => 'Meter Codes List',
 		  	table_data => \@table_data,
 		  	var_dump_data => $debug,
-		  	message => $message	  	
+		  	message => $message,
+		  	commify => \&commify	  	
 		};
 
 		my $output = '';
@@ -113,6 +113,9 @@ sub render_meter_codes_template {
 } 
     return "error loading template";
 }
+
+
+
 
 sub render_parts_template {
 	my $input = shift || die("[!] Render Parts Table needs a service_id for parameter 1");
@@ -143,16 +146,18 @@ sub render_parts_template {
 
 		my @table_data = [];
 	   
-
+		my $currency_type = "\$";
 		while (my @row = $sth->fetchrow_array) {
-			push @table_data, [@row];
+			
 			$total_parts_cost += @row[2];
+			@row[2] = ("$currency_type" . @row[2]);
+			push @table_data, [@row];
 		}		  
 
 		#close database connection
 		$sth->finish();	
 			
-		my $currency_type = "\$";    
+		    
 	    my $debug = Dumper(@table_data);
 		my $vars = {
 		  	user_input => $input,
@@ -186,7 +191,7 @@ sub Show_HTML {
 	    table_columns => \@columns,
 	    table_data  => \@table_data,
 	    number_results => $num_rows,
-	    footer  => 'By: Andrew Swenson',
+	    footer  => 'By: Andrew Swenson',	   
 	};
 
     my $output = '';

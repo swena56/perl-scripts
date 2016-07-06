@@ -24,6 +24,52 @@ my @results =  $q->param('results');
 print header; 
 print $q->header(-type => "text/xml", -charset => "utf-8");
 
+=pod
+ {
+    "chart": {
+        "caption": "Half Yearly Revenue Analysis",
+        "subcaption": "Harry's SuperMart",
+        "yaxisname": "Revenue",
+        "numberprefix": "$",
+        "yaxismaxvalue": "250000",
+        "rotatevalues": "0",
+        "theme": "zune",
+        "palettecolors": "#0075c2"
+    },
+    "data": [
+        {
+            "label": "Jul",
+            "value": "150000",
+            "tooltext": "Occupancy: 67%{br}Revenue: $150,000{br}3 conferences hosted!"
+        },
+        {
+            "label": "Aug",
+            "value": "130000",
+            "tooltext": "Occupancy: 64%{br}Revenue: $130,000{br}Lean summer period!"
+        },
+        {
+            "label": "Sep",
+            "tooltext": "Occupancy: 44%{br}Revenue: $80,000{br}Reason: Renovating the Lobby",
+            "value": "95000"
+        },
+        {
+            "label": "Oct",
+            "value": "170000",
+            "tooltext": "Occupancy: 73%{br}Revenue: $170,000{br}Anniversary Discount: 25%"
+        },
+        {
+            "label": "Nov",
+            "value": "155000",
+            "tooltext": "Occupancy: 70%{br}Revenue: $155,000{br}2 conferences cancelled!"
+        },
+        {
+            "label": "Dec",
+            "value": "230000",
+            "tooltext": "Occupancy: 95%{br}Revenue: $230,000{br}Crossed last year record!"
+        }
+    ]
+};
+=cut
 $service_id = 712;
 if($service_id ne "") {
 		my $dbh = &connect();

@@ -24,8 +24,6 @@ Then I hope to create a few other model popups, and confirm that I am getting th
 
 
 
-
-
 I dont really understand the correct way to use padding?  I see the examples on w3 schools, I did not immedietly seen the results I wanted.  
 So, I just moved on to avoid wasting time on it.
 

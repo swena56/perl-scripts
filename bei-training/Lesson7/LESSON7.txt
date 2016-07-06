@@ -1,0 +1,62 @@
+Day 7-10
+*correct my drop script
+*Make note that There are two other data sets.  Lets formally import them, and insure that my schema can support all the data in these 3 files.  ( 5060 extracts from March and April )
+*Make the following queries
+- Top Ten Calltypes by total calls for the month
+- Top Ten Models by total calls for the month
+- Top Ten Techs by total calls for the month
+
+
+fixserv 1323
+
+---------------------------------------------------------------------
+Design a Service Information Dashboard
+ 
+- Load 3 Month's worth of data into your database.
+ 
+- Create a dashboard CGI application ( dashboard.cgi ), which will:
+ 
+Display the Current ( or Most Recent ) Months data for the following elements:
+ 
+- Total Calls
+- Total Parts
+- Total Serials w/ Calls
+- Total Techs w/ Calls
+- Total Models w/ Calls
+ 
+ May's data
+ DESC
+If I click on "Total Calls", I would like to be able to see the following:
+- Top Ten Calltypes by total calls for the month
+- Top Ten Models by total calls for the month
+- Top Ten Techs by total calls for the month
+ Example:
+Top Ten Models  ( May )
+Model | Total Calls
+ 
+If I click on "Total Parts", I would like to be able to see the following:
+- Top Ten Calltypes by total parts cost for the month
+- Top Ten Models by total parts cost for the month
+- Top Ten Techs by total parts cost for the month
+- Top Ten Parts by total parts cost for the month
+ Example:
+Top Ten Parts ( May )
+Part-Number | Total-Parts-Cost
+ 
+For any of the "Top Ten" items listed above, I want a clickable link, that would popup a d3 graph, showing me the trends for the past 3 months for that item.
+ 
+So, if I have a "Top Ten Parts" list, and I click on the Part-Number, then I want to see a d3 trend graph of that part and that parts-total costs over the past-3-months.
+ 
+
+ START WITH QUERIES AND DESIGN
+
+ 
+- CGI
+- TemplateToolkit
+ 
+- Bootstrap
+- Jquery
+- AJAX
+- JSON ( print $q->header("applicaton/json") )
+ 
+- D3

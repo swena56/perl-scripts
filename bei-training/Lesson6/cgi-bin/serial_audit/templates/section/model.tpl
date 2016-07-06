@@ -1,3 +1,13 @@
+ <!-- use case
+ [ INCLUDE section/model.tpl 
+        title = ''
+        message = 
+        columns =
+        table_data =
+        draw_chart =
+ %]
+ -->
+
 <style>
 /* The Modal (background) */
 .modal {
@@ -39,6 +49,11 @@
 }
 </style>
 
+
+<link rel="stylesheet" type="text/css" href="http://localhost/xcharts/xcharts.css">
+<script type='text/javascript' src='http://localhost/xcharts/xcharts.js'/>
+
+<figure style="width: 400px; height: 300px;" id="example3"></figure>
 <!-- model functionality -->
 <script type='text/javascript'>
 
@@ -64,6 +79,54 @@
             modal.style.display = "none";
         }
     } 
+
+
+/*var data = {
+  "xScale": "time",
+  "yScale": "linear",
+  "type": "line",
+  "main": [
+    {
+      "className": ".pizza",
+      "data": [
+        {
+          "x": "2012-11-05",
+          "y": 1
+        },
+        {
+          "x": "2012-11-06",
+          "y": 6
+        },
+        {
+          "x": "2012-11-07",
+          "y": 13
+        },
+        {
+          "x": "2012-11-08",
+          "y": -3
+        },
+        {
+          "x": "2012-11-09",
+          "y": -4
+        },
+        {
+          "x": "2012-11-10",
+          "y": 9
+        },
+        {
+          "x": "2012-11-11",
+          "y": 6
+        }
+      ]
+    }
+  ]
+};
+var opts = {
+  "dataFormatX": function (x) { return d3.time.format('%Y-%m-%d').parse(x); },
+  "tickFormatX": function (x) { return d3.time.format('%A')(x); }
+};
+var myChart = new xChart('line', data, '#example3', opts);*/
+
 </script> 
 
 <h2> [% title %] </h2>
@@ -74,7 +137,7 @@
 -->
 
 <!-- Columns -->
-<table  class='table table-hover table-responsive'>
+<table  text-align='left' class='table table-hover table-responsive'>
     <tr>
         [% FOREACH i IN columns %]
             <th> [% i %] </th>
@@ -82,16 +145,22 @@
     </tr>
 </table>
 
+<!-- slurp
+
+Inspect perl variables in template toolkit, 
+-->
+
 <div class='bodycontainer scrollable'>
-    <table  class='table table-hover table-responsive'>
+    <table text-align='left' class='table table-hover table-responsive'>
       
        [% FOREACH row = table_data %]
         <tr>
             
-            [% FOREACH i = row %]
-               <td>    [% i %]   </td>
-            [% END %]
-           
+            <td> [% row.serial_number %]</td>
+            <td> [% row.meter_code %]</td>
+            <td> [% row.meter_description %]</td>
+            <td> [% commify(row.meter) %]</td>
+            
        </tr> 
         [% END %] 
          

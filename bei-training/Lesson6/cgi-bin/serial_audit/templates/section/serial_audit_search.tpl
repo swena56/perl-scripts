@@ -8,7 +8,7 @@
         function draw_table_with_json(json) {
 
             //header
-                    var table_header = $("<table align='left' class='table table-hover table-responsive'></table>");
+                    var table_header = $("<table text-align='left' class='table table-hover table-responsive'></table>");
                     var header_row = $("<tr></tr>");
                     json.columns.forEach(function(index){
                         header_row.append($("<th>"+index+"</th>"));
@@ -16,7 +16,7 @@
                     table_header.append(header_row);
 
                     var div = $("<div class='bodycontainer scrollable'></div>");
-                    var table_body = $("<table align='left' class='table table-hover table-responsive'></table>");
+                    var table_body = $("<table text-align='left' class='table table-hover table-responsive'></table>");
 
                     var valid_parts = true;         //validation should be server side, this is primary an implmentation reminder 
                     var valid_meter_codes = true;   //validation should be server side, this is primary an implmentation reminder 
@@ -63,13 +63,11 @@
                                 });
                                  
                                  //my cgi ajax way of getting my parts list
-                                 render_parts_template(['show_parts_'+ser_id],['draw_parts_popup_here'], 'POST');     
+                                 render_parts_template(['show_parts_'+ser_id],['draw_parts_popup_here'], 'POST');  
 
-                                 //ajax is not working as well as I would like, I need to implement this in jquery  
-
-
-                            }); 
                             
+                            }); 
+                              //ajax is not working as well as I would like, I need to implement this in jquery  
                             service_action.append(parts_button); 
                             service_action.append($("<span>               </span>"));       //spacing between buttons
 
@@ -105,7 +103,7 @@
                                  render_meter_codes_template(['show_meters_button_'+ser_id],['draw_parts_popup_here'], 'POST');
                                  //render_meter_codes_table(['show_meters_button_'+ser_id],['draw_parts_popup_here'], 'POST');
 
-                                //ajax is not working as well as I would like, I need to implement this in jquery
+                                // I need to implement this in jquery
                                 
                             });
                             
@@ -218,7 +216,7 @@
             <div class="form-group">
               Serial Search: 
          
-              <input  type="text" id="serial_search" class= 'form-control' action='serial_json.cgi' autofocus autocomplete='off'>
+              <input  type="text" id="serial_search" class= 'form-control' action='resources/JSON/serial_json.cgi' autofocus autocomplete='off'>
               <div style="display='none'; display: none;" ><input type="reset" id="rst_form"></div>
             </div>
         </form>       
