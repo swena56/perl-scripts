@@ -10,7 +10,7 @@ use Data::Dumper;
 
 use XML::Writer;
 use lib qw(/home/ubuntu/perl-scripts/bei-training/Lesson7/lib);
-use lib qw(/home/ubuntu/perl-scripts/bei-training/Lesson7/templates);
+use lib qw(/home/ubuntu/perl-scripts/bei-training/Lesson7/cgi-bin/serial_audit/templates);
 
 use BEI::DB 'connect';
 use JSON;
@@ -61,10 +61,11 @@ if($serial ne "") {
 
 		my @columns = ('Serial Number', 'Model Number', 'Call Type', 'Completion DateTime', 'Tech #',
 					'Call ID', 'Total Part Cost', 'Service Call Actions');
+
 		
 		my @raw_columns = $sth->{NAME};
-		while (my @row = $sth->fetchrow_array) {	
-		    push @table_data, \@row;
+		while (my $row = $sth->fetchrow_hashref) {	
+		    push @table_data, $row;
 		}
 
 		#close database connection
@@ -76,7 +77,7 @@ if($serial ne "") {
 			columns => \@columns,
 			result_data => \@table_data,
 			raw_columns => \@raw_columns,
-			user_input => $serial,
+			user_input => $serial
 		});
 		
 		print $json;

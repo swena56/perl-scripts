@@ -100,7 +100,7 @@ sub run {
 	my $file = $self->file();
 	my $table = $self->table_name();
 
-	#$self->drop_table();
+	$self->drop_table();
 
 	#create table
 	$self->create_table();

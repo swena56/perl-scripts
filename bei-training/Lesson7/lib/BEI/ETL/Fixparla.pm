@@ -57,6 +57,10 @@ sub scrub_line {
 	my $model_number 				= "$array[5]";
 	my $serial_number 				= "$array[6]";
 	my $installation_date 			= "$array[7]";
+
+	 # my @tmp  = split /\//,$installation_date;
+	 # $installation_date = "@tmp[2]-@tmp[1]-@tmp[0]";
+
 	my $init_meter_reading 			= "$array[8]";
 	my $parts_cost 					= "$array[9]";
 	my $customer_number 			= "$array[10]";

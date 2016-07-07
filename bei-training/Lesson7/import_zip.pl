@@ -27,10 +27,10 @@ use BEI::Utils qw(
 );
 
 use BEI::ETL;
-use BEI::CreateSchema qw(run);
 use BEI::CreatePermanentStorage qw(run);
+
 use BEI::InsertTempTables qw(run);
- 
+
 use constant TEMP_DIR => "/tmp/bei-tmp";
 
 my $num_args        = $#ARGV + 1;
@@ -39,12 +39,8 @@ my %extracted_files = ();
 
 # for debugging only
 #print "[+] Emptying entire database -  for debugging purposes only.\n";
-#print `sh files/drop_all.sh`;
-#print `sh files/drop_all.sh`;
-#print `sh files/drop_all.sh`;
+
 print `sh files/drop_all.sh`;
-
-
 
 #process zip files provided by arguments if there are none lets use our test data
 if ( $num_args > 0 ) {
@@ -56,8 +52,8 @@ if ( $num_args > 0 ) {
 else {
     #use the default test data
     print "[+] Using default test data.\n";
-    push( @zip_files, "files/50600316_ZIjEpwVAAm_webftp.zip" );
-    push( @zip_files, "files/50600416_Zj6SBrvd34_webftp.zip" );
+   # push( @zip_files, "files/50600316_ZIjEpwVAAm_webftp.zip" );
+   # push( @zip_files, "files/50600416_Zj6SBrvd34_webftp.zip" );
     push( @zip_files, "files/50600516_DLAvPgzytc_webftp.zip" );
 }
 
@@ -69,16 +65,12 @@ foreach my $zip (@zip_files) {
     my @files = &extract_zip( $zip, TEMP_DIR );
 
     $extracted_files{$zip} = \@files;
-
-    #push @extracted_files, \@files;
 }
 
 #connect to database
 my $dbh = &connect();
 
 BEI::CreatePermanentStorage::run($dbh);
-
-#print Dumper(%extracted_files);   #debug code
 
 foreach my $zip ( keys %extracted_files ) {
 
@@ -97,17 +89,13 @@ foreach my $zip ( keys %extracted_files ) {
         if ($obj) {
             $obj->run();
         }
+
+
     }
+
+    #prepare database schema.
+    BEI::InsertTempTables::run($dbh);
 }
-
-#prepare database schema.
-#BEI::CreateSchema::run($dbh);
-
-BEI::InsertTempTables::run($dbh);
-
-
-
-
 
 #how to handle duplicate data
 

@@ -197,7 +197,7 @@ JOIN serials ON service.serial_id = serials.serial_id
 JOIN models ON serials.model_id = models.model_id
 JOIN fixmeter ON serials.serial_number = fixmeter.serial_number 
   AND models.model_number = fixmeter.model 
-  AND service.call_id_not_call_type = fixmeter.call_id AND DATE(service.completion_datetime) = str_to_date(fixmeter.completion_date, '%m-%d-%y')
+  AND service.call_id_not_call_type = fixmeter.call_id AND DATE(service.completion_datetime) = str_to_date(fixmeter.completion_date, '%m/%d/%y')
 JOIN meter_codes ON fixmeter.meter_code = meter_codes.meter_code
 ) as src
 LEFT JOIN service_meters AS sm ON sm.service_id = src.service_id  AND sm.meter_code_id = src.meter_code_id 
@@ -238,11 +238,10 @@ FROM (
 	FROM service  
 	JOIN serials  ON service.serial_id          = serials.serial_id
 	JOIN models   ON serials.model_id           = models.model_id
-JOIN fixparla ON serials.serial_number = fixparla.serial_number 
-  AND models.model_number = fixparla.model_number
-  AND serials.serial_id = fixparla.serial_number
-  AND service.call_id_not_call_type = fixparla.call_id 
-  AND DATE(service.completion_datetime) = str_to_date(fixparla.installation_date, '%m/%d/%y')
+  JOIN fixparla ON serials.serial_number = fixparla.serial_number 
+    AND models.model_number = fixparla.model_number
+    AND service.call_id_not_call_type = fixparla.call_id 
+    AND DATE(service.completion_datetime) = str_to_date(fixparla.installation_date, '%m/%d/%y')
 	JOIN parts    ON parts.part_number          = fixparla.part_number
 
 ) AS src
@@ -256,5 +255,7 @@ WHERE sp.part_id IS NULL AND sp.service_id IS NULL AND sp.addsub IS NULL;
 		
 	}
 }
- 
+ #add qty
+
+ #fixlabor off by one
 1;

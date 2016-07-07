@@ -9,12 +9,12 @@
     <body>
         [% INCLUDE section/header.tpl %]
 
-  	
- 		[% INCLUDE section/dashboard_serials.tpl    
+  	    
+ 		<!-- [ INCLUDE section/serial_search.tpl %] -->
 
-         	%]
 
-        [% INCLUDE section/serial_audit_search.tpl %]
+        <!-- [ INCLUDE section/serial_search.tpl %] -->
+         [% INCLUDE section/serial_audit_search.tpl %] 
         
         [% INCLUDE section/footer.tpl %]
     </body>

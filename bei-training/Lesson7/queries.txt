@@ -1,0 +1,155 @@
++------------+
+|Total Calls |
++------------+
+SELECT count(*) AS total_call FROM service;
++------------+
+| total_call |
++------------+
+|       3542 |
++------------+
+
++------------+
+|Total Parts |
++------------+
+SELECT count(*) AS total_parts FROM parts;
++-------------+
+| total_parts |
++-------------+
+|         585 |
++-------------+
+
++-----------------------+
+|Total Serials w/ Calls |
++-----------------------+
+select count(*) AS total_serials_w_calls 
+FROM serials 
+JOIN service AS ser ON ser.serial_id = serials.serial_id;
+
+OR
+
+select count(*) AS total_serials_w_calls 
+FROM service 
+JOIN serials AS s ON s.serial_id = service.serial_id;
++-----------------------+
+| total_serials_w_calls |
++-----------------------+
+|                  3542 |
++-----------------------+
+
++---------------------+
+|Total Techs w/ Calls |
++---------------------+
+SELECT count(*) AS total_techs_w_calls from technicians
+JOIN service AS ser ON ser.technician_id = technicians.technician_id ;
++---------------------+
+| total_techs_w_calls |
++---------------------+
+|                3542 |
++---------------------+
+
++---------------------+
+|Total Models w/ Calls|
++---------------------+
+SELECT count(*) AS total_models_w_calls from models
+JOIN serials AS s ON s.model_id = models.model_id
+JOIN service AS ser ON ser.serial_id = s.serial_id ;
++----------------------+
+| total_models_w_calls |
++----------------------+
+|                 3542 |
++----------------------+
+
++------------+------------+-------+---------------------+
+|    Top Ten Calltypes by total calls for the month     |
++------------+------------+-------+---------------------+
+SELECT src.call_type, src.total_calls, src.month, src.completion_datetime
+FROM (
+SELECT c.call_type,COUNT(c.call_type) AS total_calls, MONTH(completion_datetime) AS month, completion_datetime
+FROM service AS s 
+JOIN serials ON s.serial_id = serials.serial_id
+JOIN call_types AS c ON s.call_type_id = c.call_type_id
+GROUP BY c.call_type) 
+AS src
+WHERE src.month = 5
+ORDER BY src.total_calls DESC LIMIT 10;
++-----------+-------------+-------+---------------------+
+| call_type | total_calls | month | completion_datetime |
++-----------+-------------+-------+---------------------+
+| CC        |         153 |     5 | 2016-05-03 11:03:00 |
+| INST      |          94 |     5 | 2016-05-17 11:17:00 |
+| EM-NET    |          40 |     5 | 2016-05-23 10:23:00 |
+| APPT-NET  |          25 |     5 | 2016-05-12 12:12:00 |
+| EINFO     |          11 |     5 | 2016-05-26 10:26:00 |
++-----------+-------------+-------+---------------------+
+
++--------------+-------------+-------+---------------------+
+|      Top Ten Models by total calls for the month         |
++--------------+-------------+-------+---------------------+
+SELECT src.model_number, src.model_count, src.month, src.completion_datetime 
+FROM (
+SELECT m.model_number AS model_number,COUNT(m.model_number) AS model_count, MONTH(completion_datetime) AS month, completion_datetime
+FROM service AS s 
+JOIN serials ON s.serial_id = serials.serial_id
+JOIN models AS m ON serials.model_id = m.model_id
+JOIN technicians AS t ON s.technician_id = t.technician_id
+JOIN call_types AS c ON s.call_type_id = c.call_type_id
+GROUP BY m.model_number
+) AS src
+WHERE src.month = 5
+ORDER BY src.model_count DESC LIMIT 10;
++--------------+-------------+-------+---------------------+
+| model_number | model_count | month | completion_datetime |
++--------------+-------------+-------+---------------------+
+| MPC3003      |         105 |     5 | 2016-05-24 15:24:00 |
+| MP7502SP     |          51 |     5 | 2016-05-05 13:05:00 |
+| MPC3503      |          27 |     5 | 2016-05-02 13:02:00 |
+| CLX-9201NA   |          22 |     5 | 2016-05-03 08:03:00 |
+| MP3352SP-LC  |          19 |     5 | 2016-05-27 10:27:00 |
+| C931dn       |          18 |     5 | 2016-05-26 14:26:00 |
+| CX2633-3TRAY |          18 |     5 | 2016-05-03 10:03:00 |
+| LD050SP      |          17 |     5 | 2016-05-04 12:04:00 |
+| LD425SP      |          15 |     5 | 2016-05-23 12:23:00 |
+| X658de       |          13 |     5 | 2016-05-11 10:11:00 |
++--------------+-------------+-------+---------------------+
+
++-------------------+------------+-------+---------------------+
+|      - Top Ten Techs by total calls for the month            |
++-------------------+------------+-------+---------------------+
+SELECT src.technician_number, src.tech_count, src.month, src.completion_datetime 
+FROM (
+SELECT t.technician_number AS technician_number,COUNT(t.technician_id) AS tech_count, MONTH(completion_datetime) AS month, completion_datetime
+FROM service AS s 
+JOIN technicians AS t ON s.technician_id = t.technician_id
+GROUP BY t.technician_number
+) AS src
+WHERE src.month = 5
+ORDER BY src.tech_count  DESC LIMIT 10;
++-------------------+------------+-------+---------------------+
+| technician_number | tech_count | month | completion_datetime |
++-------------------+------------+-------+---------------------+
+| 1031              |        379 |     5 | 2016-05-04 13:04:00 |
+| 2088              |        359 |     5 | 2016-05-09 15:09:00 |
+| 2049              |        184 |     5 | 2016-05-03 11:03:00 |
+| TD00              |        126 |     5 | 2016-05-17 11:17:00 |
+| 2042              |         51 |     5 | 2016-05-23 10:23:00 |
++-------------------+------------+-------+---------------------+
+
+
+- Top Ten Calltypes by total parts cost for the month
+- Top Ten Models by total parts cost for the month
+- Top Ten Techs by total parts cost for the month
+- Top Ten Parts by total parts cost for the month
+ Example:
+Top Ten Parts ( May )
+Part-Number | Total-Parts-Cost
+
+
+
+SELECT * from parts;
+#service parts seems to be empty.
+NOTES
+
+#get the calls for just may
+#remove automated miner from windows registry, the pop is getting annoying.
+
+

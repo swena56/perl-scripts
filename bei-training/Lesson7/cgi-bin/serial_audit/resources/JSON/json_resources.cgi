@@ -7,55 +7,83 @@ use CGI::Carp qw(fatalsToBrowser);
 use Template;
 use CGI::Ajax;
 use Data::Dumper;
-use Math::Round;
-use JSON;
 
+use XML::Writer;
 use lib qw(/home/ubuntu/perl-scripts/bei-training/Lesson7/lib);
 
-#use lib qw(/home/ubuntu/perl-scripts/bei-training/Lesson6/);
-
-my $template = Template->new(
-	  INCLUDE_PATH => '/home/ubuntu/perl-scripts/bei-training/Lesson7/cgi-bin/serial_audit/templates/'
-	
-);
 
 use BEI::DB 'connect';
-use BEI::JSON_response 'serial_search';
+use JSON;
 
-my $dbh = &connect();
+my $q = CGI->new();
 
-my $cgi = CGI->new();
-#print $cgi->header();  
-
-my $serial = $cgi->param('serial');
-my $status = $cgi->param('status');
-my $service_id = $cgi->param('service_id');
-my @parts =  $cgi->param('parts');
-
-my @table_data;
-my $num_rows = 0;
-my $table_name;
-my @columns;
-my $message;
-
-my $pjx = new CGI::Ajax( 'render_serials_table' => \&render_serials_table, 					
-						'render_meter_codes_template' => \&render_meter_codes_template,
-						'render_parts_template' => \&render_parts_template
-						
-						 );
-
-if($status)
-{
+my $serial = $q->param('serial');
 
 
-} else{
-	print $pjx->build_html( $cgi, \&Show_HTML);	
+my $response = $q->param('response');
+
+#print $q->header();  #is required for the browser to know what content
+
+print  header('application/json');
+
+sub serial_search {
+
+	my $serial = shift || die("serial search needs serial number")
+
+	if($serial ne "") {
+		my $dbh = &connect();
+
+		if($dbh){
+		
+		my $currency_type = "\\\$";
+
+		my $sth = $dbh->prepare("
+		SELECT serial_number, model_number, call_type, completion_datetime, technician_number,
+			s.call_id_not_call_type, CONCAT('$currency_type', ROUND(SUM(cost),2) ) AS total_parts_cost, s.service_id
+		FROM service AS s 
+		JOIN serials ON s.serial_id = serials.serial_id
+		JOIN models AS m ON serials.model_id = m.model_id
+		JOIN technicians AS t ON s.technician_id = t.technician_id
+		JOIN call_types AS c ON s.call_type_id = c.call_type_id
+		LEFT JOIN service_parts AS sp ON s.service_id = sp.service_id
+		#WHERE serial_number LIKE '%?' 
+		WHERE serial_number LIKE " . $dbh->quote('%'.$serial.'%') ."
+		GROUP BY s.service_id
+		ORDER BY completion_datetime DESC"
+		);
+
+		$sth->execute();	
+		my $num_rows = $sth->rows;
+
+		my @table_data;
+
+		my @columns = ('Serial Number', 'Model Number', 'Call Type', 'Completion DateTime', 'Tech #',
+					'Call ID', 'Total Part Cost', 'Service Call Actions');
+
+
+		
+		my @raw_columns = $sth->{NAME};
+		while (my @row = $sth->fetchrow_array) {	
+		    push @table_data, \@row;
+		}
+
+		#close database connection
+		$sth->finish();
+		#
+		my $op = JSON -> new -> utf8 -> pretty(1);
+		my $json = $op -> encode({
+			num_rows => $num_rows,
+			columns => \@columns,
+			result_data => \@table_data,
+			raw_columns => \@raw_columns,
+			user_input => $serial,
+		});
+		
+		print $json;
+	}
+}
 }
 
-sub perform_search {
-
-	
-}
 
 sub render_meter_codes_template {
 
@@ -119,7 +147,7 @@ sub render_parts_template {
 	if($dbh){
 
 		my $sth = $dbh->prepare("
-				SELECT sp.part_number, s.serial_number, ROUND(service_parts.cost,2)
+					SELECT sp.part_number, s.serial_number, ROUND(service_parts.cost,2)
 				FROM service_parts
 				JOIN parts AS sp ON service_parts.part_id = sp.part_id
 				JOIN service AS ser ON service_parts.service_id = ser.service_id
@@ -143,11 +171,11 @@ sub render_parts_template {
 		my @table_data = [];
 	   
 		my $currency_type = "\$";
-		while (my $row = $sth->fetchrow_hashref) {
+		while (my @row = $sth->fetchrow_array) {
 			
-			
-			#@row[2] = ("$currency_type" . @row[2]);
-			push @table_data, $row;
+			$total_parts_cost += @row[2];
+			@row[2] = ("$currency_type" . @row[2]);
+			push @table_data, [@row];
 		}		  
 
 		#close database connection
@@ -165,43 +193,10 @@ sub render_parts_template {
 		};
 
 		my $output = '';
-		$template->process('section/pop_models/parts_model.tpl', $vars,\$output)  || die $template->error();
+		$template->process('section/model.tpl', $vars,\$output)  || die $template->error();
 
 		return $output;
 } 
     return "error loading template";
-}
-
-sub Show_HTML {
-
-my $serial_search = &serial_search();
-	
-
-	  my $vars = {
-		title => "Serial Audit",
-	    about  => 'about serial audit.....',
-	    guest_welcome_message  => 'Welcome to Serial Audit Guest User ',
-	    message => $message,
-	    menu => [],
-	    table_name => $table_name,
-	    table_columns => \@columns,
-	    table_data  => \@table_data,
-	    number_results => $num_rows,
-	    render_parts => \&render_parts_template, 
-	    render_meter => \&render_meter_codes_template,
-	    #serial_search => \&serial_search,
-	    footer  => 'By: Andrew Swenson',	   
-	};
-
-    my $output = '';
-    $template->process('section/serial_table.tpl', $vars,\$output)  || die $template->error();
-    
-
-	    return $output;
-  }
-sub commify {
-	my $str = reverse shift || die("commify needs a string to work.");
-	$str =~ s/(\d\d\d)(?=\d)(?!\d*\.)/$1,/g;
-	return scalar reverse $str;
 }
 exit;

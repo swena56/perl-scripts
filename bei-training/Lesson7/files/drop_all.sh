@@ -35,10 +35,6 @@ mysql -e "DROP TABLE IF EXISTS
 mysql -e "show tables;"
 echo "[+] bei_training database is now empty.";
 
-cd /tmp/bei-tmp/;
-rm -f *;
-echo "[+] Temp directory is empty. ";
-
 
 <<COMMENT1
 mysql -e "TRUNCATE fixbilling";      
