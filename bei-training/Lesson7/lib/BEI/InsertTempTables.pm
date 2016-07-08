@@ -176,14 +176,11 @@ FROM fixserv AS fsv
   JOIN call_types AS ct ON fsv.call_type = ct.call_type
   GROUP BY s.serial_id, completion_datetime, call_id
 ) as src 
-LEFT JOIN service AS ser ON src.serial_id = ser.serial_id  
+LEFT JOIN service AS ser ON src.serial_id = ser.serial_id
+AND ser.service_id = src.call_id_not_call_type
+AND ser.completion_datetime = src.completion_datetime
 WHERE service_id IS NULL;
 ") || die();
-	#
-#GROUP BY fsv.serial_id, completion_datetime, call_id
-#TODO completion data
-#AND service.service_id = fixmeter.call_id 
-#AND DATE(service.completion_datetime) = fixmeter.completion_date
 
 $dbh->do("
 INSERT INTO service_meters ( service_id, meter_code_id, meter )
@@ -231,21 +228,24 @@ $dbh->do("
 INSERT INTO service_parts ( service_id, part_id, addsub, cost ) 
 SELECT src.service_id, src.part_id, src.addsub, src.cost
 FROM (
-	SELECT service.service_id, 
-	parts.part_id, 
-	fixparla.add_sub_indicator AS addsub, 
-	fixparla.parts_cost        AS cost
-	FROM service  
-	JOIN serials  ON service.serial_id          = serials.serial_id
-	JOIN models   ON serials.model_id           = models.model_id
-  JOIN fixparla ON serials.serial_number = fixparla.serial_number 
-    AND models.model_number = fixparla.model_number
-    AND service.call_id_not_call_type = fixparla.call_id 
-    AND DATE(service.completion_datetime) = str_to_date(fixparla.installation_date, '%m/%d/%y')
-	JOIN parts    ON parts.part_number          = fixparla.part_number
-
+SELECT service.service_id, 
+parts.part_id, 
+fixparla.add_sub_indicator AS addsub, 
+SUM(fixparla.parts_cost)        AS cost,
+SUM(fixparla.quantity_used)      AS qty
+FROM service  
+JOIN serials  ON service.serial_id          = serials.serial_id
+JOIN models   ON serials.model_id           = models.model_id
+JOIN fixparla ON serials.serial_number = fixparla.serial_number 
+  AND models.model_number = fixparla.model_number
+  AND service.call_id_not_call_type = fixparla.call_id 
+  AND DATE(service.completion_datetime) = str_to_date(fixparla.installation_date, '%m/%d/%y')
+JOIN parts    ON parts.part_number          = fixparla.part_number
+GROUP BY service.service_id, parts.part_id, fixparla.add_sub_indicator
 ) AS src
-LEFT JOIN service_parts AS sp ON sp.service_id = src.service_id  AND sp.part_id = src.part_id AND sp.addsub = src.addsub  
+LEFT JOIN service_parts AS sp ON sp.service_id = src.service_id  
+AND sp.part_id = src.part_id 
+AND sp.addsub = src.addsub  
 WHERE sp.part_id IS NULL AND sp.service_id IS NULL AND sp.addsub IS NULL;
 ") || die("[!] Failed to insert data into table.\n");
 

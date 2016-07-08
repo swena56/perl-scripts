@@ -89,7 +89,8 @@ sub bulk_load_file {
 	$sth->execute();
 	my ($cnt) = $sth->fetchrow_array();
 
-	#unlink $scrubbed_csv;
+
+	unlink $scrubbed_csv;
 	print "[+] Table $table updated with $cnt records. \n";
 }
 
@@ -100,7 +101,8 @@ sub run {
 	my $file = $self->file();
 	my $table = $self->table_name();
 
-	#$self->drop_table();
+	#drop table
+	$self->drop_table();
 
 	#create table
 	$self->create_table();
@@ -110,8 +112,6 @@ sub run {
 
 	#bulk load into database
 	$self->bulk_load_file($scrubbed_csv);
-
-	
 
 }
 

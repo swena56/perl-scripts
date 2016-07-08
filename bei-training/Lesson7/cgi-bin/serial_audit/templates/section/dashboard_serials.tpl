@@ -35,8 +35,8 @@
   }
   .dashboard{
       border: 1px solid blue;
-     /* outline-color: blue; 
-      background-color: lightgrey;*/
+      outline-color: blue; 
+      background-color: white;
   }
   .accordion > div {
     display:none;
@@ -84,7 +84,7 @@
 [% INCLUDE section/tables/models_top10.tpl rendering_info = top_ten_models_for_month_index(dashboard_data.month_index) %]
             </div>
             <div class="col-md-4" style="background-color:white;">
-[% INCLUDE section/table.tpl rendering_info = top_ten_models_for_month_index(dashboard_data.month_index) %]
+[% INCLUDE section/tables/models_top10.tpl rendering_info = top_ten_models_for_month_index(dashboard_data.month_index) %]
             </div>
             </div>
       </div>
@@ -98,13 +98,13 @@
       <div id="collapse2" class="panel-collapse collapse">
         <div class="panel-body">
             <div class="col-md-4" style="background-color:white;">
-            [% INCLUDE section/table.tpl rendering_info = top_ten_models_for_month_index(dashboard_data.month_index) %]
+            [% INCLUDE section/tables/models_top10.tpl rendering_info = top_ten_models_for_month_index(dashboard_data.month_index) %]
             </div>
             <div class="col-md-4" style="background-color:white;">
-             [% INCLUDE section/table.tpl rendering_info = top_ten_models_for_month_index(dashboard_data.month_index) %]
+             [% INCLUDE section/tables/models_top10.tpl rendering_info = top_ten_models_for_month_index(dashboard_data.month_index) %]
             </div>
             <div class="col-md-4" style="background-color:white;">
-              [% INCLUDE section/table.tpl rendering_info = top_ten_models_for_month_index(dashboard_data.month_index) %]
+              [% INCLUDE section/tables/models_top10.tpl rendering_info = top_ten_models_for_month_index(dashboard_data.month_index) %]
             </div>
             </div>
         </div>
@@ -119,13 +119,13 @@
       <div id="collapse3" class="panel-collapse collapse">
         <div class="panel-body">
               <div class="col-md-4" style="background-color:white;">
-             [% INCLUDE section/table.tpl rendering_info = top_ten_models_for_month_index(dashboard_data.month_index) %]
+             [% INCLUDE section/tables/models_top10.tpl rendering_info = top_ten_models_for_month_index(dashboard_data.month_index) %]
               </div>
              <div class="col-md-4" style="background-color:white;">
-              [% INCLUDE section/table.tpl rendering_info = top_ten_models_for_month_index(dashboard_data.month_index) %]
+              [% INCLUDE section/tables/models_top10.tpl rendering_info = top_ten_models_for_month_index(dashboard_data.month_index) %]
               </div>
              <div class="col-md-4" style="background-color:white;">
-              [% INCLUDE section/table.tpl rendering_info = top_ten_models_for_month_index(dashboard_data.month_index) %]
+              [% INCLUDE section/tables/models_top10.tpl rendering_info = top_ten_models_for_month_index(dashboard_data.month_index) %]
               </div>
             </div>
         </div>
@@ -139,13 +139,13 @@
       <div id="collapse4" class="panel-collapse collapse">
         <div class="panel-body">
               <div class="col-md-4" style="background-color:white;">
-             [% INCLUDE section/table.tpl rendering_info = top_ten_models_for_month_index(dashboard_data.month_index) %]
+             [% INCLUDE section/tables/models_top10.tpl rendering_info = top_ten_models_for_month_index(dashboard_data.month_index) %]
               </div>
              <div class="col-md-4" style="background-color:white;">
-              [% INCLUDE section/table.tpl rendering_info = top_ten_models_for_month_index(dashboard_data.month_index) %]
+              [% INCLUDE section/tables/models_top10.tpl rendering_info = top_ten_models_for_month_index(dashboard_data.month_index) %]
               </div>
              <div class="col-md-4" style="background-color:white;">
-              [% INCLUDE section/table.tpl rendering_info = top_ten_models_for_month_index(dashboard_data.month_index) %]
+              [% INCLUDE section/tables/models_top10.tpl rendering_info = top_ten_models_for_month_index(dashboard_data.month_index) %]
               </div>
             </div>
         </div>
@@ -159,14 +159,14 @@
       <div id="collapse5" class="panel-collapse collapse ">
         <div class="panel-body">
               <div class="col-md-4" >
-             [% INCLUDE section/table.tpl rendering_info = top_ten_models_for_month_index(dashboard_data.month_index) %]
+             [% INCLUDE section/tables/models_top10.tpl rendering_info = top_ten_models_for_month_index(dashboard_data.month_index) %]
               </div>
              <div class="col-md-4" style="background-color:white;">
-              [% INCLUDE section/table.tpl rendering_info = top_ten_models_for_month_index(dashboard_data.month_index) %]
+              [% INCLUDE section/tables/models_top10.tpl rendering_info = top_ten_models_for_month_index(dashboard_data.month_index) %]
 
               </div>
              <div class="col-md-4" style="background-color:white;">
-              [% INCLUDE section/table.tpl rendering_info = top_ten_models_for_month_index(dashboard_data.month_index) %]
+              [% INCLUDE section/tables/models_top10.tpl rendering_info = top_ten_models_for_month_index(dashboard_data.month_index) %]
               </div>
             </div>
         </div>

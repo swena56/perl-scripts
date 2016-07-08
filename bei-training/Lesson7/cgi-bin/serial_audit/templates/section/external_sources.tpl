@@ -13,10 +13,10 @@
         
 
         <!--d3 dashboard -->
-       <!--  <link rel="stylesheet" type="text/css" href="http://www.ankerst.de/lib/itemExplorer_10.css">
+         <link rel="stylesheet" type="text/css" href="http://www.ankerst.de/lib/itemExplorer_10.css">
       <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>
       <script src="http://www.ankerst.de/lib/itemExplorer_10.min.js"></script>
- -->
+ 
 
       <!-- xcharts 
 

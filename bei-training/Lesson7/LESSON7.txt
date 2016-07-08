@@ -1,12 +1,13 @@
 Day 7-10
-
+-
+#review data, concepts discusson
+#issues with fixparla - sum cost, qty
+#terminal plugin for sublime
 Design a Service Information Dashboard
 
  
 
 - Load 3 Month's worth of data into your database.
-
- 
 
 - Create a dashboard CGI application ( dashboard.cgi ), which will:
 

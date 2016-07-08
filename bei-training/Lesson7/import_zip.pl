@@ -40,7 +40,12 @@ my @zip_files       = ();
 # for debugging only
 #print "[+] Emptying entire database -  for debugging purposes only.\n";
 
-print `files/drop_all.sh`;
+#print `files/drop_all.sh`;
+
+#connect to database
+my $dbh = &connect();
+
+BEI::CreatePermanentStorage::run($dbh);
 
 #process zip files provided by arguments if there are none lets use our test data
 if ( $num_args > 0 ) {
@@ -70,10 +75,7 @@ foreach my $zip (@zip_files) {
 
     my $num_files = ( scalar @{ $extracted_files{$zip} } );
 
-    #connect to database
-    my $dbh = &connect();
-
-    BEI::CreatePermanentStorage::run($dbh);
+    
 
     #loop through the extracted files and process them
     for ( my $index = 0; $index < $num_files; $index++ ) {
@@ -89,15 +91,19 @@ foreach my $zip (@zip_files) {
         if ($obj) {
             $obj->run();
         }
+
+        unlink $current_file;
     }
 
      #insert the temp tables in permenant storage
     BEI::InsertTempTables::run($dbh);
     print "[+] Successfully Inserted data from $zip\n";
     print "-----------------------------------------------------------------------\n";
-    
-    #close database connection
-    $dbh->disconnect();
+ 
 }
 
+
+   
+    #close database connection
+    $dbh->disconnect();
 print "[+] Done...\n";

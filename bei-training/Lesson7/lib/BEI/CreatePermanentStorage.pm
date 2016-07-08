@@ -82,7 +82,6 @@ location_code_id		INT(10) NOT NULL AUTO_INCREMENT PRIMARY KEY,
 location_code 			VARCHAR(4)
 )");
 
-
 #call types
 $dbh->do("
 CREATE TABLE IF NOT EXISTS call_types (

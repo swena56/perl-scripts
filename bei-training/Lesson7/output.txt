@@ -1,13 +1,13 @@
 billing_meters_count
-165
+462
 branches_count
 2
 call_types_count
-14
+15
 correction_codes_count
 0
 customers_count
-5114
+5133
 fixbilling_count
 2460
 fixlabor_count
@@ -29,23 +29,23 @@ location_codes_count
 meter_codes_count
 8
 models_count
-1267
+1268
 parts_count
-278
+585
 problem_codes_count
-17
+21
 programs_count
-41
+42
 serials_count
-13117
+13144
 service_count
-1113
+3542
 service_meters_count
-712
+2244
 service_parts_count
-606
+1774
 technicians_count
-13
+14
 Field	Type	Null	Key	Default	Extra
 serial_id	int(10)	NO	PRI	NULL	
 bill_date	varchar(10)	NO	PRI	NULL	
@@ -53,27 +53,27 @@ meter_code_id	int(10)	NO	PRI	NULL
 meter_code	varchar(20)	YES		NULL	
 billing_meters Table Data\n
 *************************** 1. row ***************************
-    serial_id: 999
+    serial_id: 997
     bill_date: 1
-meter_code_id: 5
+meter_code_id: 3
    meter_code: BW
 *************************** 2. row ***************************
-    serial_id: 1092
+    serial_id: 1080
     bill_date: 1
 meter_code_id: 5
    meter_code: BW
 *************************** 3. row ***************************
-    serial_id: 1198
+    serial_id: 1134
     bill_date: 1
-meter_code_id: 5
+meter_code_id: 4
    meter_code: BW
 *************************** 4. row ***************************
-    serial_id: 3296
+    serial_id: 1160
     bill_date: 1
-meter_code_id: 5
+meter_code_id: 3
    meter_code: BW
 *************************** 5. row ***************************
-    serial_id: 3845
+    serial_id: 1173
     bill_date: 1
 meter_code_id: 5
    meter_code: BW
@@ -807,24 +807,24 @@ part_description	varchar(100)	YES		NULL
  Table Data\n
 *************************** 1. row ***************************
          part_id: 1
-     part_number: 0106B002AB
-part_description: ROLLER KIT DR2580C
+     part_number: 02008051
+part_description: CHARGE ROLLER CLEANING ROLLER
 *************************** 2. row ***************************
          part_id: 2
-     part_number: 0361501S
-part_description: SPINDLE ASSY
+     part_number: 0303302S
+part_description: PICKUP SPOOL
 *************************** 3. row ***************************
          part_id: 3
-     part_number: 201-0231
-part_description: Speed adjust potentiometer 
+     part_number: 0365600S
+part_description: 0365600S Camera Unit Scan Pro 20
 *************************** 4. row ***************************
          part_id: 4
-     part_number: 2251B003AC
-part_description: PRINTHEAD  IPF710
+     part_number: 0375400S
+part_description: 0375400S Gear Scan Pro 2000
 *************************** 5. row ***************************
          part_id: 5
-     part_number: 302H493031
-part_description: Kyocera 302H493031 Fuser (Fixing
+     part_number: 406642
+part_description: MAINT. KIT  LP131N/LP136N
 Field	Type	Null	Key	Default	Extra
 problem_code_id	int(10)	NO	PRI	NULL	auto_increment
 problem_code	varchar(32)	YES	UNI	NULL	
@@ -840,10 +840,10 @@ problem_code_id: 3
    problem_code: CLEA
 *************************** 4. row ***************************
 problem_code_id: 4
-   problem_code: DEVE
+   problem_code: DEIN
 *************************** 5. row ***************************
 problem_code_id: 5
-   problem_code: DRUM
+   problem_code: DEVE
 Field	Type	Null	Key	Default	Extra
 program_id	int(10)	NO	PRI	NULL	auto_increment
 program_number	varchar(32)	NO	UNI	NULL	
@@ -874,36 +874,36 @@ program_id	int(10)	YES	MUL	NULL
 *************************** 1. row ***************************
     serial_id: 1
 serial_number: ---
-     model_id: 467
-  customer_id: 4257
+     model_id: 463
+  customer_id: 4237
     branch_id: 1
    program_id: 5
 *************************** 2. row ***************************
     serial_id: 2
 serial_number: ---
-     model_id: 515
-  customer_id: 780
+     model_id: 511
+  customer_id: 779
     branch_id: 1
    program_id: 1
 *************************** 3. row ***************************
     serial_id: 3
 serial_number: 00000-000
-     model_id: 1249
-  customer_id: 4569
+     model_id: 1236
+  customer_id: 4544
     branch_id: 2
-   program_id: 30
+   program_id: 31
 *************************** 4. row ***************************
     serial_id: 4
 serial_number: 000274
-     model_id: 404
-  customer_id: 1986
+     model_id: 402
+  customer_id: 1979
     branch_id: 1
    program_id: 4
 *************************** 5. row ***************************
     serial_id: 5
 serial_number: 000276
-     model_id: 404
-  customer_id: 1986
+     model_id: 402
+  customer_id: 1979
     branch_id: 1
    program_id: 4
 Field	Type	Null	Key	Default	Extra
@@ -921,64 +921,64 @@ call_type_id	int(10)	YES	MUL	NULL
  Table Data\n
 *************************** 1. row ***************************
            service_id: 1
-        call_datetime: 2016-05-03 09:19:00
-  dispatched_datetime: 2016-05-03 10:40:00
-     arrival_datetime: 2016-05-03 11:19:00
-  completion_datetime: 2016-05-03 11:03:00
-            serial_id: 999
-        technician_id: 8
-      problem_code_id: 1
-     location_code_id: NULL
-call_id_not_call_type: SC64274
-         call_type_id: 3
-*************************** 2. row ***************************
-           service_id: 2
-        call_datetime: 2016-05-13 09:07:00
-  dispatched_datetime: 2016-05-17 08:14:00
-     arrival_datetime: 2016-05-17 09:00:00
-  completion_datetime: 2016-05-17 11:17:00
-            serial_id: 1002
-        technician_id: 12
-      problem_code_id: 11
-     location_code_id: NULL
-call_id_not_call_type: SC64716
-         call_type_id: 8
-*************************** 3. row ***************************
-           service_id: 3
-        call_datetime: 2016-05-20 09:37:00
-  dispatched_datetime: 2016-05-23 09:48:00
-     arrival_datetime: 2016-05-23 10:03:00
-  completion_datetime: 2016-05-23 10:23:00
-            serial_id: 1073
-        technician_id: 6
-      problem_code_id: 1
-     location_code_id: NULL
-call_id_not_call_type: SC65003
-         call_type_id: 7
-*************************** 4. row ***************************
-           service_id: 4
-        call_datetime: 2016-05-08 15:05:00
-  dispatched_datetime: 2016-05-09 14:46:00
-     arrival_datetime: 2016-05-09 14:52:00
-  completion_datetime: 2016-05-09 15:09:00
-            serial_id: 1092
+        call_datetime: 2016-03-31 08:00:00
+  dispatched_datetime: 2016-03-31 10:46:00
+     arrival_datetime: 2016-03-31 11:22:00
+  completion_datetime: 2016-03-31 13:31:00
+            serial_id: 997
         technician_id: 10
       problem_code_id: 1
      location_code_id: NULL
-call_id_not_call_type: SC64466
+call_id_not_call_type: SC62869
+         call_type_id: 6
+*************************** 2. row ***************************
+           service_id: 2
+        call_datetime: 2016-03-01 09:12:00
+  dispatched_datetime: 2016-03-08 08:46:00
+     arrival_datetime: 2016-03-08 08:52:00
+  completion_datetime: 2016-03-08 09:08:00
+            serial_id: 1021
+        technician_id: 13
+      problem_code_id: 12
+     location_code_id: NULL
+call_id_not_call_type: SC61512
+         call_type_id: 8
+*************************** 3. row ***************************
+           service_id: 3
+        call_datetime: 2016-03-04 11:00:00
+  dispatched_datetime: 2016-03-04 11:17:00
+     arrival_datetime: 2016-03-04 11:27:00
+  completion_datetime: 2016-03-04 12:04:00
+            serial_id: 1132
+        technician_id: 10
+      problem_code_id: 1
+     location_code_id: NULL
+call_id_not_call_type: SC61717
+         call_type_id: 3
+*************************** 4. row ***************************
+           service_id: 4
+        call_datetime: 2016-03-04 14:35:00
+  dispatched_datetime: 2016-03-04 14:45:00
+     arrival_datetime: 2016-03-04 15:23:00
+  completion_datetime: 2016-03-04 16:04:00
+            serial_id: 1140
+        technician_id: 2
+      problem_code_id: 2
+     location_code_id: NULL
+call_id_not_call_type: SC61700
          call_type_id: 5
 *************************** 5. row ***************************
            service_id: 5
-        call_datetime: 2016-05-03 09:47:00
-  dispatched_datetime: 2016-05-06 09:43:00
-     arrival_datetime: 2016-05-06 09:50:00
-  completion_datetime: 2016-05-06 11:06:00
-            serial_id: 1150
-        technician_id: 12
-      problem_code_id: 11
+        call_datetime: 2016-03-07 08:40:00
+  dispatched_datetime: 2016-03-07 08:56:00
+     arrival_datetime: 2016-03-07 10:18:00
+  completion_datetime: 2016-03-07 11:07:00
+            serial_id: 1140
+        technician_id: 10
+      problem_code_id: 1
      location_code_id: NULL
-call_id_not_call_type: SC64282
-         call_type_id: 8
+call_id_not_call_type: SC61751
+         call_type_id: 5
 Field	Type	Null	Key	Default	Extra
 service_id	int(10)	NO	PRI	NULL	
 meter_code_id	int(10)	NO	PRI	NULL	
@@ -987,23 +987,23 @@ meter	int(10)	YES		NULL
 *************************** 1. row ***************************
    service_id: 1
 meter_code_id: 1
-        meter: 197711
+        meter: 176875
 *************************** 2. row ***************************
    service_id: 2
 meter_code_id: 1
-        meter: 39
+        meter: 1
 *************************** 3. row ***************************
    service_id: 3
 meter_code_id: 1
-        meter: 8401
+        meter: 41113
 *************************** 4. row ***************************
    service_id: 4
 meter_code_id: 1
-        meter: 1234
+        meter: 1016
 *************************** 5. row ***************************
    service_id: 5
 meter_code_id: 1
-        meter: 15
+        meter: 1235
 Field	Type	Null	Key	Default	Extra
 service_id	int(10)	NO	PRI	NULL	
 part_id	int(10)	NO	PRI	NULL	
@@ -1011,30 +1011,30 @@ addsub	char(1)	NO	PRI	NULL
 cost	decimal(12,4)	YES		NULL	
  Table Data\n
 *************************** 1. row ***************************
-service_id: 2
-   part_id: 272
+service_id: 1
+   part_id: 22
     addsub: +
-      cost: 5.8000
+      cost: 0.0000
 *************************** 2. row ***************************
 service_id: 5
-   part_id: 24
+   part_id: 22
     addsub: +
-      cost: 20.0600
+      cost: 0.0000
 *************************** 3. row ***************************
-service_id: 6
-   part_id: 23
+service_id: 11
+   part_id: 22
     addsub: +
       cost: 0.0000
 *************************** 4. row ***************************
-service_id: 7
-   part_id: 264
-    addsub: +
-      cost: 282.8800
-*************************** 5. row ***************************
 service_id: 12
-   part_id: 272
+   part_id: 280
     addsub: +
-      cost: 5.8000
+      cost: 457.1200
+*************************** 5. row ***************************
+service_id: 18
+   part_id: 22
+    addsub: +
+      cost: 0.0000
 Field	Type	Null	Key	Default	Extra
 technician_id	int(10)	NO	PRI	NULL	auto_increment
 technician_number	varchar(32)	NO	UNI	NULL	
@@ -1047,10 +1047,10 @@ technician_number: 1031
 technician_number: 1033
 *************************** 3. row ***************************
     technician_id: 3
-technician_number: 1037
+technician_number: 1036
 *************************** 4. row ***************************
     technician_id: 4
-technician_number: 1039
+technician_number: 1037
 *************************** 5. row ***************************
     technician_id: 5
-technician_number: 1047
+technician_number: 1039

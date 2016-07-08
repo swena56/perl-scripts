@@ -1,0 +1,13 @@
+July-08-2016.txt
+I was able to get some d3 graphing done, and display top ten lists.  Its been going rather smoothly.
+
+
+  Yesturday I was working on my dashboard display, and something Jeremy said clicked for me.  I recalled him speaking about wasting time while attempting to position everything on his dashboard.  I noticed I was having the same problem, so from the sounds of it, Drawing out the website had good effects for him.  So today I figured I would give that a try.   I will get sketches of what I want the graphs to look like. That way I wont feel like I am trying to put a puzzle together with my eyes closed.
+
+I am getting very close, its just getting all of my templates to mesh together.  A concern of mine is trying to figure out what should be updated on my dash board from searches.  
+
+I am going to quickly glance through my import process, and make sure I am not in need of help there.
+
+I found a 2012 database design book on a newsbin search.  Ill read some of that tonight while trying to wind down for the night.
+
+ BEI app rule.  For june.

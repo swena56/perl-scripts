@@ -1,5 +1,6 @@
 <!--    Usage example
-        [ INCLUDE section/table.tpl          
+        CalledIn: 
+        [ INCLUDE section/models_top10.tpl          
             title           =   ,
             table_columns   =   ,
             table_data      =   ,
@@ -43,8 +44,8 @@
         </tr>
 
         [% FOREACH row IN rendering_info.table_data %]
-        <!-- <tr id="show_parts" class='clickable-row' data-href='http://www.google.com' > -->
-        <tr id="show_parts"  >
+        <tr id="show_parts" class='clickable-row' data-href='http://www.google.com' >
+        <!-- <tr id="show_parts"  > -->
                 <td>[%  row.model_number %]</td>
                 <td>[%  row.model_count %]</td>
                 <td>[%  row.completion_datetime %]</td>
@@ -53,6 +54,6 @@
     </table>
 </div>
 
-<div id='parts_model'></div>
+
 
 [% INCLUDE section/graphs/horizontal.tpl %]

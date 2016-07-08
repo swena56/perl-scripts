@@ -6,8 +6,6 @@ GROUP BY most_recent_month
 ORDER BY most_recent_month DESC LIMIT 1
 ) AS src;
 
-
-
 +------------+
 |Total Calls |
 +------------+
@@ -205,10 +203,10 @@ JOIN service_parts AS sp ON sp.service_id = s.service_id
 JOIN models AS m ON serials.model_id = m.model_id
 JOIN technicians AS t ON s.technician_id = t.technician_id
 JOIN call_types AS c ON s.call_type_id = c.call_type_id
-GROUP BY m.model_number
+GROUP BY m.model_number 
 ) AS src
 WHERE src.month = 3
-ORDER BY src.model_count DESC LIMIT 10;
+ORDER BY src.parts_cost_total DESC LIMIT 10;
 +--------------+-------------+-------+---------------------+------------------+
 | model_number | model_count | month | completion_datetime | parts_cost_total |
 +--------------+-------------+-------+---------------------+------------------+
@@ -224,20 +222,19 @@ ORDER BY src.model_count DESC LIMIT 10;
 | LD620C       |          26 |     3 | 2016-03-11 15:11:00 |        2048.5200 |
 +--------------+-------------+-------+---------------------+------------------+
 
-
 +-------------------+------------+-------+---------------------+------------------+
 |		- Top Ten Techs by total parts cost for the month                 |
 +-------------------+------------+-------+---------------------+------------------+
-SELECT src.technician_number, src.tech_count, src.month, src.completion_datetime, src.parts_cost_total
+SELECT src.technician_number, src.month, src.parts_cost_total
 FROM (
-SELECT t.technician_number AS technician_number,COUNT(t.technician_id) AS tech_count, MONTH(completion_datetime) AS month, completion_datetime, SUM(sp.cost) as parts_cost_total
+SELECT t.technician_id, t.technician_number AS technician_number, MONTH(completion_datetime) AS month, SUM(sp.cost) as parts_cost_total
 FROM service AS s 
 JOIN technicians AS t ON s.technician_id = t.technician_id
 JOIN service_parts AS sp ON sp.service_id = s.service_id
+WHERE MONTH(completion_datetime) = 3
 GROUP BY t.technician_number
 ) AS src
-WHERE src.month = 3
-ORDER BY src.tech_count  DESC LIMIT 10;
+ORDER BY src.parts_cost_total  DESC LIMIT 10;
 +-------------------+------------+-------+---------------------+------------------+
 | technician_number | tech_count | month | completion_datetime | parts_cost_total |
 +-------------------+------------+-------+---------------------+------------------+

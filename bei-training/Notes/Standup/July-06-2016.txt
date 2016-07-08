@@ -1,0 +1,81 @@
+July-6-2016.txt
+
+Yesterday I spent my time putting all my project code in the same place, I have a sane folder layout for my cgi projects in my training respository. 
+
+I got a bit further in my sql book.  Better understanding of order by.  I learned you can use numbers instead of the column names.  I cant picture a reason you would do that, but now nowing that, a video I saw a while ago about sql injection makes a bit more sense. 
+
+I am also thankful of the jquery book I picked up a couple days ago.
+
+I have not made alot of headway on lessc, I am werry of using it, in fear that I will waste  to much time.  I spend a bunch of time, playing with d3, and have grown a liking for xcharts.  Still looking for a reason why I should graph out my data.  
+
+If I get frusterated with graphing, I will likely create some kind of base class for retreiving json, instead of just having a bunch of unorganized files to do it.
+
+Screen multiuser
+screen -x
+
+
+What perl books do you guys have?
+
+SQL replication
+email triggers
+
+xabics alerts
+percona
+poweruser of accountability
+swag on accountability
+FCE - issue
+EWD Effective Workload Distribution- 2092
+ERP
+hooks based on configuration files.
+
+etl process
+KPI report?
+tech document
+
+get perl book
+http://shop.oreilly.com/product/9780596004927.do
+
+chad-new users are only techs.  svn branch directory issues.  svn resolve --accept working -R 
+
+dave - get back into meters. historical look ups
+
+greg - 
+
+dealer configuration related.
+techcom bug.
+
+
+meter_reading,
+
+
+
+//convert ajax function calls to templates
+    var column_arr = [];
+    var table_data_arr = [];
+     $.post('resources/JSON/parts_json.cgi', {service_id: ser_id}, function(json){
+
+       
+
+              json.columns.forEach(function(index){
+                column_arr.push(index);
+                                            });
+
+                                                
+                json.result_data.forEach(function(row){
+                    table_data_arr.push(row);
+                });
+
+                 [% INCLUDE section/model.tpl 
+                
+                   title = 'Parts',
+                    message = 'message',
+                    columns = json.columns,
+                    table_data = json.result_data,
+                    draw_chart = '1'
+            %]
+               
+                                   
+                                       
+
+                                 },'json');
+

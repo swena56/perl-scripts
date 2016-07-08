@@ -35,8 +35,7 @@
         <!-- <tr id="show_parts" class='clickable-row' data-href='http://www.google.com' > -->
         <tr id="show_parts"  >
                 <td>[%  row.call_type %]</td>
-                <td>[%  row %]</td>
-                <td>[%  row %]</td>
+               
         </tr>
     [% END %]    
     </table>
