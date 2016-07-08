@@ -1,6 +1,10 @@
  <style>
         .bodycontainer { max-height: 350px; width: 100%; margin: 0; overflow-y: auto; }
         .table-scrollable { margin: 0; padding: 0; }
+#serial_search{
+    float: center;
+    
+}
 </style>
 
   <script type='text/javascript'>
@@ -23,19 +27,15 @@
         console.log(json);
         //expecting json serial data from post request
         json.result_data.forEach(function ( query_results ) {
-            var row = $("<tr></tr>");
-           
+            var row = $("<tr></tr>");        
             row.append($("<td>"+query_results.service_id+"</td>")); 
             row.append($("<td>"+query_results.serial_number+"</td>"));   
             row.append($("<td>"+query_results.model_number+"</td>"));   
             row.append($("<td>"+query_results.call_type+"</td>"));   
             row.append($("<td>"+query_results.completion_datetime+"</td>"));   
             row.append($("<td>"+query_results.technician_number+"</td>"));   
-            row.append($("<td>"+query_results.call_id_not_call_type+"</td>"));   
-            row.append($("<td>"+query_results.total_parts_cost+"</td>")); 
-           
-            var service_action = $("<td></td>");
-
+            row.append($("<td>"+query_results.call_id_not_call_type+"</td>"));
+                       
             var parts_button = $("<button id='show_parts_"+query_results.service_id+"' value='"+query_results.service_id+"' name='myBtn'>Parts</button>").on('click', function() {
  
                 var modal = document.getElementById('parts_model');
@@ -56,15 +56,44 @@
                         modal.style.display = "none";
                     }
                 });
-
-                render_parts_template(['show_parts_'+query_results.service_id],['draw_parts_popup_here'], 'POST'); 
-                
+                render_parts_template(['show_parts_'+query_results.service_id],['draw_popup_here'], 'POST') 
             }); 
-                      
-            service_action.append($("<span>               </span>"));
-             if(query_results.total_parts_cost){
-            service_action.append(parts_button);    
+
+            var meters_button = $("<button id='show_meters_"+query_results.service_id+"' value='"+query_results.service_id+"' name='myBtn'>Meters</button>").on('click', function() {
+ 
+                var modal = document.getElementById('parts_model');
+                modal.style.display = "block";
+
+                var span = document.getElementsByClassName("close")[0];
+
+                //model use fucntion
+                span.onclick = function() {
+                    modal.style.display = "none";
+                }
+                
+                //detect escape to close popup
+                $(document).keyup(function(event) {
+                    /* Act on the event */
+                    if(event.which == 27){
+                        console.log("escape button detected");    
+                        modal.style.display = "none";
+                    }
+                });
+                render_meters_template(['show_meters_'+query_results.service_id],['draw_popup_here'], 'POST') 
+            }); 
+                             
+            var service_action = $("<td></td>");
+            
+            if(query_results.total_parts_cost){
+                row.append($("<td>"+query_results.total_parts_cost+"</td>")); 
+                service_action.append(parts_button);
+                service_action.append($("<span>  </span>"));    
+                service_action.append(meters_button);        
+            }   else {
+                row.append($("<td>-</td>")); 
+                service_action.append(meters_button);      
             }
+  
             row.append( service_action );
             table_body.append(row);     //append table row  
         });                   
@@ -126,14 +155,14 @@
           <!-- model container -->
           <div class="modal-content">
             <span class="close">x</span>
-             <div id="draw_parts_popup_here"></div>
+             <div id="draw_popup_here"></div>
           </div>
         </div>
 
            <!-- Enter serial form -->
         <form role="form" role="form" method="POST" accept-charset="UTF-8">
             <div class="form-group">
-              Serial Search: 
+              <b style='font-size: 15;'>Serial Search: </b>
          
               <input  type="text" id="serial_search" class='form-control' action='resources/JSON/serial_json.cgi' autofocus autocomplete='off'>
               <div style="display='none'; display: none;" ><input type="reset" id="rst_form"></div>

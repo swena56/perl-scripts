@@ -9,8 +9,6 @@
  -->
 
 <style>
-
-
         .bodycontainer { max-height: 350px; width: 100%; margin: 0; overflow-y: auto; }
         .table-scrollable { margin: 0; padding: 0; }
 
@@ -91,39 +89,36 @@
 <p> [% message %] </p>
 <!-- <p> [% user_input %]</p> 
 -->
-
-
-
+<p> [% var_dump_data %]</p>
+<p> Service required based on meter reading: unknown </p>
 <!-- Columns -->
-<table  class='table table-hover table-responsive'>
+<table  text-align='left' class='table table-hover table-responsive'>
     <tr>
         [% FOREACH i IN columns %]
-            <th> [% i %] </th>
+            
         [% END %]      
     </tr>
 </table>
 
-
-<!-- slurp
-
-Inspect perl variables in template toolkit, 
--->
-<div class='bodycontainer scrollable'>
-    <table  class='table table-hover table-responsive'>
-      
-       [% FOREACH row IN table_data %]
+<div class='bodycontainer'>
+    <table text-align='left' class='table table-hover table-responsive'>
         <tr>
+        [% FOREACH i IN columns %]
+            <th> [% i %] </th>
+        [% END %]      
+        </tr>
+
+        [% FOREACH row = table_data %]
+        <tr>          
             <td> [% row.serial_number %]</td>
-            <td> [% row.part_number %]</td>
-            <td> [% row.parts_cost %]</td>
-         </tr>        
-        [% END %] 
-        
-         
+            <td> [% row.meter_code %]</td>
+            <td> [% row.meter_description %]</td>
+            <td> [% commify(row.meter) %]</td>            
+       </tr> 
+        [% END %]               
     </table>
 </div>
 
-<p> Total Parts Cost: [% total_parts_cost %] </p>
 <!-- The Modal -->
 <div id="model" class="modal">
   <!-- Modal content -->

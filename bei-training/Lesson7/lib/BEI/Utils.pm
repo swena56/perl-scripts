@@ -137,17 +137,19 @@ sub get_temp_file_listing {
 
  		#list files
  		opendir ( DIR, TEMP_DIR ) || die "[!] Error opening directory\n";
- 		print "[+] Contents of " . TEMP_DIR . ":\n";
+ 		#print "[+] Contents of " . TEMP_DIR . ":\n";
  		
+ 		#print "      ";
  		while (my $filename = readdir(DIR)){
  			chomp $filename;
 
  			if($filename ne '..' && $filename ne '.'){							#do not want to show current directory (.) and parent directory (..)
  					
- 					print "     $filename\n";
+ 					#print "$filename, ";
  					push @extracted_files, (TEMP_DIR . "$filename"); 			#add file names to array				
  			}
  		}
+ 		#print "\n";
  	return @extracted_files;
 }
 

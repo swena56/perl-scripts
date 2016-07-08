@@ -1,0 +1,33 @@
+July-7-2016.txt
+Yesterday was going very until I had receieved my three months of data.  Having all this Dave gave me the insentive to verify my data.  
+I put together a script to test my scrubbed verus not scrubbed data.  This was easy part, correcting the issues. Has been difficult.
+The flaws I discovered made me feel like I was drowning, it was terrifying.
+It feels like things were working by conqu
+
+Duplicate entry problem cased by date.  
+
+Converting my existing project popup model to hand hashref instead of an array turned out to be more work than I antipated.  My dynamic way of using the same model for both my popups ended up requiring me to statically defined two different models.  
+
+Then I had the issue of losing data, due to clumsyness of trying to manually empty my temp folder
+
+Thankfully i have things tested, and I have proof where my problems are.  As well as I have all the queries I will need to finish up my dashboard.  I just need to correct some of these issues, revoling around my new data.  
+
+Its been a frusterating day, and felt like I took steps backwards.
+I am glad to be rested, and with a fresh head on my shoulders.  I really liked how effective it was to plan out what I was going to do before I started, soo today I will make a list before I start.
+
+
+
+Trunk will be the new branch.  1.9 will be retired.  report Runner
+
+chad has a support day yesterday.
+
+Brett. accountablility.  building the back end.  
+
+
+
+What are my data issues?
+-Service-meters and service-parts are not loading up with data due to what appears to be date, but it worked before so maybe i can just get ride of duplicates.
+ -a test files individually to see if I can find the file with the duplicate.
+ - implment a way to prevent duplicate lines from being inserted,  flush them out of the scrubbed file.
+
+Get my model popups working again.  Pre plan

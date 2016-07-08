@@ -35,12 +35,12 @@ use constant TEMP_DIR => "/tmp/bei-tmp";
 
 my $num_args        = $#ARGV + 1;
 my @zip_files       = ();
-my %extracted_files = ();
+
 
 # for debugging only
 #print "[+] Emptying entire database -  for debugging purposes only.\n";
 
-print `sh files/drop_all.sh`;
+print `files/drop_all.sh`;
 
 #process zip files provided by arguments if there are none lets use our test data
 if ( $num_args > 0 ) {
@@ -52,30 +52,30 @@ if ( $num_args > 0 ) {
 else {
     #use the default test data
     print "[+] Using default test data.\n";
-   # push( @zip_files, "files/50600316_ZIjEpwVAAm_webftp.zip" );
-   # push( @zip_files, "files/50600416_Zj6SBrvd34_webftp.zip" );
+    push( @zip_files, "files/50600316_ZIjEpwVAAm_webftp.zip" );
+    push( @zip_files, "files/50600416_Zj6SBrvd34_webftp.zip" );
     push( @zip_files, "files/50600516_DLAvPgzytc_webftp.zip" );
 }
 
-#clean up clutter in temp directory
-&cleanup_temp_directory();    # i might need to prove that this works
-
 #extract data and its content files to an array for processing
 foreach my $zip (@zip_files) {
+    
+    #clean up clutter in temp directory
+    print "[+] Clear temp directory for $zip\n";
+    &cleanup_temp_directory();    # i might need to prove that this works
+
     my @files = &extract_zip( $zip, TEMP_DIR );
-
+    my %extracted_files = ();
     $extracted_files{$zip} = \@files;
-}
-
-#connect to database
-my $dbh = &connect();
-
-BEI::CreatePermanentStorage::run($dbh);
-
-foreach my $zip ( keys %extracted_files ) {
 
     my $num_files = ( scalar @{ $extracted_files{$zip} } );
 
+    #connect to database
+    my $dbh = &connect();
+
+    BEI::CreatePermanentStorage::run($dbh);
+
+    #loop through the extracted files and process them
     for ( my $index = 0; $index < $num_files; $index++ ) {
 
         my $current_file = @{ $extracted_files{$zip} }[$index];
@@ -89,16 +89,15 @@ foreach my $zip ( keys %extracted_files ) {
         if ($obj) {
             $obj->run();
         }
-
-
     }
 
-    #prepare database schema.
+     #insert the temp tables in permenant storage
     BEI::InsertTempTables::run($dbh);
+    print "[+] Successfully Inserted data from $zip\n";
+    print "-----------------------------------------------------------------------\n";
+    
+    #close database connection
+    $dbh->disconnect();
 }
 
-#how to handle duplicate data
-
-#close database connection
-$dbh->disconnect();
-print "[+] Done...disconnected from database.\n";
+print "[+] Done...\n";

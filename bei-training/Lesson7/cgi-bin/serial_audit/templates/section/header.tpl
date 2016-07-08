@@ -16,7 +16,7 @@ ul {
     margin: 0;
     padding: 0;
     overflow: hidden;
-    background-color: #5745b6;
+    background-color: black;
 }
 
 li {
@@ -32,13 +32,13 @@ li a {
 
 }
 .title{
-    border: 1px solid blue;
-    outline-color: blue; 
-    background-color: lightgrey;
+    border: 1px solid white;
+    outline-color: black; 
+    background-color: white;
 }
 
 .jumbotron{
-	background-color: lightgrey;
+	background-color: white;
    
 }
 
@@ -50,7 +50,7 @@ li a:hover:not(.active) {
 .active {
 	text-decoration: none;
     color: black;
-    background-color: lightgrey;
+    background-color: white;
 }
 </style>
 </head>
@@ -60,21 +60,14 @@ li a:hover:not(.active) {
 
 <div class='title'>
     <ul>
-     <li><b><a class='dashboard_link' href="#home">Home</a></b></li>
-     <li><b><a class='dashboard_link' href="#customer">Customers</a></b></li>
-      <li><b><a class='dashboard_link' href="#meter">Meters</a></b></li>
+     <li><b><a class='dashboard_link' href="http://localhost/cgi-bin/serial_audit/">Home</a></b></li>
+     
 
       <!-- <li style="float:right"><b><a class='dashboard_link' href="https://www.beiservices.com/"><img style="-webkit-user-select: none" width='50px' src="http://192.168.1.230/bei_high.png"></a></b></li> -->
       
-      <li><b><a class="active" href="#active_dashboard_selection">[% title %] </a></b></li>
+      <li><b><a class="active" href="">[% title %] </a></b></li>
     </ul>
-    <div align='center'  class='jumbotron'>
-
-                <h1> [% title %] </h1>
-                <p> [% guest_welcome_message %]</p> 
-                <p> [% about %]</p>
-                
-              </div>  
+    
  </div>
  <br>
 

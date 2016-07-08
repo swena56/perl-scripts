@@ -1,6 +1,6 @@
 SELECT src.most_recent_month
 FROM (
-SELECT MONTH(completion_datetime) as most_recent_month, MONTH(completion_datetime) as most_recent_month FROM service 
+SELECT MONTH(completion_datetime) as most_recent_month FROM service 
 
 GROUP BY most_recent_month
 ORDER BY most_recent_month DESC LIMIT 1

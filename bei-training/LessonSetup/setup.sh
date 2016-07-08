@@ -15,7 +15,6 @@ sudo add-apt-repository -y ppa:webupd8team/sublime-text-2
 
 #install skype
 
-
 subl # so the packages directory can get initalized
 cd .config/sublime-text-2/Packages
 echo '{ "cmd": ["perl", "-w", "$file"], "file_regex": ".* at (.) line ([0-9])", "selector": "source.perl" }' > Perl/Perl.sublime-build
@@ -28,4 +27,7 @@ git clone https://github.com/cockscomb/SublimePerldoc
 git clone https://github.com/tushortz/Perl-Completions
 git clone https://github.com/vifo/SublimePerlTidy PerlTidy
 
+
+
+https://github.com/adampresley/sublime-view-in-browser
 

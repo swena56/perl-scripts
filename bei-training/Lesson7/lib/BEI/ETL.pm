@@ -80,7 +80,7 @@ sub bulk_load_file {
 
 	my $bulk_load_sql = $self->bulk_load_sql(); 
 
-    print "[+] Processing bulk load query: $bulk_load_sql \n";
+    print "[+] Processing bulk load query \n";
 
 	$dbh->do($bulk_load_sql, undef, $scrubbed_csv )  || die("[!] Failed to do Bulk load into: $table\n");	
 	
@@ -100,7 +100,7 @@ sub run {
 	my $file = $self->file();
 	my $table = $self->table_name();
 
-	$self->drop_table();
+	#$self->drop_table();
 
 	#create table
 	$self->create_table();
