@@ -199,8 +199,9 @@ JOIN meter_codes ON fixmeter.meter_code = meter_codes.meter_code
 ) as src
 LEFT JOIN service_meters AS sm ON sm.service_id = src.service_id  AND sm.meter_code_id = src.meter_code_id 
 WHERE sm.service_id IS NULL AND sm.meter_code_id IS NULL;
-");#install_date ( to comp_date )
-			#2016-04-08 14:08:00     04/04/16  
+");
+
+#billing_meters
 $dbh->do("
 INSERT INTO billing_meters  ( serial_id, bill_date, meter_code_id, meter_code ) 
 SELECT src.serial_id, src.meter_code_id, src.bill_date, src.meter_code
@@ -220,13 +221,10 @@ LEFT JOIN billing_meters AS bm ON bm.serial_id = src.serial_id
 WHERE bm.serial_id IS NULL;
 ") || die("[!] Failed to insert data into table.\n");
 
-
-#* service-parts ( FK_service.service_id, FK_parts.part_id, qty, cost, addsub ) 
-#[ Source: FIXPARLA; Link FIXPARLA TO FIXSERV based on model, serial, call_id, install_date ( to comp_date ) ]
- #                  PrimaryKey ( service_id, part_id, addsub )
+#service_parts
 $dbh->do("
-INSERT INTO service_parts ( service_id, part_id, addsub, cost ) 
-SELECT src.service_id, src.part_id, src.addsub, src.cost
+INSERT INTO service_parts ( service_id, part_id, addsub, cost, quantity ) 
+SELECT src.service_id, src.part_id, src.addsub, src.cost, qty
 FROM (
 SELECT service.service_id, 
 parts.part_id, 
@@ -249,13 +247,8 @@ AND sp.addsub = src.addsub
 WHERE sp.part_id IS NULL AND sp.service_id IS NULL AND sp.addsub IS NULL;
 ") || die("[!] Failed to insert data into table.\n");
 
-		
-		print "[+] Inserted Temp Tables into Permenant Storage.\n";
-		
-		
+		print "[+] Inserted Temp Tables into Permenant Storage.\n";		
 	}
 }
- #add qty
-
- #fixlabor off by one
+ 
 1;

@@ -38,13 +38,13 @@ my @zip_files       = ();
 
 
 # for debugging only
-#print "[+] Emptying entire database -  for debugging purposes only.\n";
-
-#print `files/drop_all.sh`;
+print "[+] Emptying entire database -  for debugging purposes only.\n";
+print `files/drop_all.sh`;
 
 #connect to database
 my $dbh = &connect();
 
+#TODO complete task before moving on.
 BEI::CreatePermanentStorage::run($dbh);
 
 #process zip files provided by arguments if there are none lets use our test data

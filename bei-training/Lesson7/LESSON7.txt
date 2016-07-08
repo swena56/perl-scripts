@@ -3,9 +3,10 @@ Day 7-10
 #review data, concepts discusson
 #issues with fixparla - sum cost, qty
 #terminal plugin for sublime
-Design a Service Information Dashboard
+#I am not going to want to drop all for production data.  remove that for good practice.
 
- 
+
+Design a Service Information Dashboard
 
 - Load 3 Month's worth of data into your database.
 
@@ -14,6 +15,8 @@ Design a Service Information Dashboard
  
 Display the Current ( or Most Recent ) Months data for the following elements:
 
+#Lessons learned
+#TODO complete task before moving on.  
 
 - Total Calls
 

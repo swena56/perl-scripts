@@ -165,6 +165,7 @@ service_id  INT(10) NOT NULL,
 part_id  INT(10) NOT NULL,
 addsub CHAR(1) NOT NULL,
 cost DECIMAL(12,4),
+quantity INT(4),
 FOREIGN KEY ( part_id )  REFERENCES parts ( part_id ),
 FOREIGN KEY ( service_id )  REFERENCES service ( service_id ),
 PRIMARY KEY ( service_id, part_id, addsub ));
