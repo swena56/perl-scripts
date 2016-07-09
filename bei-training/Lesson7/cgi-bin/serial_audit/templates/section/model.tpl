@@ -9,10 +9,8 @@
  -->
 
 <style>
-
-
-        .bodycontainer { max-height: 350px; width: 100%; margin: 0; overflow-y: auto; }
-        .table-scrollable { margin: 0; padding: 0; }
+ .bodycontainer { max-height: 350px; width: 100%; margin: 0; overflow-y: auto; }
+ .table-scrollable { margin: 0; padding: 0; }
 
 /* The Modal (background) */
 .modal {
@@ -111,14 +109,12 @@ Inspect perl variables in template toolkit,
     </tr>
        [% FOREACH row = table_data %]
         <tr>
-            
             <td> [% row.serial_number %]</td>
             <td> [% row.meter_code %]</td>
             <td> [% row.meter_description %]</td>
             <td> [% commify(row.meter) %]</td>            
        </tr> 
         [% END %] 
-         
     </table>
 </div>
 

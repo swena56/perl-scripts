@@ -11,3 +11,102 @@ I am going to quickly glance through my import process, and make sure I am not i
 I found a 2012 database design book on a newsbin search.  Ill read some of that tonight while trying to wind down for the night.
 
  BEI app rule.  For june.
+
+
+
+    Review data, concepts discusson
+[+] issues with fixparla - sum cost, qty
+[+] I am not going to want to drop all for production data.  remove that for good practice.  I will do this manually, every time.
+[-] Verify data, is this all correct, files/datareview
+
+[!!] Focus on Task completion 
+
+	Task List
+[!] Review queries, remove unecessary data
+[!] Complete Drawing
+[!] Top Ten Graphs for Each
+[!] terminal plugin for sublime
+[!] D3 Graph
+[!] Read a chapter from my database design book.
+[!] Clean up git
+
+<!-- [% INCLUDE section/tables/top10/calltypes_by_totalcalls.tpl rendering_info = top_ten_call_types_month_index(dashboard_data.month_index) %] -->
+
+Questions
+[+] Is there 0 tech calls for the month of 4 and 5
+
+
+#i need to worry about closing my db after dashboard
+	my %dashboard_data = ( 'top_ten_call_types_month' => '');
+	
+	my @total_values_array;
+	
+	#|current month|
+	my $current_month = '3';
+	my $sth = $dbh->prepare("
+		SELECT src.month_index, src.month
+		FROM (
+		SELECT MONTH(completion_datetime) as month_index, MONTHNAME(completion_datetime) as month 
+		FROM service 
+		GROUP BY month_index
+		ORDER BY completion_datetime DESC LIMIT 1
+		) AS src;
+	");
+	$sth->execute(); 	#expecting 1 row
+	if($sth->rows == 1){   
+		my $row = $sth->fetchrow_hashref;	
+		#push @dashboard_data, $row;	
+		$dashboard_data{'month'} .= $row->{'month'};
+		$dashboard_data{'month_index'} .= $row->{'month_index'};
+	}
+
+
+	#|Total Calls |
+	my $sth = $dbh->prepare("SELECT count(*) AS total_calls FROM service");
+	$sth->execute(); 	#expecting 1 row
+	if($sth->rows == 1){   
+		my $row = $sth->fetchrow_hashref;	
+		#push @dashboard_data, $row;	
+		$dashboard_data{'total_calls'} .= $row->{'total_calls'};
+	}
+
+	#|Total Parts |
+	my $sth = $dbh->prepare("SELECT count(*) AS total_parts FROM parts;");
+	$sth->execute();	#expecting 1 row
+	if($sth->rows == 1){   
+		my $row = $sth->fetchrow_hashref;	
+		$dashboard_data{'total_parts'} .= $row->{'total_parts'};
+		#push @dashboard_data, $row;	
+	}
+
+	#|Total Serials w/ Calls |
+	my $sth = $dbh->prepare("SELECT count(*) AS total_serials_w_calls 
+								FROM service 
+								JOIN serials AS s ON s.serial_id = service.serial_id;");
+	$sth->execute();	#expecting 1 row
+	if($sth->rows == 1){   
+		my $row = $sth->fetchrow_hashref;	
+		$dashboard_data{'total_serials_w_calls'} .= $row->{'total_serials_w_calls'};
+		#push @dashboard_data, $row;	
+	}
+
+	#|Total Techs w/ Calls |
+	my $sth = $dbh->prepare("SELECT count(*) AS total_techs_w_calls FROM technicians
+JOIN service AS ser ON ser.technician_id = technicians.technician_id ;");
+	$sth->execute();	#expecting 1 row
+	if($sth->rows == 1){   
+		my $row = $sth->fetchrow_hashref;	
+		$dashboard_data{'total_techs_w_calls'} .= $row->{'total_techs_w_calls'};
+		#push @dashboard_data, $row;	
+	}
+
+	#|Total Models w/ Calls|
+	my $sth = $dbh->prepare("SELECT count(*) AS total_models_w_calls FROM models
+							JOIN serials AS s ON s.model_id = models.model_id
+							JOIN service AS ser ON ser.serial_id = s.serial_id ;");
+	$sth->execute();	#expecting 1 row
+	if($sth->rows == 1){   
+		my $row = $sth->fetchrow_hashref;	
+		$dashboard_data{'total_models_w_calls'} .= $row->{'total_models_w_calls'};
+		#push @dashboard_data, $row;	
+	}

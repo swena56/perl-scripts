@@ -80,7 +80,8 @@ sub scrub_line {
 	my $territory_field 				= "$array[23]";
 
 	#$date_sold_or_rented = BEI::Utils::verify_and_convert_date($date_sold_or_rented);
-
+	#example fixserl data
+	#210210263|REXELL SHREDDER|0|06/08/05|4550S3||0|    ||34401|CH-110TC30|1220|||50265|    |SN-210210263|UA||0|  Z
 	$line = "$serial|$machine_description|$initial_meter_reading" .
 			   "|$date_sold_or_rented|$model_number|$source_code".
 			   "|$meter_reading|$null_placeholder|$date_of_last_service_call".

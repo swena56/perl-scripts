@@ -65,6 +65,7 @@ sub scrub_line {
 	my $parts_cost 					= "$array[9]";
 	my $customer_number 			= "$array[10]";
 
+	#02008051|CHARGE ROLLER CLEANING ROLLER|+|1|SC61813|LD435C|L8976820679|03/08/16|0|11.72|CR|    |  Z
 	$line = "$part_number|$part_description|$add_sub_indicator|$quantity_used|$call_id|$model_number|$serial_number|$installation_date|$init_meter_reading|$parts_cost|$customer_number\n";
 
 	return $line;

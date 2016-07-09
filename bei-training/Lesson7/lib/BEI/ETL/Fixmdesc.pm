@@ -38,6 +38,7 @@ sub scrub_line {
  	my $meter_code					= "$array[0]";
 	my $meter_code_description		= "$array[1]";
 	
+	#B\W|This is to be used with black and white meters| Z
 	$line = "$meter_code|$meter_code_description\n";
 
 	return $line;

@@ -39,21 +39,41 @@
 
 
 </style>
+
+<h3> [% title %] </h3>
+ [% FOREACH value IN columns %]
+       <p> c [% value %] </p> 
+[% END %]
+ [% FOREACH value IN rows %]
+       <p> rows [% value %] </p> 
+[% END %]
+
 <svg class="chart"></svg>
 <script src="http://d3js.org/d3.v3.min.js"></script>
 <script>
 
+
+/*var col = [];
+[% FOREACH value IN columns %]
+      col.push(l[% value %]);
+[% END %]
+
+
+var values = [];
+[% FOREACH value IN rows %]
+    values.push([% value %]);
+[% END %]
+var series_arr = [ {label: "test", values: values }]      
+data.push(series: series_arr);*/
+
 var data = {
-  labels: [
-    'MPC4503-LC','MPC5503','MPC3002','MPC4502','LD625C','MP4054SP','HPLJP3015','LD255SP','ML-6515ND','LD220SPF'
-  ],
+  labels: ["label1"],
   series: [
     {
       label: 'Amount',
-      values: [60, 33,27,9,6,5,4,4,3]
+      values: [10,10,2,3,45,6]
     },
-    
-    ]
+]
 };
 
 var chartWidth       = 300,

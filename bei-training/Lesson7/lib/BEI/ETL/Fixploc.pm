@@ -58,6 +58,7 @@ sub scrub_line {
 	my $warehouse_location_num		= "$array[8]";
 	my $qty_on_hand		 			= "$array[9]";
 	
+	#02008051|02008051|CHARGE ROLLER CLEANING ROLLER|10|1033|1|2088|2|5001|6|6001|1| Z
 	$line = "$product_code|$vendor_part_number|$description|$identifier|$item_cost|$record_creation_date|$total_qty|$warehouse_qty|$warehouse_location_num|$qty_on_hand\n";
 
 	return $line;

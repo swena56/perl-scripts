@@ -90,8 +90,7 @@ sub scrub_line {
 	my $response_time 				= "$array[27]";
 
 
-	
-
+	#|SC62481|LD117SPF|V4409101083|03/22/16|1156|31|1348|1419|APPT|||||03/23/16|1322|03/23/16|58760|40625|06/09/14||   |   ||2057|CR||  Z
 	$line = "$null_field1|$call_id|$model_number|$serial_number|$call_date|$call_time|$customer_time".
 			"|$arrival_time|$call_completion_time|$call_type|$problem_code|$location_code|$reason_code".
 			"|$correction_code|$date_dispatched|$time_dispatched|$completion_date|$meter_reading_total".

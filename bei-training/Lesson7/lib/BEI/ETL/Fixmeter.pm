@@ -42,6 +42,7 @@ sub scrub_line {
 	my $meter_code 			= "$array[4]";
 	my $meter_reading 		= "$array[5]";
 
+	#SC60282|MPC4503-LC|E175M810836|03/07/16|B\W|4186|Color|932| Z
 	$line = "$call_id|$model|$serial_number|$completion_date|$meter_code|$meter_reading\n";
 
 	return $line;

@@ -56,7 +56,7 @@ sub scrub_line {
 	my $interrupt_hours 	= "$array[10]";
 	my $mileage 			= "$array[11]";
 
-
+	#|SC60282|MPC4503-LC|E175M810836|SL|False|03/07/16|TD00|0910|0910|0910|0000|0|  Z
 	$line = "$call_id|$model|$serial|$activity_code|$assist|$date|$tech_number|$dispatch_time|$arrival_time|$departure_time|$interrupt_hours|$mileage\n";
 
 	return $line;

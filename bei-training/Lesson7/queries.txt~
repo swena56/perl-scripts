@@ -6,8 +6,6 @@ GROUP BY most_recent_month
 ORDER BY most_recent_month DESC LIMIT 1
 ) AS src;
 
-
-
 +------------+
 |Total Calls |
 +------------+

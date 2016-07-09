@@ -44,7 +44,7 @@ print `files/drop_all.sh`;
 #connect to database
 my $dbh = &connect();
 
-#TODO complete task before moving on.
+
 BEI::CreatePermanentStorage::run($dbh);
 
 #process zip files provided by arguments if there are none lets use our test data
@@ -64,18 +64,14 @@ else {
 
 #extract data and its content files to an array for processing
 foreach my $zip (@zip_files) {
-    
-    #clean up clutter in temp directory
-    print "[+] Clear temp directory for $zip\n";
-    &cleanup_temp_directory();    # i might need to prove that this works
 
+     &cleanup_temp_directory();
+   
     my @files = &extract_zip( $zip, TEMP_DIR );
     my %extracted_files = ();
     $extracted_files{$zip} = \@files;
 
     my $num_files = ( scalar @{ $extracted_files{$zip} } );
-
-    
 
     #loop through the extracted files and process them
     for ( my $index = 0; $index < $num_files; $index++ ) {
@@ -92,7 +88,10 @@ foreach my $zip (@zip_files) {
             $obj->run();
         }
 
+         #clean up clutter in temp directory
         unlink $current_file;
+        print "[+] Clear temp directory for $zip\n";
+       
     }
 
      #insert the temp tables in permenant storage

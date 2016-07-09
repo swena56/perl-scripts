@@ -17,7 +17,7 @@
 
   .x.axis path {  display: none; }
   .legend{
-      margin-bottom:100px;
+      margin-bottom:150px;
       display:inline-block;
      /* border-collapse: collapse;*/
       border-spacing: 0px;
@@ -34,7 +34,7 @@
     color: black;
   }
   .dashboard{
-      border: 1px solid blue;
+      
       outline-color: blue; 
       background-color: white;
   }
@@ -51,19 +51,9 @@
 #dash{
     float: center;
     width: 1200px;
+    height: 800px;
 }
-
-
 </style>
-
-
-
-
-<script>
-
-
-
-</script>
 
 <div id="dash" align='center' >
   <h3 value='3'> [% dashboard_title %] for [% dashboard_data.month %] </h3><br>
@@ -74,17 +64,17 @@
           <a id="total_calls" data-toggle="collapse" data-parent="#accordion" href="#collapse1">Total Calls: [% dashboard_data.total_calls %]</a>
         </h4>
       </div>
-      <div id="collapse1" class="panel-collapse collapse">
+      <div id="collapse1" class="panel-collapse collapse in">
         <div class="panel-body">            
-            <div class="col-md-4" style="background-color:white;">
-[% INCLUDE section/tables/models_top10.tpl rendering_info = top_ten_call_types_month_index(dashboard_data.month_index) %]
+            <div class="col-md-4">
+[% INCLUDE section/tables/top10/calltypes_by_totalcalls.tpl rendering_info = top_ten_calltypes(dashboard_data.month_index) %]
             <div id="draw_top_ten_models_here"></div>
             </div>
-            <div class="col-md-4" style="background-color:white;">
-[% INCLUDE section/tables/models_top10.tpl rendering_info = top_ten_models_for_month_index(dashboard_data.month_index) %]
+            <div class="col-md-4">
+[% INCLUDE section/tables/top10/models_by_totalcalls.tpl rendering_info = top_ten_models(dashboard_data.month_index) %]
             </div>
-            <div class="col-md-4" style="background-color:white;">
-[% INCLUDE section/tables/models_top10.tpl rendering_info = top_ten_models_for_month_index(dashboard_data.month_index) %]
+            <div class="col-md-4">
+ [% INCLUDE section/tables/top10/techs_by_totalcalls.tpl rendering_info = top_ten_techs(dashboard_data.month_index) %] 
             </div>
             </div>
       </div>
@@ -97,80 +87,16 @@
       </div>
       <div id="collapse2" class="panel-collapse collapse">
         <div class="panel-body">
-            <div class="col-md-4" style="background-color:white;">
-            [% INCLUDE section/tables/models_top10.tpl rendering_info = top_ten_models_for_month_index(dashboard_data.month_index) %]
+            <div class="col-md-4">      
             </div>
-            <div class="col-md-4" style="background-color:white;">
-             [% INCLUDE section/tables/models_top10.tpl rendering_info = top_ten_models_for_month_index(dashboard_data.month_index) %]
+            <div class="col-md-4">           
             </div>
-            <div class="col-md-4" style="background-color:white;">
-              [% INCLUDE section/tables/models_top10.tpl rendering_info = top_ten_models_for_month_index(dashboard_data.month_index) %]
-            </div>
-            </div>
-        </div>
-      </div>
-    
-    <div class="panel panel-default">
-      <div class="panel-heading">
-        <h4 class="panel-title">
-          <a data-toggle="collapse" data-parent="#accordion" href="#collapse3">Total Serials With Calls: [% dashboard_data.total_serials_w_calls %]</a>
-        </h4>
-      </div>
-      <div id="collapse3" class="panel-collapse collapse">
-        <div class="panel-body">
-              <div class="col-md-4" style="background-color:white;">
-             [% INCLUDE section/tables/models_top10.tpl rendering_info = top_ten_models_for_month_index(dashboard_data.month_index) %]
-              </div>
-             <div class="col-md-4" style="background-color:white;">
-              [% INCLUDE section/tables/models_top10.tpl rendering_info = top_ten_models_for_month_index(dashboard_data.month_index) %]
-              </div>
-             <div class="col-md-4" style="background-color:white;">
-              [% INCLUDE section/tables/models_top10.tpl rendering_info = top_ten_models_for_month_index(dashboard_data.month_index) %]
-              </div>
-            </div>
-        </div>
-      </div>
-     <div class="panel panel-default">
-      <div class="panel-heading">
-        <h4 class="panel-title">
-          <a data-toggle="collapse" data-parent="#accordion" href="#collapse4">Total Technicians With Calls: [% dashboard_data.total_techs_w_calls %] </a>
-        </h4>
-      </div>
-      <div id="collapse4" class="panel-collapse collapse">
-        <div class="panel-body">
-              <div class="col-md-4" style="background-color:white;">
-             [% INCLUDE section/tables/models_top10.tpl rendering_info = top_ten_models_for_month_index(dashboard_data.month_index) %]
-              </div>
-             <div class="col-md-4" style="background-color:white;">
-              [% INCLUDE section/tables/models_top10.tpl rendering_info = top_ten_models_for_month_index(dashboard_data.month_index) %]
-              </div>
-             <div class="col-md-4" style="background-color:white;">
-              [% INCLUDE section/tables/models_top10.tpl rendering_info = top_ten_models_for_month_index(dashboard_data.month_index) %]
-              </div>
-            </div>
-        </div>
-      </div>
-      <div class="panel panel-default">
-      <div  class="panel-heading ">
-        <h4 class="panel-title ">
-          <a data-toggle="collapse"  data-parent="#accordion" href="#collapse5">Total Models With Calls: [% dashboard_data.total_models_w_calls %] </a>
-        </h4>
-      </div>
-      <div id="collapse5" class="panel-collapse collapse ">
-        <div class="panel-body">
-              <div class="col-md-4" >
-             [% INCLUDE section/tables/models_top10.tpl rendering_info = top_ten_models_for_month_index(dashboard_data.month_index) %]
-              </div>
-             <div class="col-md-4" style="background-color:white;">
-              [% INCLUDE section/tables/models_top10.tpl rendering_info = top_ten_models_for_month_index(dashboard_data.month_index) %]
-
-              </div>
-             <div class="col-md-4" style="background-color:white;">
-              [% INCLUDE section/tables/models_top10.tpl rendering_info = top_ten_models_for_month_index(dashboard_data.month_index) %]
-              </div>
+            <div class="col-md-4">    </div>
             </div>
         </div>
       </div>
       </div>
   </div> 
-</div>
+
+
+[%  show_trends() %]

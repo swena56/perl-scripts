@@ -12,15 +12,24 @@ use JSON;
 
 use lib qw(/home/ubuntu/perl-scripts/bei-training/Lesson7/lib);
 
+#use lib qw(/home/ubuntu/perl-scripts/bei-training/Lesson6/);
+
 my $template = Template->new(
 	  INCLUDE_PATH => '/home/ubuntu/perl-scripts/bei-training/Lesson7/cgi-bin/serial_audit/templates/'
+	
 );
 
 use BEI::DB 'connect';
 use BEI::JSON_response 'serial_search';
 
+
 my $cgi = CGI->new();  
 
+my @table_data;
+my $num_rows = 0;
+my $table_name;
+my @columns;
+my $message;
 
 my $pjx = new CGI::Ajax( 'render_serials_table' => \&render_serials_table, 					
 						'render_meters_template' => \&render_meters_template,
@@ -28,7 +37,6 @@ my $pjx = new CGI::Ajax( 'render_serials_table' => \&render_serials_table,
 						'top_ten_calltypes' => \&top_ten_calltypes,
 						'top_ten_models' => \&top_ten_models,
 						'top_ten_techs' => \&top_ten_techs,
-						'get_trend_data' => \&get_trend_data,
 						'show_trends' => \&show_trends
 						 );
 
@@ -63,13 +71,15 @@ sub top_ten_calltypes {
 	}
 
 	$sth->finish();	
+
 	
 	my $vars = {
 			title => "Top Ten Models",
 		  	table_data => \@table_data,
-	};
+		 };
 
-	return $vars;
+		return $vars;
+
 }
 
 sub top_ten_models {
@@ -117,13 +127,6 @@ sub top_ten_models {
 		return $vars;
 }
 
-sub get_trend_data {
-
-	my $input = shift || 0;
-
-	return Dumper($input);
-}
-
 sub top_ten_techs {
 
 	# need a group by method
@@ -132,32 +135,37 @@ sub top_ten_techs {
 
 	#|Top Ten Models by total calls for the month         |
 	my $sth = $dbh->prepare("
-	SELECT t.technician_id, t.technician_number, COUNT(ct.call_type) as total_calls from technicians as t
-	JOIN service AS s ON s.technician_id = t.technician_id
-	JOIN call_types AS ct ON ct.call_type_id = s.call_id_not_call_type
-	where MONTH(s.completion_datetime) = ?
-	GROUP by t.technician_id
-	ORDER BY total_calls LIMIT 10;
-		");
+	SELECT src.technician_id, src.technician_number, src.total_calls, src.month
+	FROM (
+	SELECT t.technician_id, t.technician_number ,COUNT(t.technician_id) AS total_calls, MONTH(completion_datetime) AS month
+	FROM service AS s 
+	JOIN technicians AS t ON s.technician_id = t.technician_id
+	WHERE MONTH(completion_datetime) = ?
+	GROUP BY t.technician_number
+	) AS src
+	ORDER BY src.total_calls  DESC LIMIT 10;
+	");
 	$sth->execute($month_index);
 	my $message;
-	my @table_data = ["No data for this month"];
+	my @table_data;
 
 	if($sth->rows > 0){   
-		@table_data = [];
+
 		while(my $row = $sth->fetchrow_hashref){
 			push @table_data, $row;		
 		}	
-	}
+	} else {
+	$message = "No data for this month";
+		}
 
 	$sth->finish();	
-my $debug = Dumper(@table_data);
-	my $vars = {
-	  	table_data => \@table_data,
-	  	debug => $debug,	  
-	};
 
-	return $vars;
+	my $vars = {
+		  	table_data => \@table_data,
+		  	message => $message
+		};
+
+		return $vars;
 }
 
 sub render_meters_template {
@@ -179,11 +187,11 @@ sub render_meters_template {
 		my $sth = $dbh->prepare($sql);
 
 		$sth->execute($input);				
-		my $num_rows = $sth->rows;
+		$num_rows = $sth->rows;
 		
 		my $total_parts_cost = 0;
 
-		my @columns = ('Serial Number',  'Meter Code', 'Meter Description', 'Meter');
+		@columns = ('Serial Number',  'Meter Code', 'Meter Description', 'Meter');
 		
 		#set message about data found
 		my $message_text_color = ($num_rows <= 0) ? 'red' : 'green' ;					   
@@ -239,11 +247,11 @@ sub render_parts_template {
 		);
 
 		$sth->execute($input);				
-		my $num_rows = $sth->rows;
+		$num_rows = $sth->rows;
 		
 		
 
-		my @columns = ('Part Number',  'Serial Number', 'Part Cost');
+		@columns = ('Part Number',  'Serial Number', 'Part Cost');
 		
 		#set message about data found
 		my $message_text_color = ($num_rows <= 0) ? 'red' : 'green' ;					   
@@ -310,6 +318,7 @@ sub update_dashboard {
 		return $output;
 }
 
+
 sub Show_HTML {
 
 	#+------------+
@@ -340,6 +349,7 @@ sub Show_HTML {
 		$dashboard_data{'month'} .= $row->{'month'};
 		$dashboard_data{'month_index'} .= $row->{'month_index'};
 	}
+
 
 	#|Total Calls |
 	my $sth = $dbh->prepare("SELECT count(*) AS total_calls FROM service");
@@ -403,14 +413,19 @@ sub Show_HTML {
 		title => "Serial Audit",
 	    about  => 'about serial audit.....',
 	    guest_welcome_message  => 'Welcome to Serial Audit Guest User ',
+	    message => $message,
+	    menu => [],
+	    table_name => $table_name,
+	    table_columns => \@columns,
+	    table_data  => \@table_data,
+	    number_results => $num_rows,
 	    render_parts => \&render_parts_template, 
 	    render_meter => \&render_meter_codes_template,
 	    top_ten_models => \&top_ten_models,
 	    top_ten_calltypes => \&top_ten_calltypes,
 	    top_ten_techs => \&top_ten_calltypes,
-	    top_ten_parts => \&top_ten_parts,
-	    show_trends => \&show_trends,					
-	
+	    show_trends => \&show_trends,
+	    debug => $debug,
 	    dashboard_title => 'Service Call Analytics Dashboard',
 	    dashboard_data => \%dashboard_data,
 	#display_dashboard => \&display_dashboard,
@@ -420,6 +435,7 @@ sub Show_HTML {
     my $output = '';
     $template->process('section/index.tpl', $vars,\$output)  || die $template->error();
     
+
 	    return $output;
   }
 
