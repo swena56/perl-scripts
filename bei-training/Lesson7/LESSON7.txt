@@ -4,7 +4,7 @@ Day 7-10
 #issues with fixparla - sum cost, qty
 #terminal plugin for sublime
 #I am not going to want to drop all for production data.  remove that for good practice.
-
+#month toggle
 
 Design a Service Information Dashboard
 

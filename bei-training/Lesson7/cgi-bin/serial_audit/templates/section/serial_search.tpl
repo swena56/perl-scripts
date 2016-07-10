@@ -9,9 +9,7 @@
  -->
 
 <style>
-
-
-        .bodycontainer { max-height: 350px; width: 100%; margin: 0; overflow-y: auto; }
+        .bodycontainer { max-height: 360px; width: 100%; margin: 0; overflow-y: auto; }
         .table-scrollable { margin: 0; padding: 0; }
 
 /* The Modal (background) */
@@ -54,9 +52,6 @@
 }
 </style>
 
-
-
-<figure style="width: 400px; height: 300px;" id="example3"></figure>
 <!-- model functionality -->
 <script type='text/javascript'>
 
@@ -86,10 +81,6 @@
 
 <h2> [% title %] </h2>
 <p> [% message %] </p>
-<!-- <p> [% user_input %]</p> 
-<p> [% var_dump_data %]</p>
-
--->
 <script type='text/javascript'>
     
      $(document).ready(function(){

@@ -1,3 +1,10 @@
++-----------------+
+|Available Months |
++-----------------+
+SELECT month(completion_datetime) FROM service
+GROUP BY month(completion_datetime);
++-----------------+
+
 SELECT src.most_recent_month
 FROM (
 SELECT MONTH(completion_datetime) as most_recent_month, MONTH(completion_datetime) as most_recent_month FROM service 

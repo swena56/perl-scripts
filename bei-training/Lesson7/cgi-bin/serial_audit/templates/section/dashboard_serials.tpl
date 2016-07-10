@@ -38,6 +38,18 @@
       outline-color: blue; 
       background-color: white;
   }
+  #month_selection{
+    background-color: white;
+  }
+  #previous_month, #next_month{
+    /* background-color: grey;*/
+  }
+  .pager {
+    background-color: white;
+    color: blue;
+  }
+  
+  
   .accordion > div {
     display:none;
   }
@@ -55,9 +67,88 @@
 }
 </style>
 
+<script>
+
+
+  /*  var size = parseInt("[% available_months.size %]");
+    var first_month = parseInt("[% available_months.first %]");
+    var last_month = parseInt("[% available_months.last %]");
+    var current_month = last_month;
+
+
+    console.log("size " + size);
+    console.log("current month " + current_month);
+    console.log("first_month month " + first_month);
+    console.log("last_month month " + last_month);
+
+    //initally set current month display
+    $("#current_month").text("Current Month: "+ current_month);
+
+    //detech previous month change button
+    $("#previous_month").on('click', function(){
+      console.log("Previous Month Click Deteched.  Current: " + current_month + ", previous: " + (current_month - 1));
+      current_month--;
+      if(current_month < first_month){
+        current_month = last_month;
+
+      }
+      $("#current_month").text("Current Month: "+ current_month);
+    });
+
+    //detech next month change button
+    $("#next_month").on('click', function(){
+      console.log("Next Month Click Deteched.  Current: " + current_month + ", next: " + (current_month + 1));
+      current_month++;
+      if( current_month > last_month){
+           current_month = first_month;
+      }
+      $("#current_month").text("Current Month: "+ current_month);
+    });
+  });
+*/
+
+/*$(document).ready(function(){
+
+    [% dashboard_data = get_dashboard_data() %]  
+    var size = parseInt("[% available_months.size %]");
+      
+    var current_month = "[% dashboard_data.selected_month %]";
+    console.log("Current month: "+ current_month);
+    //initally set current month display
+    $("#current_month").text("Current Month: "+ current_month);
+
+    //detech previous month change button
+    $("#previous_month").on('click', function(){
+    
+      [% dashboard_data = get_dashboard_data(3) %]  
+     
+      current_month = "[% dashboard_data.selected_month %]";
+      $("#current_month").text("Current Month: "+ current_month);
+    });
+
+    //detech next month change button
+    $("#next_month").on('click', function(){
+      
+     
+      
+    });
+  });*/
+
+</script>
+
 <div id="dash" align='center' >
-  <h3 value='3'> [% dashboard_title %] for [% dashboard_data.month %] </h3><br>
-  <div  class="panel-group" id="accordion">
+    
+    <h3> [% dashboard_title %] for [% dashboard_data.month %]  </h3>
+     <h3> Selected month [% dashboard_data.selected_month %]  </h3>
+ 
+    <div class='pager' id="month_selection">
+      
+      <h3 id='current_month'></h3>
+      <div align='left' class="previous"><a href="#">Previous</a></div>
+      <div align='right' class="next"><a id="next_month" href="#">Next</a></div>
+    </div>
+
+    <div  class="panel-group" id="accordion">
     <div class="panel panel-default">
       <div id="total_calls" class="panel-heading">
         <h4 class="panel-title">

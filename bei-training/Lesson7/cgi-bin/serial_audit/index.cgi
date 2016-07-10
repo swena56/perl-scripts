@@ -13,152 +13,37 @@ use JSON;
 use lib qw(/home/ubuntu/perl-scripts/bei-training/Lesson7/lib);
 
 my $template = Template->new(
-	  INCLUDE_PATH => '/home/ubuntu/perl-scripts/bei-training/Lesson7/cgi-bin/serial_audit/templates/'
+	  INCLUDE_PATH => '/home/ubuntu/perl-scripts/bei-training/Lesson7/cgi-bin/serial_audit/templates/',
+	  					'/home/ubuntu/perl-scripts/bei-training/Lesson7/cgi-bin/serial_audit/dashboard'
 );
 
 use BEI::DB 'connect';
 use BEI::JSON_response 'serial_search';
 
 my $cgi = CGI->new();  
-
-
 my $pjx = new CGI::Ajax( 'render_serials_table' => \&render_serials_table, 					
 						'render_meters_template' => \&render_meters_template,
 						'render_parts_template' => \&render_parts_template,
-						'top_ten_calltypes' => \&top_ten_calltypes,
-						'top_ten_models' => \&top_ten_models,
-						'top_ten_techs' => \&top_ten_techs,
-						'get_trend_data' => \&get_trend_data,
-						'show_trends' => \&show_trends
 						 );
 
 print $pjx->build_html( $cgi, \&Show_HTML);	
+sub Show_HTML {
 
-sub top_ten_calltypes {
-
-	# need a group by method
-	my $month_index = shift || 0;
-	my $dbh = &connect();
-
-	#|Top Ten Models by total calls for the month         |
-	my $sth = $dbh->prepare("
-	SELECT src.call_type, src.total_calls, src.month
-	FROM (
-	SELECT c.call_type,COUNT(c.call_type) AS total_calls, MONTH(completion_datetime) AS month
-	FROM service AS s 
-	JOIN serials ON s.serial_id = serials.serial_id
-	JOIN call_types AS c ON s.call_type_id = c.call_type_id
-	WHERE MONTH(completion_datetime) = ?
-	GROUP BY c.call_type
-	) AS src
-	ORDER BY src.total_calls DESC LIMIT 10;
-	");
-	my @table_data;
-	$sth->execute($month_index);
-	if($sth->rows > 0){   
-
-		while(my $row = $sth->fetchrow_hashref){
-			push @table_data, $row;		
-		}	
-	}
-
-	$sth->finish();	
-	
-	my $vars = {
-			title => "Top Ten Models",
-		  	table_data => \@table_data,
+	  my $vars = {
+		title => "Serial Audit",
+	    about  => 'about serial audit.....',
+	    guest_welcome_message  => 'Welcome to Serial Audit Guest User ',
+	    render_parts => \&render_parts_template, 
+	    render_meter => \&render_meter_codes_template,
+	    available_months => \&available_months,
+	    footer  => 'By: Andrew Swenson',	   
 	};
 
-	return $vars;
-}
-
-sub top_ten_models {
-
-	# need a group by method
-	my $month_index = shift || 0;
-	my $dbh = &connect();
-
-	#|Top Ten Models by total calls for the month         |
-	my $sth = $dbh->prepare("
-	SELECT src.model_number, src.model_count, src.completion_datetime 
-	FROM (
-	SELECT m.model_number AS model_number,COUNT(m.model_number) AS model_count, MONTH(completion_datetime) AS month, completion_datetime
-	FROM service AS s 
-	JOIN serials ON s.serial_id = serials.serial_id
-	JOIN models AS m ON serials.model_id = m.model_id
-	JOIN technicians AS t ON s.technician_id = t.technician_id
-	JOIN call_types AS c ON s.call_type_id = c.call_type_id
-	GROUP BY m.model_number
-	) AS src
-	WHERE src.month = ?
-	ORDER BY src.model_count DESC LIMIT 10;
-	");
-	$sth->execute($month_index);
-
-	my @columns = ('Model Number', 'Amount', 'Date');
-	my @table_data;
-
-	if($sth->rows > 0){   
-
-		while(my $row = $sth->fetchrow_hashref){
-			push @table_data, $row;		
-		}	
-	}
-	$sth->finish();	
-	my $debug_dump = Dumper(@table_data);
-
-	my $vars = {
-			title => "Top Ten Models",
-		  	table_data => \@table_data,
-		  	table_columns => \@columns,
-		  	debug => $debug_dump,
-		};
-
-		return $vars;
-}
-
-sub get_trend_data {
-
-	my $input = shift || 0;
-
-	return Dumper($input);
-}
-
-sub top_ten_techs {
-
-	# need a group by method
-	my $month_index = shift || 0;
-	my $dbh = &connect();
-
-	#|Top Ten Models by total calls for the month         |
-	my $sth = $dbh->prepare("
-	SELECT t.technician_id, t.technician_number, COUNT(ct.call_type) as total_calls from technicians as t
-	JOIN service AS s ON s.technician_id = t.technician_id
-	JOIN call_types AS ct ON ct.call_type_id = s.call_id_not_call_type
-	where MONTH(s.completion_datetime) = ?
-	GROUP by t.technician_id
-	ORDER BY total_calls LIMIT 10;
-		");
-	$sth->execute($month_index);
-	my $message;
-	my @table_data = ["No data for this month"];
-
-	if($sth->rows > 0){   
-		@table_data = [];
-		while(my $row = $sth->fetchrow_hashref){
-			push @table_data, $row;		
-		}	
-	}
-
-	$sth->finish();	
-my $debug = Dumper(@table_data);
-	my $vars = {
-	  	table_data => \@table_data,
-	  	debug => $debug,	  
-	};
-
-	return $vars;
-}
+    my $output = '';
+    $template->process('index.tpl', $vars,\$output)  || die $template->error();
+    
+	    return $output;
+ }
 
 sub render_meters_template {
 
@@ -288,153 +173,24 @@ sub render_parts_template {
     return "error loading parts model template";
 }
 
-sub show_trends {
-	my $vars = {
-		  	title => "Trends Data",
-		};
+sub available_months {
 
-		my $output = '';
-		$template->process('section/pop_models/trends.tpl', $vars,\$output)  || die $template->error();
-
-		return $output;
-}
-
-sub update_dashboard {
-		my $vars = {
-		  	title => "Service Calls Analytics",
-		};
-
-		my $output = '';
-		$template->process('section/dasboard_serials.tpl', $vars,\$output)  || die $template->error();
-
-		return $output;
-}
-
-sub Show_HTML {
-
-	#+------------+
-	#| dashboard  |
-	#+------------+
+	my @available_months;
 	my $dbh = &connect();
+	my $sth = $dbh->prepare("SELECT month(completion_datetime) FROM service GROUP BY month(completion_datetime) ORDER BY month(completion_datetime);");
+	$sth->execute();
 
-	#i need to worry about closing my db after dashboard
-	my %dashboard_data = ( 'top_ten_call_types_month' => '');
-	
-	my @total_values_array;
-	
-	#|current month|
-	my $current_month = '3';
-	my $sth = $dbh->prepare("
-		SELECT src.month_index, src.month
-		FROM (
-		SELECT MONTH(completion_datetime) as month_index, MONTHNAME(completion_datetime) as month 
-		FROM service 
-		GROUP BY month_index
-		ORDER BY completion_datetime DESC LIMIT 1
-		) AS src;
-	");
-	$sth->execute(); 	#expecting 1 row
-	if($sth->rows == 1){   
-		my $row = $sth->fetchrow_hashref;	
-		#push @dashboard_data, $row;	
-		$dashboard_data{'month'} .= $row->{'month'};
-		$dashboard_data{'month_index'} .= $row->{'month_index'};
+	while(my @row = $sth->fetchrow_array){
+		push @available_months, @row;
 	}
 
-	#|Total Calls |
-	my $sth = $dbh->prepare("SELECT count(*) AS total_calls FROM service");
-	$sth->execute(); 	#expecting 1 row
-	if($sth->rows == 1){   
-		my $row = $sth->fetchrow_hashref;	
-		#push @dashboard_data, $row;	
-		$dashboard_data{'total_calls'} .= $row->{'total_calls'};
-	}
+	$sth->finish();
 
-	#|Total Parts |
-	my $sth = $dbh->prepare("SELECT count(*) AS total_parts FROM parts;");
-	$sth->execute();	#expecting 1 row
-	if($sth->rows == 1){   
-		my $row = $sth->fetchrow_hashref;	
-		$dashboard_data{'total_parts'} .= $row->{'total_parts'};
-		#push @dashboard_data, $row;	
-	}
-
-	#|Total Serials w/ Calls |
-	my $sth = $dbh->prepare("SELECT count(*) AS total_serials_w_calls 
-								FROM service 
-								JOIN serials AS s ON s.serial_id = service.serial_id;");
-	$sth->execute();	#expecting 1 row
-	if($sth->rows == 1){   
-		my $row = $sth->fetchrow_hashref;	
-		$dashboard_data{'total_serials_w_calls'} .= $row->{'total_serials_w_calls'};
-		#push @dashboard_data, $row;	
-	}
-
-	#|Total Techs w/ Calls |
-	my $sth = $dbh->prepare("SELECT count(*) AS total_techs_w_calls FROM technicians
-	JOIN service AS ser ON ser.technician_id = technicians.technician_id ;");
-	$sth->execute();	#expecting 1 row
-	if($sth->rows == 1){   
-		my $row = $sth->fetchrow_hashref;	
-		$dashboard_data{'total_techs_w_calls'} .= $row->{'total_techs_w_calls'};
-		#push @dashboard_data, $row;	
-	}
-
-	#|Total Models w/ Calls|
-	my $sth = $dbh->prepare("SELECT count(*) AS total_models_w_calls FROM models
-							JOIN serials AS s ON s.model_id = models.model_id
-							JOIN service AS ser ON ser.serial_id = s.serial_id ;");
-	$sth->execute();	#expecting 1 row
-	if($sth->rows == 1){   
-		my $row = $sth->fetchrow_hashref;	
-		$dashboard_data{'total_models_w_calls'} .= $row->{'total_models_w_calls'};
-		#push @dashboard_data, $row;	
-	}
-
-	$sth->finish();	
-
-	#print debug code
-	my $debug = Dumper(%dashboard_data);
-	#+-------------------+
-	#| end of dashboard  |
-	#+-------------------+
-	#index start template
-	  my $vars = {
-		title => "Serial Audit",
-	    about  => 'about serial audit.....',
-	    guest_welcome_message  => 'Welcome to Serial Audit Guest User ',
-	    render_parts => \&render_parts_template, 
-	    render_meter => \&render_meter_codes_template,
-	    top_ten_models => \&top_ten_models,
-	    top_ten_calltypes => \&top_ten_calltypes,
-	    top_ten_techs => \&top_ten_calltypes,
-	    top_ten_parts => \&top_ten_parts,
-	    show_trends => \&show_trends,					
-	
-	    dashboard_title => 'Service Call Analytics Dashboard',
-	    dashboard_data => \%dashboard_data,
-	#display_dashboard => \&display_dashboard,
-	    footer  => 'By: Andrew Swenson',	   
-	};
-
-    my $output = '';
-    $template->process('section/index.tpl', $vars,\$output)  || die $template->error();
-    
-	    return $output;
-  }
-
-
-sub update_dashboard {
-		my $vars = {
-		  	title => "Service Calls Analytics",
-		};
-
-		my $output = '';
-		$template->process('section/dasboard_serials.tpl', $vars,\$output)  || die $template->error();
-
-		return $output;
+	return @available_months;
 }
 
+
+#used for adding commas to in my meters popup
 sub commify {
 	my $str = reverse shift || die("commify needs a string to work.");
 	$str =~ s/(\d\d\d)(?=\d)(?!\d*\.)/$1,/g;

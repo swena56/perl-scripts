@@ -10,8 +10,8 @@
 
 <style>
 
-
-        .bodycontainer { max-height: 350px; width: 100%; margin: 0; overflow-y: auto; }
+        
+        #search_table_results { max-height: 450px; width: 100%; margin: 0; overflow-y: auto; }
         .table-scrollable { margin: 0; padding: 0; }
 
 /* The Modal (background) */
@@ -84,16 +84,10 @@
             modal.style.display = "none";
         }
     } 
-
-
 </script> 
 
 <h2> [% title %] </h2>
 <p> [% message %] </p>
-<!-- <p> [% user_input %]</p> 
-<p> [% var_dump_data %]</p>
-
--->
 
 <!-- Columns -->
 <table  text-align='left' class='table table-hover table-responsive'>
@@ -104,16 +98,11 @@
     </tr>
 </table>
 
-<!-- slurp
-
-Inspect perl variables in template toolkit, 
--->
-<div class='bodycontainer scrollable'>
+<div id="search_table_results" class='bodycontainer scrollable'>
     <table text-align='left' class='table table-hover table-responsive'>
       
        [% FOREACH row = table_data %]
         <tr>
-            
             <td> [% row.serial_number %]</td>
             <td> [% row.meter_code %]</td>
             <td> [% row.meter_description %]</td>

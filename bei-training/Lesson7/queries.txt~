@@ -1,3 +1,9 @@
++-----------------+
+|Available Months |
++-----------------+
+
++-----------------+
+
 SELECT src.most_recent_month
 FROM (
 SELECT MONTH(completion_datetime) as most_recent_month, MONTH(completion_datetime) as most_recent_month FROM service 
@@ -70,77 +76,90 @@ JOIN service AS ser ON ser.serial_id = s.serial_id ;
 +------------+------------+-------+---------------------+
 |    Top Ten Calltypes by total calls for the month     |
 +------------+------------+-------+---------------------+
-SELECT src.call_type, src.total_calls, src.month, src.completion_datetime
+SELECT src.call_type, src.total_calls, src.month
 FROM (
-SELECT c.call_type,COUNT(c.call_type) AS total_calls, MONTH(completion_datetime) AS month, completion_datetime
+SELECT c.call_type,COUNT(c.call_type) AS total_calls, MONTH(completion_datetime) AS month
 FROM service AS s 
 JOIN serials ON s.serial_id = serials.serial_id
 JOIN call_types AS c ON s.call_type_id = c.call_type_id
-GROUP BY c.call_type) 
-AS src
-WHERE src.month = 5
+WHERE MONTH(completion_datetime) = 5
+GROUP BY c.call_type
+) AS src
 ORDER BY src.total_calls DESC LIMIT 10;
-+-----------+-------------+-------+---------------------+
-| call_type | total_calls | month | completion_datetime |
-+-----------+-------------+-------+---------------------+
-| CC        |         153 |     5 | 2016-05-03 11:03:00 |
-| INST      |          94 |     5 | 2016-05-17 11:17:00 |
-| EM-NET    |          40 |     5 | 2016-05-23 10:23:00 |
-| APPT-NET  |          25 |     5 | 2016-05-12 12:12:00 |
-| EINFO     |          11 |     5 | 2016-05-26 10:26:00 |
-+-----------+-------------+-------+---------------------+
++------------+-------------+-------+
+| call_type  | total_calls | month |
++------------+-------------+-------+
+| RemoteTech |         389 |     5 |
+| EM         |         339 |     5 |
+| RS-NP      |          92 |     5 |
+| EM-DOWN    |          62 |     5 |
+| CC         |          54 |     5 |
+| APPT       |          46 |     5 |
+| RS-NA      |          44 |     5 |
+| INST       |          28 |     5 |
+| EM-NET     |          18 |     5 |
+| RS-END     |          16 |     5 |
++------------+-------------+-------+
+
 
 +--------------+-------------+-------+---------------------+
 |      Top Ten Models by total calls for the month         |
 +--------------+-------------+-------+---------------------+
-SELECT src.model_number, src.model_count, src.month, src.completion_datetime 
+SELECT src.model_number, src.total_calls, src.month
 FROM (
-SELECT m.model_number AS model_number,COUNT(m.model_number) AS model_count, MONTH(completion_datetime) AS month, completion_datetime
+SELECT m.model_number AS model_number,COUNT(s.service_id) AS total_calls, MONTH(completion_datetime) AS month
 FROM service AS s 
 JOIN serials ON s.serial_id = serials.serial_id
 JOIN models AS m ON serials.model_id = m.model_id
 JOIN technicians AS t ON s.technician_id = t.technician_id
 JOIN call_types AS c ON s.call_type_id = c.call_type_id
+WHERE MONTH(s.completion_datetime) = 5
 GROUP BY m.model_number
 ) AS src
-WHERE src.month = 5
-ORDER BY src.model_count DESC LIMIT 10;
-+--------------+-------------+-------+---------------------+
-| model_number | model_count | month | completion_datetime |
-+--------------+-------------+-------+---------------------+
-| MPC3003      |         105 |     5 | 2016-05-24 15:24:00 |
-| MP7502SP     |          51 |     5 | 2016-05-05 13:05:00 |
-| MPC3503      |          27 |     5 | 2016-05-02 13:02:00 |
-| CLX-9201NA   |          22 |     5 | 2016-05-03 08:03:00 |
-| MP3352SP-LC  |          19 |     5 | 2016-05-27 10:27:00 |
-| C931dn       |          18 |     5 | 2016-05-26 14:26:00 |
-| CX2633-3TRAY |          18 |     5 | 2016-05-03 10:03:00 |
-| LD050SP      |          17 |     5 | 2016-05-04 12:04:00 |
-| LD425SP      |          15 |     5 | 2016-05-23 12:23:00 |
-| X658de       |          13 |     5 | 2016-05-11 10:11:00 |
-+--------------+-------------+-------+---------------------+
+ORDER BY src.total_calls DESC LIMIT 10;
++--------------+-------------+-------+
+| model_number | total_calls | month |
++--------------+-------------+-------+
+| NONPROD      |         393 |     5 |
+| MPS3537mc    |          57 |     5 |
+| MPC3003      |          41 |     5 |
+| MPC4503-LC   |          28 |     5 |
+| LD620C       |          24 |     5 |
+| LD520C       |          19 |     5 |
+| MP6002SP     |          17 |     5 |
+| PRO C7110    |          16 |     5 |
+| MPC305SPF    |          16 |     5 |
+| MPC2003      |          16 |     5 |
++--------------+-------------+-------+
+
 
 +-------------------+------------+-------+---------------------+
-|      - Top Ten Techs by total calls for the month            |
+|      - Top Ten Techs by total calls for the month            |  I might want to know the call type
 +-------------------+------------+-------+---------------------+
-SELECT src.technician_number, src.tech_count, src.month, src.completion_datetime 
+SELECT src.technician_id, src.technician_number, src.total_calls, src.month
 FROM (
-SELECT t.technician_number AS technician_number,COUNT(t.technician_id) AS tech_count, MONTH(completion_datetime) AS month, completion_datetime
+SELECT t.technician_id, t.technician_number AS technician_number,COUNT(t.technician_id) AS total_calls, MONTH(completion_datetime) AS month
 FROM service AS s 
 JOIN technicians AS t ON s.technician_id = t.technician_id
 GROUP BY t.technician_number
 ) AS src
 WHERE src.month = 5
-ORDER BY src.tech_count  DESC LIMIT 10;
-+-------------------+------------+-------+---------------------+
-| technician_number | tech_count | month | completion_datetime |
-+-------------------+------------+-------+---------------------+
-| 1031              |        379 |     5 | 2016-05-04 13:04:00 |
-| 2088              |        359 |     5 | 2016-05-09 15:09:00 |
-| 2049              |        184 |     5 | 2016-05-03 11:03:00 |
-| TD00              |        126 |     5 | 2016-05-17 11:17:00 |
-| 2042              |         51 |     5 | 2016-05-23 10:23:00 |
-+-------------------+------------+-------+---------------------+
+ORDER BY src.total_calls  DESC LIMIT 10;
++---------------+-------------------+-------------+-------+
+| technician_id | technician_number | total_calls | month |
++---------------+-------------------+-------------+-------+
+|            10 | 2057              |         408 |     3 |
+|             1 | 1031              |         379 |     3 |
+|            11 | 2088              |         359 |     3 |
+|             8 | 2048              |         323 |     3 |
+|             4 | 1037              |         321 |     3 |
+|             5 | 1039              |         299 |     3 |
+|             6 | 1047              |         296 |     3 |
+|            12 | 2093              |         295 |     3 |
+|             2 | 1033              |         285 |     3 |
+|             3 | 1036              |         201 |     3 |
++---------------+-------------------+-------------+-------+
+
 
 
 - Top Ten Calltypes by total parts cost for the month
@@ -165,67 +184,66 @@ NOTES
 +------------+-------------+-------+---------------------+------------+
 |	- Top Ten Calltypes by total parts cost for the month	      |
 +------------+-------------+-------+---------------------+------------+
-SELECT src.call_type, src.total_calls, src.month, src.completion_datetime, src.part_cost_total
+SELECT src.call_type, src.month, src.part_cost_total
 FROM (
-SELECT c.call_type,COUNT(c.call_type) AS total_calls, MONTH(completion_datetime) AS month, completion_datetime, SUM(sp.cost) as part_cost_total
+SELECT c.call_type, MONTH(completion_datetime) AS month, SUM(sp.cost) as part_cost_total
 FROM service AS s 
 JOIN serials ON s.serial_id = serials.serial_id
 JOIN service_parts AS sp ON sp.service_id = s.service_id
 JOIN call_types AS c ON s.call_type_id = c.call_type_id
+WHERE MONTH(s.completion_datetime) = 3
 GROUP BY c.call_type) 
 AS src
-WHERE src.month = 3
-ORDER BY src.total_calls DESC LIMIT 10;
-+------------+-------------+-------+---------------------+-----------------+
-| call_type  | total_calls | month | completion_datetime | part_cost_total |
-+------------+-------------+-------+---------------------+-----------------+
-| EM         |         583 |     3 | 2016-03-07 11:07:00 |       450879705 |
-| RS-NP      |         278 |     3 | 2016-03-21 15:21:00 |       414151484 |
-| EM-DOWN    |         101 |     3 | 2016-03-31 13:31:00 |        57518187 |
-| APPT       |          89 |     3 | 2016-03-31 10:31:00 |        62346345 |
-| RS-NA      |          79 |     3 | 2016-03-08 12:08:00 |       253751467 |
-| CC         |          33 |     3 | 2016-03-15 11:15:00 |        90473602 |
-| RS-END     |          24 |     3 | 2016-03-18 14:18:00 |               0 |
-| PM         |          15 |     3 | 2016-03-10 11:10:00 |               0 |
-| RemoteTech |          13 |     3 | 2016-03-28 15:28:00 |        44529501 |
-| SH         |          11 |     3 | 2016-03-30 14:30:00 |          365600 |
-+------------+-------------+-------+---------------------+-----------------+
+ORDER BY src.part_cost_total DESC LIMIT 10;
++------------+-------+-----------------+
+| call_type  | month | part_cost_total |
++------------+-------+-----------------+
+| EM         |     3 |      10681.9700 |
+| RS-NP      |     3 |       6802.9600 |
+| RS-NA      |     3 |       2163.5300 |
+| CC         |     3 |       1355.2100 |
+| SH         |     3 |       1344.7900 |
+| EM-DOWN    |     3 |       1288.2700 |
+| APPT       |     3 |       1141.6200 |
+| RS-END     |     3 |        539.2000 |
+| RemoteTech |     3 |        408.4900 |
+| PM         |     3 |        183.9000 |
++------------+-------+-----------------+
+
 
 +--------------+-------------+-------+---------------------+------------------+
 |	    - Top Ten Models by total parts cost for the month                |
 +--------------+-------------+-------+---------------------+------------------+
-SELECT src.model_number, src.model_count, src.month, src.completion_datetime, src.parts_cost_total
-FROM (
-SELECT m.model_number AS model_number,COUNT(m.model_number) AS model_count, MONTH(completion_datetime) AS month, completion_datetime, SUM(sp.cost) AS parts_cost_total
+SELECT m.model_id, m.model_number AS model_number, MONTH(completion_datetime) AS month, SUM(sp.cost) AS parts_cost_total
 FROM service AS s 
 JOIN serials ON s.serial_id = serials.serial_id
 JOIN service_parts AS sp ON sp.service_id = s.service_id
 JOIN models AS m ON serials.model_id = m.model_id
 JOIN technicians AS t ON s.technician_id = t.technician_id
 JOIN call_types AS c ON s.call_type_id = c.call_type_id
+WHERE MONTH(s.completion_datetime) = 3
 GROUP BY m.model_number 
-) AS src
-WHERE src.month = 3
-ORDER BY src.parts_cost_total DESC LIMIT 10;
-+--------------+-------------+-------+---------------------+------------------+
-| model_number | model_count | month | completion_datetime | parts_cost_total |
-+--------------+-------------+-------+---------------------+------------------+
-| LD425C       |          49 |     3 | 2016-03-25 10:25:00 |        1165.1000 |
-| MP6002SP     |          47 |     3 | 2016-03-03 15:03:00 |        1310.9600 |
-| MP7502SP     |          45 |     3 | 2016-03-04 11:04:00 |         829.3000 |
-| MP4002SP     |          37 |     3 | 2016-03-24 09:24:00 |        1601.0700 |
-| LD360SP      |          37 |     3 | 2016-03-11 10:11:00 |         654.2100 |
-| LD365C       |          30 |     3 | 2016-03-17 10:17:00 |         732.9500 |
-| LD325SP      |          27 |     3 | 2016-03-11 14:11:00 |         375.6800 |
-| LD425B       |          27 |     3 | 2016-03-30 10:30:00 |         434.4300 |
-| MPC5503      |          26 |     3 | 2016-03-04 13:04:00 |        3731.1200 |
-| LD620C       |          26 |     3 | 2016-03-11 15:11:00 |        2048.5200 |
-+--------------+-------------+-------+---------------------+------------------+
+ORDER BY SUM(sp.cost) DESC LIMIT 10;
++----------+---------------+-------+------------------+
+| model_id | model_number  | month | parts_cost_total |
++----------+---------------+-------+------------------+
+|     1076 | SCAN PRO 2000 |     3 |        1294.0000 |
+|      992 | MPC5503       |     3 |        1287.2800 |
+|      939 | MP4002SP      |     3 |        1144.4000 |
+|      986 | MPC4502       |     3 |         902.2000 |
+|     1054 | PRO C7110     |     3 |         818.4000 |
+|     1058 | PROC651EX-L   |     3 |         752.5500 |
+|      753 | LD365C        |     3 |         732.9500 |
+|      288 | CLX-9251NA    |     3 |         731.7000 |
+|      953 | MP6002SP      |     3 |         729.5600 |
+|      871 | LW426         |     3 |         662.9200 |
++----------+---------------+-------+------------------+
+
 
 +-------------------+------------+-------+---------------------+------------------+
 |		- Top Ten Techs by total parts cost for the month                 |
 +-------------------+------------+-------+---------------------+------------------+
-SELECT src.technician_number, src.month, src.parts_cost_total
+SELECT src.technician_id, src.technician_number, src.month, src.parts_cost_total
 FROM (
 SELECT t.technician_id, t.technician_number AS technician_number, MONTH(completion_datetime) AS month, SUM(sp.cost) as parts_cost_total
 FROM service AS s 
@@ -235,27 +253,27 @@ WHERE MONTH(completion_datetime) = 3
 GROUP BY t.technician_number
 ) AS src
 ORDER BY src.parts_cost_total  DESC LIMIT 10;
-+-------------------+------------+-------+---------------------+------------------+
-| technician_number | tech_count | month | completion_datetime | parts_cost_total |
-+-------------------+------------+-------+---------------------+------------------+
-| 2057              |        226 |     3 | 2016-03-31 13:31:00 |        7275.2700 |
-| 2048              |        189 |     3 | 2016-03-10 11:10:00 |        7771.9300 |
-| 1047              |        160 |     3 | 2016-03-23 14:23:00 |        5270.4300 |
-| 2088              |        144 |     3 | 2016-03-31 16:31:00 |        6127.8100 |
-| 1037              |        119 |     3 | 2016-03-11 14:11:00 |        4815.7800 |
-| 1031              |        109 |     3 | 2016-03-01 13:01:00 |        6583.1600 |
-| 2093              |         87 |     3 | 2016-03-08 12:08:00 |        4979.8000 |
-| 1039              |         78 |     3 | 2016-03-09 12:09:00 |        3506.8800 |
-| 1033              |         53 |     3 | 2016-03-28 15:28:00 |        3039.0800 |
-| 1036              |         47 |     3 | 2016-03-21 15:21:00 |        2289.4200 |
-+-------------------+------------+-------+---------------------+------------------+
++---------------+-------------------+-------+------------------+
+| technician_id | technician_number | month | parts_cost_total |
++---------------+-------------------+-------+------------------+
+|             4 | 1037              |     3 |        3717.9600 |
+|             1 | 1031              |     3 |        3530.7400 |
+|            10 | 2057              |     3 |        2920.3400 |
+|             6 | 1047              |     3 |        2779.5200 |
+|             5 | 1039              |     3 |        2633.5300 |
+|            11 | 2088              |     3 |        2576.3800 |
+|            12 | 2093              |     3 |        2459.5300 |
+|             8 | 2048              |     3 |        2327.3200 |
+|             3 | 1036              |     3 |        1684.0800 |
+|             2 | 1033              |     3 |         974.7500 |
++---------------+-------------------+-------+------------------+
 
 +-------------+-------+---------------------+------------------+
 |     - Top Ten Parts by total parts cost for the month        |
 +-------------+-------+---------------------+------------------+
-SELECT src.part_number, src.month, src.completion_datetime, src.parts_cost_total
+SELECT src.part_number, src.month,  src.parts_cost_total
 FROM (
-SELECT p.part_number AS part_number, MONTH(completion_datetime) AS month, completion_datetime, SUM(sp.cost) AS parts_cost_total
+SELECT p.part_number AS part_number, MONTH(completion_datetime) AS month, SUM(sp.cost) AS parts_cost_total
 FROM service AS s 
 JOIN service_parts AS sp ON sp.service_id = s.service_id
 JOIN parts AS p ON p.part_id = sp.part_id
@@ -263,19 +281,50 @@ GROUP BY p.part_number
 ) AS src
 WHERE src.month = 3
 ORDER BY src.parts_cost_total DESC LIMIT 10;
-+-------------+-------+---------------------+------------------+
-| part_number | month | completion_datetime | parts_cost_total |
-+-------------+-------+---------------------+------------------+
-| GB2969640   |     3 | 2016-03-18 10:18:00 |        2198.4600 |
-| GD1054050   |     3 | 2016-03-14 11:14:00 |        2147.9000 |
-| GD1862239   |     3 | 2016-03-24 12:24:00 |        1776.4400 |
-| 0365600S    |     3 | 2016-03-30 14:30:00 |        1254.0000 |
-| GB2242042   |     3 | 2016-03-01 13:01:00 |        1136.5900 |
-| GB0649645   |     3 | 2016-03-03 10:03:00 |        1106.5200 |
-| GB2469510   |     3 | 2016-03-21 15:21:00 |        1002.4200 |
-| JC91-01064A |     3 | 2016-03-15 12:15:00 |         979.4700 |
-| GD0099510   |     3 | 2016-03-28 14:28:00 |         828.6800 |
-| GD1862238   |     3 | 2016-03-04 14:04:00 |         807.7000 |
-+-------------+-------+---------------------+------------------+
++-------------+-------+------------------+
+| part_number | month | parts_cost_total |
++-------------+-------+------------------+
+| GD1054050   |     3 |        2577.4800 |
+| GB2969640   |     3 |        2418.6800 |
+| GB0649645   |     3 |        1833.7500 |
+| GD1862239   |     3 |        1776.4400 |
+| GD1862238   |     3 |        1615.4000 |
+| 0365600S    |     3 |        1254.0000 |
+| GD1442253   |     3 |        1253.2800 |
+| GD1442251   |     3 |        1172.5200 |
+| GB2469510   |     3 |        1170.5400 |
+| GB2242042   |     3 |        1136.5900 |
++-------------+-------+------------------+
+
 
 SELECT 
+
+
+- Total Serials w/ Calls 
+
+
++--------------+-------------+-------+---------------------+------------------+
+|	   Top Ten Models by total Serials with calls for the month               |
++--------------+-------------+-------+---------------------+------------------+
+SELECT DISTINCT m.model_id, m.model_number AS model_number, MONTH(completion_datetime) AS month
+FROM service AS s 
+JOIN serials ON s.serial_id = serials.serial_id
+JOIN models AS m ON serials.model_id = m.model_id
+WHERE MONTH(s.completion_datetime) = 3
+GROUP BY model_number ;
+
+
+SELECT COUNT(DISTINCT(ser.serial_id)) AS total_serials FROM service AS ser
+JOIN serials AS s ON s.serial_id = ser.serial_id
+JOIN models AS m ON m.model_id = s.model_id
+WHERE m.model_id = 3;
+
+
+select count(*) AS total_serials_w_calls 
+FROM serials 
+JOIN service AS ser ON ser.serial_id = serials.serial_id;
+
+- Total Techs w/ Calls
+
+- Total Models w/ Calls
+

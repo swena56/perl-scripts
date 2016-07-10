@@ -6,13 +6,13 @@
         
         <tr id="table_header">
             <th> Tech ID </th>
-            <th> Number of Calls </th>
+            <th> Parts Cost </th>
         </tr>
 
         [% FOREACH row IN rendering_info.table_data %]
         <tr id="data-popup-open" data-popup-open="trend_data" value="techs_by_totalcalls">
-                <td>[%  row.technician_id %]</td>
-                <td>[%  row.technician_number %]</td>               
+                <td>[%  row.technician_number %]</td>
+                <td>[%  row.parts_cost_total %]</td>               
         </tr>
         [% END %]    
     </table>

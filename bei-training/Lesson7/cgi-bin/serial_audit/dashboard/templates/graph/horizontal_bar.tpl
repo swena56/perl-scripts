@@ -16,13 +16,16 @@
 	<p> [% Title %] </p>
 	<p> [% debug %] </p>
 	<p> Column Data: </p>
-
+	[% FOREACH value IN columns %]
+		     <p> [% value.model_number %] </p>
+	[% END %]
 	<script> console.log("[% columns %]"); </script>
 	<div id="wrapper">
 	</div>
 	<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
 	<script>
-		
+		/*var categories= ['','Accessories', 'Audiophile', 'Camera & Photo', 'Cell Phones', 'Computers','eBook Readers','Gadgets','GPS & Navigation','Home Audio','Office Electronics','Portable Audio','Portable Video','Security & Surveillance','Service','Television & Video','Car & Vehicle'];*/
+
 		var categories = [];
 		[% FOREACH value IN columns %]
 		      categories.push("[% value %]");
@@ -34,7 +37,6 @@
 		      dollars.push("[% value %]");
 		[% END %]
 
-		/*Bunch of random colors*/
 		var colors = ['#0000b4','#0082ca','#0094ff','#0d4bcf','#0066AE','#074285','#00187B','#285964','#405F83','#416545','#4D7069','#6E9985','#7EBC89','#0283AF','#79BCBF','#99C19E'];
 
 		var grid = d3.range(4).map(function(i){
@@ -52,7 +54,7 @@
 
 		var yscale = d3.scale.linear()
 						.domain([0,categories.length])
-						.range([0,[% height %]]);
+						.range([0,480]);
 
 		var colorScale = d3.scale.quantize()
 						.domain([0,categories.length])
@@ -60,9 +62,9 @@
 
 		var canvas = d3.select('#wrapper')
 						.append('svg')
-						.attr({'width':900,'height':480});
+						.attr({'width':900,'height':550});
 
-		/*var grids = canvas.append('g')
+		var grids = canvas.append('g')
 						  .attr('id','grid')
 						  .attr('transform','translate(150,10)')
 						  .selectAll('line')
@@ -74,7 +76,7 @@
 								 'x2':function(d,i){ return i*30; },
 								 'y2':function(d){ return d.y2; },
 							})
-						  .style({'stroke':'#adadad','stroke-width':'1px'});*/
+						  .style({'stroke':'#adadad','stroke-width':'1px'});
 
 		var	xAxis = d3.svg.axis();
 			xAxis

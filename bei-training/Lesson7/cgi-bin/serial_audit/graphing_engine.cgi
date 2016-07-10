@@ -14,25 +14,42 @@ my $template = Template->new(
 );
 
 my $cgi = CGI->new();  
-my $graph_data = $cgi->param('graph_data');
+my $table = $cgi->param('table');
+my $id = $cgi->param('id');
 
-#print $cgi->header();
 print "Content-type: text/html\n\n";
+		my $dbh = &connect();
 
-#parse the json data and plug the data in to the template variables
-my $debug = Dumper($graph_data);
+#MP7502SP  needs to be between the last three months
+my $sth = $dbh->prepare("
+SELECT m.model_number, s.completion_datetime
+FROM service AS s 
+JOIN serials ON s.serial_id = serials.serial_id
+JOIN models AS m ON m.model_id = serials.model_id
+WHERE m.model_number = ?;
+");
+		$sth->execute($table);
+
+		my @table_data;
+
+		my $num_rows =  $sth->rows;
+		if($num_rows > 0){   
+
+			while(my $row = $sth->fetchrow_hashref){
+				push @table_data, $row;	
+			}	
+		}
+		$sth->finish();	
 
 my $vars = {
-	  	title => "D3 Graph",
-	  	columns => $graph_data->{call_type},
-	  	rows =>	$graph_data->{rows},
-	  	json_data => $graph_data,
-	  	debug => $debug,
-	  	min => 10,
+	  	title => "Trending data for: $table",
+	  	columns => ['model_number'],
+	  	data => [34,3,2,5,6,8,4,3,2],
+	  	height => 480,
 	};
 
 	my $output = '';
-   $template->process('section/graphs/horizontal.tpl', $vars,\$output)  || die $template->error();
+   $template->process('section/graphs/horizontal_bar.tpl', $vars,\$output)  || die $template->error();
 
    print $output;
 exit;

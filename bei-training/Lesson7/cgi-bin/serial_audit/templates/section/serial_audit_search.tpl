@@ -1,10 +1,7 @@
  <style>
-        .bodycontainer { max-height: 450px; width: 100%; margin: 0;  }
+        .bodycontainer { max-height: 450px; width: 100%; margin: 0; overflow-y: auto; }
         .table-scrollable { margin: 0; padding: 0; }
-#serial_search{
-    float: center;
-    
-}
+
 </style>
 
 <script type='text/javascript'>
@@ -156,7 +153,8 @@ $(document).ready(function(){
    <!-- Enter serial form -->
 <form role="form" role="form" method="POST" accept-charset="UTF-8">
     <div class="form-group">
-      <b style='font-size: 15;'>Serial Search: </b>
+     
+      <b style='font-size: 15;'>Serial Search: </b> <span class="glyphicon glyphicon-search"></span>
  
       <input  type="text" id="serial_search" class='form-control' action='resources/JSON/serial_json.cgi' autofocus autocomplete='off'>
       <div style="display='none'; display: none;" ><input type="reset" id="rst_form"></div>
