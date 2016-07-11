@@ -6,7 +6,7 @@
 </script>
 
 <div id='result'></div>
-<h3> Top Ten CallTypes </h3><br>
+<h3> Top Ten Call Types [% rendering_info.month %]</h3><br>
 
 <div class='bodycontainer'>
     <table id="table_body" class='table table-hover '>
@@ -17,7 +17,7 @@
         </tr>
 
         [% FOREACH row IN rendering_info.table_data %]
-        <tr id="data-popup-open" data-popup-open="trend_data" value="calltypes_by_totalcalls" >
+        <tr id="data-popup-open" data-popup-open="trend_data" target="calltypes_by_totalcalls" >
                 <td>[%  row.call_type %]</td>
                 <td>[%  row.total_calls %]</td>              
         </tr>

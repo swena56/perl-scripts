@@ -27,11 +27,14 @@ my $pjx = new CGI::Ajax( 'render_serials_table' => \&render_serials_table,
 						 );
 
 print $pjx->build_html( $cgi, \&Show_HTML);	
+
 sub Show_HTML {
 
-	  my $vars = {
+  	my $vars = {
 		title => "Serial Audit",
-	    about  => 'about serial audit.....',
+	    about  => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. 
+	    		   Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+	    			...about serial audit',
 	    guest_welcome_message  => 'Welcome to Serial Audit Guest User ',
 	    render_parts => \&render_parts_template, 
 	    render_meter => \&render_meter_codes_template,
@@ -126,8 +129,6 @@ sub render_parts_template {
 		$sth->execute($input);				
 		my $num_rows = $sth->rows;
 		
-		
-
 		my @columns = ('Part Number',  'Serial Number', 'Part Cost');
 		
 		#set message about data found
@@ -151,7 +152,6 @@ sub render_parts_template {
 		#close database connection
 		$sth->finish();	
 
-		
 	    my $debug = Dumper(@table_data);
 		my $vars = {
 		  	user_input => $input,
@@ -188,7 +188,6 @@ sub available_months {
 
 	return @available_months;
 }
-
 
 #used for adding commas to in my meters popup
 sub commify {

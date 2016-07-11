@@ -13,7 +13,8 @@
 /* Inner */
 .popup-inner {
     max-width:700px;
-    width:90%;
+    max-width:470px;
+    width:100%;
     padding:40px;
     position:absolute;
     top:50%;
@@ -22,7 +23,7 @@
     transform:translate(-50%, -50%);
     box-shadow:0px 2px 6px rgba(0,0,0,1);
     border-radius:3px;
-    background:#fff;
+    background: white;
 }
  
 /* Close Button */
@@ -68,38 +69,50 @@
 
 <script>
  $(document).ready(function($) {
-        $(function() {
-            //----- OPEN
-            $('[data-popup-open]').on('click', function(e)  {
-                
-                var calling_row = $(this).context;
-                console.log(calling_row);
 
-                var model_id = calling_row.getElementsByTagName('td')[0].innerText;
-                 console.log("clicked on: " + model_id);
+    //if the escape button is pressed
+    $(document).keydown(function(event){
+        if(event.which == 27){
+               $('[data-popup-close]').click();
+            return;
+        }
+    });
+      
+    //----- OPEN
+    $('[data-popup-open]').on('click', function(e)  {
+        
+        var calling_row = $(this).context;
+        var graph_type = $(this).context.getAttribute("target");;
+        console.log(calling_row);
 
-                 if(model_id){
-                        $.post('graphing_engine.cgi', { 
-                            table: "models",
-                            id:  model_id,
-                        }, function(response) {
-                            $("#draw_trend_data_here").empty();
-                            $( "#draw_trend_data_here" ).append( response );
-                        });
-                 } 
+        console.log(graph_type);
 
-                $("#trend_title").empty().append($("<h3> Trend Data for "+model_id+"</h3>"));
-                var targeted_popup_class = jQuery(this).attr('data-popup-open');
-                $('[data-popup="' + targeted_popup_class + '"]').fadeIn(350);
-                e.preventDefault();
-            });
+        var ref_id = calling_row.getElementsByTagName('td')[0].innerText;
+         console.log("clicked on: " + ref_id);
 
-            //----- CLOSE
-            $('[data-popup-close]').on('click', function(e)  {
-                var targeted_popup_class = jQuery(this).attr('data-popup-close');
-                $('[data-popup="' + targeted_popup_class + '"]').fadeOut(350);
-                e.preventDefault();
-            });
-        });
+         if(ref_id){
+                $.post('dashboard/graphing_engine.cgi', { 
+                    id:  ref_id,
+                    type: graph_type,
+                }, function(response) {
+
+                    $("#draw_trend_data_here").empty();
+                    $( "#draw_trend_data_here" ).append( response );
+                });
+         } 
+
+       /* $("#trend_title").empty().append($("<h3> Trend Data for "+model_id+"</h3>"));*/
+        var targeted_popup_class = jQuery(this).attr('data-popup-open');
+        $('[data-popup="' + targeted_popup_class + '"]').fadeIn(350);
+        e.preventDefault();
+    });
+
+    //----- CLOSE
+    $('[data-popup-close]').on('click', function(e)  {
+        var targeted_popup_class = jQuery(this).attr('data-popup-close');
+        $('[data-popup="' + targeted_popup_class + '"]').fadeOut(350);
+        e.preventDefault();
+    });
+        
     });
 </script>

@@ -5,13 +5,17 @@ Day 7-10
 #terminal plugin for sublime
 #I am not going to want to drop all for production data.  remove that for good practice.
 #month toggle
+- I want to press next on current month
+format cost for parts
+
+TODO button does not respond correctly, remove local host from it
 
 Design a Service Information Dashboard
 
 - Load 3 Month's worth of data into your database.
 
 - Create a dashboard CGI application ( dashboard.cgi ), which will:
-
+#http://nvd3.org/
  
 Display the Current ( or Most Recent ) Months data for the following elements:
 

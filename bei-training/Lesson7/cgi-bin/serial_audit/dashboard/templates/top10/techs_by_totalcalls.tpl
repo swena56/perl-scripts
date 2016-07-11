@@ -11,7 +11,7 @@
         </tr>
         
         [% FOREACH row IN rendering_info.table_data %]
-        <tr id="data-popup-open" data-popup-open="trend_data" value="techs_by_totalcalls">
+        <tr id="data-popup-open" data-popup-open="trend_data" target="techs_by_totalcalls">
                 <td>[%  row.technician_number %]</td>
                 <td>[%  row.total_calls %]</td>               
         </tr>

@@ -17,11 +17,9 @@
     $("#next_month").on('click', function(){});
 
     //post request based on month data.
-    
-
       console.log("document ready draw dashboard");
       $.post('dashboard/index.cgi', { 
-          current_dashboard_data: {current_month},
+          get_dashboard: {'true'},
           current_month: {current_month},
       }, function(response) {
           $("#draw_dash_board_here").empty();

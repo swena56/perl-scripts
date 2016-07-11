@@ -8,7 +8,7 @@
         </tr>
 
         [% FOREACH row IN rendering_info.table_data %]
-        <tr id="data-popup-open" data-popup-open="trend_data" value="models_by_totalcalls" href="#" >
+        <tr id="data-popup-open" data-popup-open="trend_data" target="models_by_totalcalls" href="#" >
             <td>[%  row.model_number %]</td>
             <td>[%  row.model_count %]</td>               
         </tr>

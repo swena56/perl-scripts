@@ -58,7 +58,6 @@
 <link rel="stylesheet" type="text/css" href="http://localhost/xcharts/xcharts.css">
 <script type='text/javascript' src='http://localhost/xcharts/xcharts.js'/>
 
-<figure style="width: 400px; height: 300px;" id="example3"></figure>
 <!-- model functionality -->
 <script type='text/javascript'>
 

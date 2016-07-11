@@ -1,4 +1,5 @@
 #!/usr/bin/perl
+#TODO might be able to remove this
 use strict;
 #use CGI;
 use CGI ':standard';

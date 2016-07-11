@@ -18,8 +18,11 @@ my $template = Template->new(
 
 my $cgi = CGI->new();  
 
-my $dashboard_update_info = $cgi->param('current_dashboard_data');
+my $get_dashboard = $cgi->param('get_dashboard');
 my $current_month = $cgi->param('current_month');
+my $current = $cgi->param('current_dashboard_data');
+
+
 
 print "Content-type: text/html\n\n";
 
@@ -29,17 +32,9 @@ sub get_dashboard_data {
 	#+------------+
 	
 	my $month_index = shift || $current_month;
-
+	my %dashboard_data = ( );
 	my $dbh = &connect();
-
-	if($month_index eq 'previous')
-	{
-		
-	}
-	#i need to worry about closing my db after dashboard
-	my %dashboard_data = ( 'top_ten_call_types_month' => '');
 	
-
 	#append the months that are available in the data set.
 	my $sth = $dbh->prepare("SELECT month(completion_datetime) FROM service GROUP BY month(completion_datetime) ORDER BY month(completion_datetime);");
 	$sth->execute();
@@ -48,17 +43,16 @@ sub get_dashboard_data {
 	}
 	$sth->finish();
 
-	#|current month|
+	#see if month data exists, and determine the string value of the index requested 
 	my $sth = $dbh->prepare("
-	SELECT src.month_index, src.month
-	FROM (
 	SELECT MONTH(completion_datetime) as month_index, MONTHNAME(completion_datetime) as month 
 	FROM service 
+	WHERE MONTH(completion_datetime) = ?
 	GROUP BY month_index
-	ORDER BY completion_datetime DESC LIMIT 1
-	) AS src;
+	ORDER BY completion_datetime;
 	");
-	$sth->execute(); 	#expecting 1 row
+
+	$sth->execute($month_index); 	#expecting 1 row
 	if($sth->rows == 1){   
 		my $row = $sth->fetchrow_hashref;	
 		#push @dashboard_data, $row;	
@@ -66,63 +60,65 @@ sub get_dashboard_data {
 		$dashboard_data{'month_index'} .= $row->{'month_index'};
 	}
 
-	# if dashboard data is not provided a month_index we will just determine the most recent, and use that.
-	if(!$month_index){
-		$month_index = $dashboard_data{'month_index'};
-	}
-
 	$dashboard_data{'selected_month'} = $month_index;
 
-	#|Total Calls |
-	my $sth = $dbh->prepare("SELECT count(*) AS total_calls FROM service 
-		WHERE MONTH(completion_datetime) = $month_index");
-	$sth->execute(); 	#expecting 1 row
+	#Total Calls for month index
+	my $sth = $dbh->prepare("
+	SELECT count(*) AS total_calls FROM service 
+	WHERE MONTH(completion_datetime) = ? 
+	");
+	$sth->execute($month_index); 	#expecting 1 row
 	if($sth->rows == 1){   
 		my $row = $sth->fetchrow_hashref;	
 		#push @dashboard_data, $row;	
 		$dashboard_data{'total_calls'} .= $row->{'total_calls'};
 	}
 
-	#|Total Parts |
-	my $sth = $dbh->prepare("SELECT count(*) AS total_parts FROM parts;");
-	$sth->execute();	#expecting 1 row
+	# Total Parts 
+	my $sth = $dbh->prepare("
+		SELECT count(sp.part_id) AS total_parts FROM service_parts AS sp
+		JOIN service AS ser ON sp.service_id = ser.service_id
+		JOIN parts AS p ON p.part_id = sp.part_id
+		WHERE MONTH(ser.completion_datetime) = ? 		
+	");
+
+	$sth->execute($month_index);	#expecting 1 row
 	if($sth->rows == 1){   
 		my $row = $sth->fetchrow_hashref;	
 		$dashboard_data{'total_parts'} .= $row->{'total_parts'};
-		#push @dashboard_data, $row;	
 	}
 
 	#|Total Serials w/ Calls |
-	my $sth = $dbh->prepare("SELECT count(*) AS total_serials_w_calls 
-								FROM service 
-								JOIN serials AS s ON s.serial_id = service.serial_id;");
-	$sth->execute();	#expecting 1 row
-	if($sth->rows == 1){   
-		my $row = $sth->fetchrow_hashref;	
-		$dashboard_data{'total_serials_w_calls'} .= $row->{'total_serials_w_calls'};
-		#push @dashboard_data, $row;	
-	}
+	my $sth = $dbh->prepare("
+	SELECT count(ser.service_id) AS total_serials_w_calls 
+	FROM service AS ser
+	JOIN serials AS s ON s.serial_id = ser.serial_id
+	WHERE MONTH(ser.completion_datetime) = ?
+	;");
+	$sth->execute($month_index);	
+	my $row = $sth->fetchrow_hashref;	
+	$dashboard_data{'total_serials_w_calls'} .= $row->{'total_serials_w_calls'};
 
-	#|Total Techs w/ Calls |
-	my $sth = $dbh->prepare("SELECT count(*) AS total_techs_w_calls FROM technicians
-	JOIN service AS ser ON ser.technician_id = technicians.technician_id ;");
-	$sth->execute();	#expecting 1 row
-	if($sth->rows == 1){   
-		my $row = $sth->fetchrow_hashref;	
-		$dashboard_data{'total_techs_w_calls'} .= $row->{'total_techs_w_calls'};
-		#push @dashboard_data, $row;	
-	}
+	# Total Techs w/ Calls
+	my $sth = $dbh->prepare("
+	SELECT count(*) AS total_techs_w_calls FROM technicians
+	JOIN service AS ser ON ser.technician_id = technicians.technician_id 
+	WHERE MONTH(ser.completion_datetime) = ?;
+	");
+	$sth->execute($month_index);
+	my $row = $sth->fetchrow_hashref;	
+	$dashboard_data{'total_techs_w_calls'} .= $row->{'total_techs_w_calls'};
 
 	#|Total Models w/ Calls|
-	my $sth = $dbh->prepare("SELECT count(*) AS total_models_w_calls FROM models
-							JOIN serials AS s ON s.model_id = models.model_id
-							JOIN service AS ser ON ser.serial_id = s.serial_id ;");
-	$sth->execute();	#expecting 1 row
-	if($sth->rows == 1){   
-		my $row = $sth->fetchrow_hashref;	
-		$dashboard_data{'total_models_w_calls'} .= $row->{'total_models_w_calls'};
-		#push @dashboard_data, $row;	
-	}
+	my $sth = $dbh->prepare("
+	SELECT count(s.model_id) AS total_models_w_calls FROM models
+	JOIN serials AS s ON s.model_id = models.model_id
+	JOIN service AS ser ON ser.serial_id = s.serial_id 
+	WHERE MONTH(ser.completion_datetime) = ?;
+	");
+	$sth->execute($month_index);
+	my $row = $sth->fetchrow_hashref;	
+	$dashboard_data{'total_models_w_calls'} .= $row->{'total_models_w_calls'};
 
 	$sth->finish();	
 
@@ -268,11 +264,11 @@ sub parts_by_partscost {
 	ORDER BY src.parts_cost_total DESC LIMIT 10;
 		");
 	$sth->execute($month_index);
-	my $message;
-	my @table_data = ["No data for this month"];
+
+	my @table_data;
 	my $num_rows = $sth->rows;
+
 	if($num_rows > 0){   
-		@table_data = [];
 		while(my $row = $sth->fetchrow_hashref){
 			push @table_data, $row;		
 		}	
@@ -307,11 +303,10 @@ sub techs_by_partscost {
 	ORDER BY src.parts_cost_total  DESC LIMIT 10;
 		");
 	$sth->execute($month_index);
-	my $message;
-	my @table_data = ["No data for this month"];
+
+	my @table_data;
 	my $num_rows = $sth->rows;
 	if($num_rows > 0){   
-		@table_data = [];
 		while(my $row = $sth->fetchrow_hashref){
 			push @table_data, $row;		
 		}	
@@ -345,11 +340,10 @@ sub models_by_partscost {
 	ORDER BY SUM(sp.cost) DESC LIMIT 10;
 		");
 	$sth->execute($month_index);
-	my $message;
-	my @table_data = ["No data for this month"];
+	my @table_data;
 	my $num_rows = $sth->rows;
+
 	if($num_rows > 0){   
-		@table_data = [];
 		while(my $row = $sth->fetchrow_hashref){
 			push @table_data, $row;		
 		}	
@@ -386,11 +380,10 @@ sub calltypes_by_partscost {
 	ORDER BY src.part_cost_total DESC LIMIT 10;
 		");
 	$sth->execute($month_index);
-	my $message;
-	my @table_data = ["No data for this month"];
+	my @table_data;
 	my $num_rows = $sth->rows;
+	
 	if($num_rows > 0){   
-		@table_data = [];
 		while(my $row = $sth->fetchrow_hashref){
 			push @table_data, $row;		
 		}	
@@ -410,19 +403,51 @@ sub calltypes_by_partscost {
 sub show_trends {
 	my $vars = {
 		  	title => "Trends Data",
-		  	
 		};
 
-		my $output = '';
-		$template->process('trends_popup.tpl', $vars,\$output)  || die $template->error();
+	my $output = '';
+	$template->process('trends_popup.tpl', $vars,\$output)  || die $template->error();
 
-		return $output;
+	return $output;
 }
 
 sub update_dashboard {
-		
+
+	my @default = available_months();
+
+
+	#the dashboard data is based on month selection
+	my $month = shift || @default[(length @default) -1 ];
+
+	my $vars = {
+  	dashboard_title => 'Service Call Analytics Dashboard',
+    dashboard_data => get_dashboard_data($month),
+    get_dashboard_data => \&get_dashboard_data,
+    debug => \&debug,
+    top_ten_models => \&top_ten_models,
+    top_ten_calltypes => \&top_ten_calltypes,
+    top_ten_techs => \&top_ten_calltypes,
+    top_ten_parts => \&top_ten_parts,
+    parts_by_partscost => \&parts_by_partscost,
+    techs_by_partscost => \&techs_by_partscost,
+    models_by_partscost => \&models_by_partscost,
+    calltypes_by_partscost => \&calltypes_by_partscost,
+    available_months => \&available_months,
+    update_dashboard => \&update_dashboard,
+    selected_month => \&selected_month,			#same as dashboard->{month}
+    show_trends => \&show_trends,
+	};
+
+	my $output = '';
+	$template->process('dashboard.tpl', $vars,\$output)  || die $template->error();
+
+	print $output;
 }
 
+sub selected_month {
+
+	#TODO
+}
 
 sub serialize_string_list {
    return join(',',
@@ -453,35 +478,21 @@ sub available_months {
 
 sub debug {
 
-	my $a = "Available months: " . Dumper(available_months()) . "\n";
-	my $dashboard_data = "dashboard_data: " . Dumper(get_dashboard_data()) . "\n";
-	my $top_call_types = "Top ten call types: " . Dumper(top_ten_calltypes(4)) . "\n";
-	my $selected_month = "Selected month: " . get_dashboard_data(5)->{'selected_month'};
-	return "Debug data: $current_month
-	";
+	#my $a = "Available months: " . Dumper(available_months()) . "\n";
+	#my $dashboard_data = "dashboard_data: " . Dumper(get_dashboard_data()) . "\n";
+	#my $top_call_types = "Top ten call types: " . Dumper(top_ten_calltypes(4)) . "\n";
+	#my $selected_month = "Selected month: " . get_dashboard_data(5)->{'selected_month'};
+	return "Debug data: ..$current";
+	
 }
 
-#DRAW DASHBOARD
-my $vars = {
-  	dashboard_title => 'Service Call Analytics Dashboard',
-    dashboard_data => get_dashboard_data,
-    get_dashboard_data => \&get_dashboard_data,
-    debug => \&debug,
-    top_ten_models => \&top_ten_models,
-    top_ten_calltypes => \&top_ten_calltypes,
-    top_ten_techs => \&top_ten_calltypes,
-    top_ten_parts => \&top_ten_parts,
-    parts_by_partscost => \&parts_by_partscost,
-    techs_by_partscost => \&techs_by_partscost,
-    models_by_partscost => \&models_by_partscost,
-    calltypes_by_partscost => \&calltypes_by_partscost,
-    available_months => \&available_months,
-    selected_month => \&selected_month,			#same as dashboard->{month}
-    show_trends => \&show_trends,
-};
+#-----DRAW DASHBOARD------
+#trying to pass month data into my update dashbaord
+#print "get dashboard: $current_month". Dumper($get_dashboard);
+update_dashboard($current_month);	
 
-my $output = '';
-$template->process('dashboard.tpl', $vars,\$output)  || die $template->error();
+#set initial month to the lastest month available for imported data.
 
-print $output;
+
+
 
