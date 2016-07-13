@@ -1,0 +1,43 @@
+July-11-2016.txt
+- I thought i was going to share a demo, but I did not!  Shame on me!
+
+What did I do? 
+I spent my time getting matching the requirements of the assignment.  Established a new way of keeping on task. I discovered I was able to get alot more done, when I stick with one idea until it is complete.  I revolve that around tasks i document in my stand up notes as well as TODO comment flags scattered through out my code.  Maybe Ill find a plugin or write a script that greps out all the lines that have TODO on it.  
+
+What struggles did I have?
+The requirements I am having the most difficult with are updating the dashboard with my search. I have added a jquery datepicker which with out dislaying the calender part of it makes it fit very well.  The arrows do no do what I anticapate them to do.
+
+What will I be working on today?
+This morning i was reading through some bootstrap examples and realized a couple different ways I can condense my dashboard with drop downs.  
+[!] Format Money in top ten graphs
+[!] Jquery datepicker
+[!] bootstrap drop down, to condense dashboard
+[!] improve d3 graphs
+	[!] Graph ranges for top parts by cost
+	[!] top techs by part cost, seems to not have data, look into that.
+[!] HTML title varies upon changing templates. 
+[!] Continue reading Database design book.
+[!] Managing TODOs through out code base
+[!] Format Money in top ten graphs
+
+Brett- contining accountability, focus is UI today.
+Chad - milestone 2 views.  What is the difference between milestone 1 and milestone 2?
+dealers can have different bei packages.  Dealer privledges?
+Dave - GIS, full twenty four hours.  Sync mysql servers. Dev wiki?  Meters project?
+
+Company Meeting
+----------------
+Right now for training I am working on my graphing skills, so I can take arbitrary database data, and automagically turn it into a meanful graphs.
+I am constantly wanting to improve my development skills, and I enjoy the rate at which that is going. 
+So I am looking forward to pressing onto learning more about how the company works.
+I want to understand how BEI makes profit, so I can let that shape my thinking in hopes to start establishing some job security.
+
+BEI Superuser
+BEI Admin
+Dealer Super User - xy
+Dealer admin 
+
+tech user -  read only
+
+
+user permissions,

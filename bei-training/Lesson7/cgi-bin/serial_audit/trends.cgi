@@ -77,6 +77,7 @@ sub top_ten_calltypes {
 	my $vars = {
 			title => "Top Ten Models",
 		  	table_data => \@table_data,
+		  	month => $month_index,
 		 };
 
 		return $vars;
@@ -122,6 +123,7 @@ sub top_ten_models {
 			title => "Top Ten Models",
 		  	table_data => \@table_data,
 		  	table_columns => \@columns,
+		  	month => $month_index,
 		  	debug => $debug_dump,
 		};
 
@@ -163,6 +165,7 @@ sub top_ten_techs {
 
 	my $vars = {
 		  	table_data => \@table_data,
+		  	month => $month_index,
 		  	message => $message
 		};
 

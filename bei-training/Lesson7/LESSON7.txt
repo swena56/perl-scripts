@@ -1,5 +1,12 @@
 Day 7-10
 -
+
+svn, and vagrant, trello
+
+MORE concise in standup -  1 - 2 minutes,  Notice how brett and chad speak about their projects.
+bullet points
+
+SKETch
 #review data, concepts discusson
 #issues with fixparla - sum cost, qty
 #terminal plugin for sublime

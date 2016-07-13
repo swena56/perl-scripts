@@ -1,0 +1,44 @@
+TODO_LIST.TXT
+1)database audit - (my data is in poor condition, due to my lack in database skills.)
+	a) service table returns incorrect number of rows
+	b) review each table
+	c) being able to get the data and denomalize it accurately - demo
+	d) Do I have valid table data?
+		i) models - seems to have the correct data and count.
+		ii) service might have wrong count
+		...
+
+		x) service_meters
+	e) correct spacing in create schema
+	f) Problems with my data
+		i) fixlabor seems to be not showing a call_id
+		   fixlabor has 0 data for both assist and mileage
+		ii)meter_code has 0 consistently for meter_reading
+			meter_code has an invalid customer_number
+		iii)fixploc 
+		fixserl the Z ending field shows up in customer_bill_to_number
+		iv) blank check for program_number
+	g)
+
+2)CGI Lesson 6
+	a) Review the Lesson 6 requirements
+	b) Write a serial Audit form That displays the following data in a table-grid
+		i)  text box that sends via post
+		2) updates the page, and continues to allow for a search
+	c) Create a modal-popup for meters and parts associated with that call
+	d) Review the Lesson 6 requirements again. Confirm that I have met the requirements.
+	e) check again that I have my data finished correctly.
+	f) Twitter Bootstrap
+	g) Less [ lessc]
+	h) refactor using template-toolkit
+	i) combo-box of valid serial-numbers
+	bootstrap useage
+	ajax
+
+	References:
+https://www.cs.cf.ac.uk/Dave/PERL/node185.html
+http://template-toolkit.org/docs/tutorial/Web.html
+
+
+My example needs to include a template
+ajax

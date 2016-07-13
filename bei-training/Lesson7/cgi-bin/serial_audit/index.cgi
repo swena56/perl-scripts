@@ -27,6 +27,20 @@ my $pjx = new CGI::Ajax( 'render_serials_table' => \&render_serials_table,
 						 );
 
 print $pjx->build_html( $cgi, \&Show_HTML);	
+sub get_month_string {
+
+	my $month_index = shift;
+
+	my @month_strings = ('January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December');
+
+	my $result = "Not a valid month index";
+
+	if($month_index < 13 && $month_index > 0){
+		$result = @month_strings[$month_index -1];
+	}
+
+	return $result;
+}
 
 sub Show_HTML {
 
@@ -39,6 +53,7 @@ sub Show_HTML {
 	    render_parts => \&render_parts_template, 
 	    render_meter => \&render_meter_codes_template,
 	    available_months => \&available_months,
+	    get_month_string => \&get_month_string,
 	    footer  => 'By: Andrew Swenson',	   
 	};
 
