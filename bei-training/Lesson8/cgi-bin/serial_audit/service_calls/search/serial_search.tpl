@@ -86,7 +86,6 @@ ul.pagination li a:hover:not(.active) {background-color: #ddd;}
         $("#datepicker_end").datepicker('setDate', null);
         $("#datepicker_start").datepicker('setDate', null);
 
-
         //clear buttons
         $("#clear_start_date").on('click', function(){
             $("#datepicker_start").datepicker('setDate', null);
@@ -134,40 +133,45 @@ ul.pagination li a:hover:not(.active) {background-color: #ddd;}
 
     function export_page(){
         console.log("exporting page");
-
+        var export_status = "page";
+     //   update_results(starting_page,last_selected_column, export_status);
          $.post('search/serial_json.cgi', {
             search_input: user_input,
-            starting_row: starting_row,
-            selected_column: selected_column,
+            starting_page: starting_page,
+            selected_column: last_selected_column,
             direction: direction,
-            export_csv: 'page',
+            start_date: start_date,
+            end_date: end_date,
+            export_csv: export_status,
         }, function(csv_response) {
-            console.log(csv_response.filename);
-            $("#serial_table").append(csv_response);
+           console.log(csv_response);
+           $("#serial_table").append(csv_response);
 
         }, 'html');
     }
 
     function export_all(){
         console.log("exporting all");
+         var export_status = "all";
+         //update_results(starting_page,last_selected_column, export_status);
+       
          $.post('search/serial_json.cgi', {
             search_input: user_input,
-            starting_row: starting_row,
-            selected_column: selected_column,
+            starting_page: 0,
+            selected_column: last_selected_column,
+            start_date: start_date,
+            end_date: end_date,
             direction: direction,
-            export_csv: 'all',
+            export_csv: export_status,
         }, function(csv_response) {
-            console.log(csv_response.filename);
+            console.log(csv_response);
             $("#serial_table").append(csv_response);
 
         }, 'html');
     }
 
-
     function update_results(starting_page, selected_column) {
         console.log("updating results with page: " + starting_page);
-       
-
         console.log("start_date: " + start_date );
         console.log("end_date: " + end_date );
 
@@ -206,7 +210,6 @@ ul.pagination li a:hover:not(.active) {background-color: #ddd;}
             var column_headers = $("<tr></tr>"); 
 
             //find the column that is selected and give it a ordering symbol
-
             for (var key in json.columns) {
                 if(key == last_selected_column){
                     if(direction == "DESC"){
@@ -225,14 +228,11 @@ ul.pagination li a:hover:not(.active) {background-color: #ddd;}
             column_headers.append($("<th id='call_type'><a href=\"javascript:toggle_sort_order('"+(starting_page)+"','call_type')\"> "+json.columns.call_type+"</a> </th>"));  
             column_headers.append($("<th id='completion_datetime'><a href=\"javascript:toggle_sort_order('"+(starting_page)+"','completion_datetime')\"> "+json.columns.completion_datetime+"</a> </th>"));  
             column_headers.append($("<th id='dispatched_datetime'><a href=\"javascript:toggle_sort_order('"+(starting_page)+"','dispatched_datetime')\"> "+json.columns.dispatched_datetime+"</a> </th>"));  
-              
             column_headers.append($("<th id='service_id'><a href=\"javascript:toggle_sort_order('"+(starting_page)+"','service_id')\"> "+json.columns.service_id+"</a> </th>"));  
             column_headers.append($("<th id='technician_number'><a href=\"javascript:toggle_sort_order('"+(starting_page)+"','technician_number')\"> "+json.columns.technician_number+"</a> </th>"));  
-
             column_headers.append($("<th id='total_parts_cost'><a href=\"javascript:toggle_sort_order('"+(starting_page)+"','total_parts_cost')\"> "+json.columns.total_parts_cost+"</a> </th>"));  
 
             column_headers.append($("<th id='view_parts'><a>Actions</a></th>"));  
-
 
             table.append(column_headers); 
 

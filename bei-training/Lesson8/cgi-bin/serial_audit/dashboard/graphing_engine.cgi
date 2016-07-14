@@ -312,8 +312,8 @@ if($type eq "techs_by_totalcalls"){
 		data => [@num_calls],
 		height => 150,
 		width => 400,
-		min => 10,
-		max => 50,
+		min => 50,
+		max => 200,
 		#debug => $debug,
 	};
 

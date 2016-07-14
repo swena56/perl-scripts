@@ -96,6 +96,11 @@ sub get_service_data {
 
 	if( $args->{max_per_page} ){
 		
+		if($args->{export} eq "all"){
+			$max_per_page = 0;
+		} else {
+			$max_per_page = $args->{max_per_page};
+		}
 		($total_records) = $dbh->selectrow_array("SELECT COUNT(*) FROM ( $sql ) AS sql_src",undef,@{$binds});
 		
 		$max_per_page = $args->{max_per_page};
@@ -121,7 +126,6 @@ sub get_service_data {
 		};	
 	}
 	#$pager = buildPagerFromData($total_records, $start_row);
-
 
 	my $result = { 
 		data => $data, 

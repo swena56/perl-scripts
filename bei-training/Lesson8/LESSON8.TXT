@@ -9,11 +9,13 @@ Group meeting location of jermeys selection.
 LESSON8.TXT
 
 [+] Verify my sorts table columns 
-[!] Selecting the last page the message does not say the correct message
+[+] Selecting the last page the message does not say the correct message
 [+] Date filter jquery datepicker is not working with my version of jquery.  
 [!] Get my header right for a file download
 [!] Nav bar instead of 
 [!] Pagination that supports a million pages!
+[!] Extra comma in my csv file, serving.
+[!] export page, export all
 
 
 [+] Filter by date datepicker
@@ -23,14 +25,14 @@ LESSON8.TXT
 [+] New service calls search page
 [+] Add all the date columns from service
 [+] Removed Pie graph
-[+] export page, export all
+
 [+] Redirect CGI to Lesson 8
 [+] Home index page
 [+] Dash board Index page
 [!] Add time element to bar graphs
 
 [!] Format Money in top ten graphs
-[!] Jquery datepicker	https://api.jqueryui.com/datepicker/#method-refresh
+[+] Jquery datepicker	https://api.jqueryui.com/datepicker/#method-refresh
 [!] bootstrap drop down, to condense dashboard
 [!] improve d3 graphs
 	[!] Graph ranges for top parts by cost
