@@ -7,18 +7,28 @@ So overall slight hiccup in the begining, but things are going smoothly right no
 Group meeting location of jermeys selection.
 
 LESSON8.TXT
-[+] Draw out appearance of page before before starting
-[!] Redirect CGI to Lesson 8
-[!] Home index page
-[!] Dash board Index page
-[!] New service calls search page
-[!] Add all the date columns from service
-[!] Filter by date datepicker
-[!] Sort table columns 
-[!] pagination 100 per page
-[!] export page, export all
 
+[+] Verify my sorts table columns 
+[!] Selecting the last page the message does not say the correct message
+[+] Date filter jquery datepicker is not working with my version of jquery.  
+[!] Get my header right for a file download
+[!] Nav bar instead of 
+[!] Pagination that supports a million pages!
+
+
+[+] Filter by date datepicker
+[!] Change my view total calls, view total parts to be like my exporting of files.
+[!] Remove resources folder and templates
+[+] pagination 100 per page
+[+] New service calls search page
+[+] Add all the date columns from service
+[+] Removed Pie graph
+[+] export page, export all
+[+] Redirect CGI to Lesson 8
+[+] Home index page
+[+] Dash board Index page
 [!] Add time element to bar graphs
+
 [!] Format Money in top ten graphs
 [!] Jquery datepicker	https://api.jqueryui.com/datepicker/#method-refresh
 [!] bootstrap drop down, to condense dashboard
@@ -40,8 +50,9 @@ Low Priority
 [!] user login 
 [!] Rename project folder....
 [!] Commify top ten tables
-[!] Resource library
-
+[!] Make lib folder static like shown in serial_json.cgi
+[?] What is techcom?
+[+] Draw out appearance of page before before starting
 Help!
  
 I need a page that will allow me to view service information on the following fields:

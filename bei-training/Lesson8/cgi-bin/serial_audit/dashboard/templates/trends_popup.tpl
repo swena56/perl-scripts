@@ -77,9 +77,6 @@
             return;
         }
     });
-      
-
-   
 
     //----- OPEN
     $('[data-popup-open]').on('click', function(e)  {

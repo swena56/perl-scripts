@@ -15,7 +15,7 @@
         [% FOREACH row IN rendering_info.table_data %]
         <tr id="data-popup-open" data-popup-open="trend_data" target="calltypes_by_totalcalls" >
                 <td>[%  row.call_type %]</td>
-                <td>[%  row.part_cost_total %]</td>              
+                <td>$[%  row.part_cost_total %]</td>              
         </tr>
     [% END %]    
     </table>

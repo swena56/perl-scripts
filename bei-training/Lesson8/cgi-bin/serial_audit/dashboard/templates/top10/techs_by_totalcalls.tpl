@@ -1,5 +1,5 @@
 <div id='result'></div>
-<h3> Top Ten Technicians in [% get_month_string(rendering_info.month) %]</h3><br>
+<h3> Top Ten Technicians in [% get_month_string(rendering_info.month) %]</h3>
 
 [% IF rendering_info.num_rows > 0%]
 <div class='bodycontainer'>

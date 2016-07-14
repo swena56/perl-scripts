@@ -1,44 +1,25 @@
-#!/usr/bin/perl
+package BEI::DB::Dashboard;
+
+use Exporter 'import';
+@EXPORT_OK = qw(
+	get_dashboard_data
+	top_ten_calltypes
+	top_ten_models
+	top_ten_techs
+	parts_by_partscost
+	techs_by_partscost
+	models_by_partscost
+	calltypes_by_partscost
+	serialize_string_list
+	available_months
+); 
+
 use strict;
-use CGI ':standard';
-use CGI::Carp qw(fatalsToBrowser);
-use Template;
-use Data::Dumper;
-use JSON;
-use CGI::Ajax;
-use Data::Dumper;
-use Math::Round;
-
-use lib qw(/home/ubuntu/perl-scripts/bei-training/Lesson8/lib);
-use BEI::DB 'connect';
-
-my $template = Template->new(
-	  INCLUDE_PATH => '/home/ubuntu/perl-scripts/bei-training/Lesson8/cgi-bin/serial_audit/dashboard/templates/'
-);
-
-my $cgi = CGI->new();  
-my $get_dashboard = $cgi->param('get_dashboard');
-my $current_month = $cgi->param('current_month');
-my $current = $cgi->param('current_dashboard_data');
-
-print "Content-type: text/html\n\n";
-
-sub get_month_string {
-
-	my $month_index = shift;
-
-	my @month_strings = ('January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December');
-
-	my $result = "Not a valid month index";
-
-	if($month_index < 13 && $month_index > 0){
-		$result = @month_strings[$month_index -1];
-	}
-
-	return $result;
-}
+use warnings;
+use POSIX;
 
 sub get_dashboard_data {
+	
 	#+------------+
 	#| dashboard  |
 	#+------------+
@@ -239,9 +220,10 @@ sub top_ten_techs {
 		");
 	$sth->execute($month_index);
 	my $message;
-	my @table_data;
+	my @table_data = ["No data for this month"];
 	my $num_rows = $sth->rows;
 	if($num_rows > 0){   
+		@table_data = [];
 		while(my $row = $sth->fetchrow_hashref){
 			push @table_data, $row;		
 		}	
@@ -259,6 +241,7 @@ sub top_ten_techs {
 }
 
 sub parts_by_partscost {
+	
 	# need a group by method
 	my $month_index = shift || 0;
 	my $dbh = &connect();
@@ -300,6 +283,7 @@ sub parts_by_partscost {
 }
 
 sub techs_by_partscost {
+
 	# need a group by method
 	my $month_index = shift || 0;
 	my $dbh = &connect();
@@ -339,6 +323,7 @@ sub techs_by_partscost {
 }
 
 sub models_by_partscost {
+
 	my $month_index = shift || 0;
 	my $dbh = &connect();
 	
@@ -377,6 +362,7 @@ sub models_by_partscost {
 }
 
 sub calltypes_by_partscost {
+
 	# need a group by method
 	my $month_index = shift || 0;
 	my $dbh = &connect();
@@ -417,56 +403,8 @@ sub calltypes_by_partscost {
 	return $vars;
 }
 
-sub show_trends {
-	my $vars = {
-		  	title => "Trends Data",
-		};
-
-	my $output = '';
-	$template->process('trends_popup.tpl', $vars,\$output)  || die $template->error();
-
-	return $output;
-}
-
-sub update_dashboard {
-
-	my @default = available_months();
-
-	#the dashboard data is based on month selection
-	my $month = shift ;
-
-	my $vars = {
-  	dashboard_title => 'Service Call Analytics Dashboard',
-    dashboard_data => get_dashboard_data($month),
-    get_dashboard_data => \&get_dashboard_data,
-    debug => \&debug,
-    top_ten_models => \&top_ten_models,
-    top_ten_calltypes => \&top_ten_calltypes,
-    top_ten_techs => \&top_ten_techs,
-    top_ten_parts => \&top_ten_parts,
-    parts_by_partscost => \&parts_by_partscost,
-    techs_by_partscost => \&techs_by_partscost,
-    models_by_partscost => \&models_by_partscost,
-    calltypes_by_partscost => \&calltypes_by_partscost,
-    available_months => \&available_months,
-    update_dashboard => \&update_dashboard,
-    get_month_string => \&get_month_string,
-    selected_month => \&selected_month,			#same as dashboard->{month}
-    show_trends => \&show_trends,
-	};
-
-	my $output = '';
-	$template->process('dashboard.tpl', $vars,\$output)  || die $template->error();
-
-	print $output;
-}
-
-sub selected_month {
-
-	#TODO
-}
-
 sub serialize_string_list {
+
    return join(',',
       map {
          (defined($_)
@@ -492,24 +430,4 @@ sub available_months {
 
 	return @available_months;
 }
-
-sub debug {
-
-	#my $a = "Available months: " . Dumper(available_months()) . "\n";
-	#my $dashboard_data = "dashboard_data: " . Dumper(get_dashboard_data()) . "\n";
-	#my $top_call_types = "Top ten call types: " . Dumper(top_ten_calltypes(4)) . "\n";
-	#my $selected_month = "Selected month: " . get_dashboard_data(5)->{'selected_month'};
-	return "coming from dashboard/index.cgi Debug data: ..$current - updating dashboard with ".get_month_string($current);
-	
-}
-
-#-----DRAW DASHBOARD------
-#trying to pass month data into my update dashbaord
-#print "get dashboard: $current_month". Dumper($get_dashboard);
-update_dashboard($current);	
-
-#set initial month to the lastest month available for imported data.
-
-
-
-
+1;

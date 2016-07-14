@@ -1,5 +1,7 @@
 <!DOCKTYPE html>
 <html>
+<head>
+    
 <style>
 ul.pagination {
     display: inline-block;
@@ -29,17 +31,108 @@ ul.pagination li a:hover:not(.active) {background-color: #ddd;}
 </style>
 
 <script>  
-//initalize starting values
-var selected_column = "serial_number";
-var last_selected_column = "serial_number";
+    //initalize starting values
+    var last_selected_column = "serial_number";
+    var starting_page = 0;
+    var start_date;
+    var end_date;
+    var direction = "ASC";
+    var user_input = "[% user_input %]";
+    console.log("starting user input: " + user_input);
+    
+    $(document).ready(function(){
 
-var starting_row = 1;
-var direction = "DESC";
-var user_input = "[% user_input %]";
-console.log("starting user input: " + user_input);
+        //list of active service dates
+        var active_service_dates = [];
+        [% FOREACH date IN service_date_range %]
+            active_service_dates.push("[% date %]");
+        [% END %]
+        //console.log(active_service_dates);
+        var minDate = active_service_dates[0];
+        var maxDate = active_service_dates[active_service_dates.length - 1];
+        console.log("service date range: " + minDate + " - " + maxDate );
+
+        $("#datepicker_start" ).datepicker({ 
+            minDate: new Date(minDate), 
+            maxDate: new Date(maxDate),
+            defaultDate: new Date(minDate),
+            onSelect: function(dateText, inst) {
+                start_date = $("#datepicker_start").datepicker( "getDate");
+                start_date = $.datepicker.formatDate("yy-mm-dd 00:00:00", new Date(start_date));  // 00:00:00
+                console.log("start clicked: "+ start_date);
+                 if(user_input != ''){
+                    update_results( starting_page, last_selected_column );    
+                }
+            },
+        });
+       
+        $("#datepicker_end" ).datepicker({ 
+            minDate: new Date(minDate), 
+            maxDate: new Date(maxDate),
+            defaultDate: new Date(maxDate),
+            onSelect: function(dateText, inst) {
+                end_date = $("#datepicker_end").datepicker( "getDate");
+                end_date = $.datepicker.formatDate("yy-mm-dd 00:00:00", new Date(end_date));
+                console.log("end clicked: "+ end_date);
+                
+                //if the input field is not empty update the results
+                if(user_input != ''){
+                    update_results( starting_page, last_selected_column );    
+                }
+                
+            },
+        });
+
+        $("#datepicker_end").datepicker('setDate', null);
+        $("#datepicker_start").datepicker('setDate', null);
 
 
- function export_page(){
+        //clear buttons
+        $("#clear_start_date").on('click', function(){
+            $("#datepicker_start").datepicker('setDate', null);
+        });
+        $("#clear_end_date").on('click', function(){
+            $("#datepicker_end").datepicker('setDate', null);
+        });
+
+         $( "#datepicker_start" ).datepicker();
+        $( "#datepicker_end" ).datepicker();
+
+        $("#serial_search").keyup(function(event){
+            //get user input
+            user_input = $(this).val();
+
+            if(event.which == 27 || user_input == ""){
+                console.log("escape button detected- changing focus to search: "+  $(this).val());                        
+                $('#rst_form').click();  //clear form
+                $('#serial_table').empty();
+                $("#datepicker_end").datepicker('setDate', null);
+                $("#datepicker_start").datepicker('setDate', null);
+                $('#results_pagination').empty();
+                $("#serial_search").focus();
+                return;
+            }
+
+           update_results(starting_page);
+        });  
+    }); 
+
+    function toggle_sort_order(starting_page, selected_column){
+        console.log("toggling sort order: " + direction );
+
+        if( selected_column == last_selected_column ){
+          if(direction == "DESC"){
+                direction = "ASC";
+            } else if (direction == "ASC"){
+                direction = "DESC";
+            }
+        }
+        
+        last_selected_column = selected_column;
+        update_results(starting_page, selected_column);
+    }
+
+    function export_page(){
         console.log("exporting page");
 
          $.post('search/serial_json.cgi', {
@@ -49,164 +142,256 @@ console.log("starting user input: " + user_input);
             direction: direction,
             export_csv: 'page',
         }, function(csv_response) {
-            console.log(csv);
-          
+            console.log(csv_response.filename);
+            $("#serial_table").append(csv_response);
 
-        }, 'csv');
+        }, 'html');
     }
 
-     function export_all(){
+    function export_all(){
         console.log("exporting all");
-    }
-
-function update_results(starting_row, order_by) {
-        console.log("updating results with page: " + starting_row);
-        
-        selected_column = order_by;
-
-        if(selected_column == last_selected_column){
-            //switch sort direction
-            console.log("same column selected, switching direction");
-            if(direction == "DESC"){
-                direction = "ASC";
-            } else if( direction == "ASC") {
-                direction = "DESC";
-            }
-        }
-
-        //check to make sure starting page is defined
-        if(order_by){
-            console.log("Order by: " + order_by + " in " + direction + " order.");
-        }
-        //if(starting_page)
-          $.post('search/serial_json.cgi', {
+         $.post('search/serial_json.cgi', {
             search_input: user_input,
             starting_row: starting_row,
-            order_by: order_by,
             selected_column: selected_column,
             direction: direction,
-        }, function(json) {
+            export_csv: 'all',
+        }, function(csv_response) {
+            console.log(csv_response.filename);
+            $("#serial_table").append(csv_response);
+
+        }, 'html');
+    }
+
+
+    function update_results(starting_page, selected_column) {
+        console.log("updating results with page: " + starting_page);
+       
+
+        console.log("start_date: " + start_date );
+        console.log("end_date: " + end_date );
+
+        //check to make sure starting page is defined
+        if(selected_column){
+            console.log("Order by: " + selected_column + " in " + direction + " order.");
+        }
+        //if(starting_page)
+      $.post('search/serial_json.cgi', {
+        search_input: user_input,
+        starting_page: starting_page,
+        selected_column: last_selected_column,
+        start_date: start_date,
+        end_date: end_date,
+        direction: direction}, function(json) {
+
             //pass json data into results table
-            last_selected_column = json.selected_column.toString();
+            console.log(
+                "Search Input:" + json.search.toString() + "\n" + 
+                "Number of rows:" + json.num_rows.toString() + "\n" +
+                "total_num_rows_on_page:" + json.total_num_rows_on_page.toString() + "\n" + 
+                "starting_page:" + json.starting_page.toString() + "\n" + 
+                "columns:" + json.columns.toString() + "\n" + 
+                //"result_data:" + json.result_data.toString() + "\n" + 
+                "total_pages:" + json.total_pages.toString() + "\n" + 
+                "starting_row:" + starting_page.toString() + "\n" + 
+                "current_page:" + json.current_page.toString() + "\n" + 
+                "current_row:" + json.current_row.toString() + "\n" 
+            );
+
+            //console.log(json.selected_column.toString() + "");
             console.log("Debug:"+json.debug.toString());
             $("#serial_table").empty();
 
             var table = $("<table id='serial_table' text-align='left' class='table table-hover table-responsive '>");
             var column_headers = $("<tr></tr>"); 
-            column_headers.append($("<th id='serial_number'><a href=\"javascript:update_results('"+(json.starting_row)+"','serial_number')\">"+json.columns.serial_number+"</a> </th>")); 
-            column_headers.append($("<th id='model_number'><a href=\"javascript:update_results('"+(json.starting_row)+"','model_number')\">"+json.columns.model_number+"</a> </th>"));
-            column_headers.append($("<th id='arrival_datetime'><a href=\"javascript:update_results('"+(json.starting_row)+"','arrival_datetime')\"> "+json.columns.arrival_datetime+"</a> </th>"));    
-            column_headers.append($("<th id='call_datetime'><a href=\"javascript:update_results('"+(json.starting_row)+"','call_datetime')\"> "+json.columns.call_datetime+"</a> </th>"));  
-            column_headers.append($("<th id='call_id_not_call_type'><a href=\"javascript:update_results('"+(json.starting_row)+"','call_id_not_call_type')\"> "+json.columns.call_id_not_call_type+"</a></th>"));  
-            column_headers.append($("<th id='call_type'><a href=\"javascript:update_results('"+(json.starting_row)+"','call_type')\"> "+json.columns.call_type+"</a> </th>"));  
-            column_headers.append($("<th id='completion_datetime'><a href=\"javascript:update_results('"+(json.starting_row)+"','completion_datetime')\"> "+json.columns.completion_datetime+"</a> </th>"));  
-            column_headers.append($("<th id='dispatched_datetime'><a href=\"javascript:update_results('"+(json.starting_row)+"','dispatched_datetime')\"> "+json.columns.dispatched_datetime+"</a> </th>"));  
+
+            //find the column that is selected and give it a ordering symbol
+
+            for (var key in json.columns) {
+                if(key == last_selected_column){
+                    if(direction == "DESC"){
+                        json.columns[key] = json.columns[key] + "&#9660";
+                    } else if( direction == "ASC") {
+                        json.columns[key] = json.columns[key] + "&#9650";
+                    }
+                }
+            }
+
+            column_headers.append($("<th id='serial_number'><a href=\"javascript:toggle_sort_order('"+(json.starting_page)+"','serial_number')\">"+json.columns.serial_number+"</a> </th>")); 
+            column_headers.append($("<th id='model_number'><a href=\"javascript:toggle_sort_order('"+(starting_page)+"','model_number')\">"+json.columns.model_number+"</a> </th>"));
+            column_headers.append($("<th id='arrival_datetime'><a href=\"javascript:toggle_sort_order('"+(starting_page)+"','arrival_datetime')\"> "+json.columns.arrival_datetime+"</a> </th>"));    
+            column_headers.append($("<th id='call_datetime'><a href=\"javascript:toggle_sort_order('"+(starting_page)+"','call_datetime')\"> "+json.columns.call_datetime+"</a> </th>"));  
+            column_headers.append($("<th id='call_id_not_call_type'><a href=\"javascript:toggle_sort_order('"+(starting_page)+"','call_id_not_call_type')\"> "+json.columns.call_id_not_call_type+"</a></th>"));  
+            column_headers.append($("<th id='call_type'><a href=\"javascript:toggle_sort_order('"+(starting_page)+"','call_type')\"> "+json.columns.call_type+"</a> </th>"));  
+            column_headers.append($("<th id='completion_datetime'><a href=\"javascript:toggle_sort_order('"+(starting_page)+"','completion_datetime')\"> "+json.columns.completion_datetime+"</a> </th>"));  
+            column_headers.append($("<th id='dispatched_datetime'><a href=\"javascript:toggle_sort_order('"+(starting_page)+"','dispatched_datetime')\"> "+json.columns.dispatched_datetime+"</a> </th>"));  
               
-            column_headers.append($("<th id='service_id'><a href=\"javascript:update_results('"+(json.starting_row)+"','service_id')\"> "+json.columns.service_id+"</a> </th>"));  
-            column_headers.append($("<th id='technician_number'><a href=\"javascript:update_results('"+(json.starting_row)+"','technician_number')\"> "+json.columns.technician_number+"</a> </th>"));  
-            column_headers.append($("<th id='total_parts_cost'><a href=\"javascript:update_results('"+(json.starting_row)+"','total_parts_cost')\"> "+json.columns.total_parts_cost+"</a> </th>"));  
+            column_headers.append($("<th id='service_id'><a href=\"javascript:toggle_sort_order('"+(starting_page)+"','service_id')\"> "+json.columns.service_id+"</a> </th>"));  
+            column_headers.append($("<th id='technician_number'><a href=\"javascript:toggle_sort_order('"+(starting_page)+"','technician_number')\"> "+json.columns.technician_number+"</a> </th>"));  
+
+            column_headers.append($("<th id='total_parts_cost'><a href=\"javascript:toggle_sort_order('"+(starting_page)+"','total_parts_cost')\"> "+json.columns.total_parts_cost+"</a> </th>"));  
+
+            column_headers.append($("<th id='view_parts'><a>Actions</a></th>"));  
+
 
             table.append(column_headers); 
 
             var table_data = $("<tbody></tbody>");
-            json.result_data.forEach(function(row){
-              
+            json.result_data.forEach(function(row) {
                 var row_data = $("<tr></tr>");
                 row_data.append($("<td>" + (row.serial_number) + " </td>")); 
-                row_data.append($("<td>" + (row.model_number) + " </td>"));  
+                row_data.append($("<td><a href='https://www.google.com/search?tbm=isch&q="+row.model_number+"'>" + (row.model_number) + "</a></td>"));  
                 row_data.append($("<td>" + (row.arrival_datetime) + " </td>"));            
                 row_data.append($("<td>" + (row.call_datetime) + " </td>"));  
                 row_data.append($("<td>" + (row.call_id_not_call_type) + " </td>"));  
                 row_data.append($("<td>" + (row.call_type) + " </td>"));  
                 row_data.append($("<td>" + (row.completion_datetime) + " </td>"));  
                 row_data.append($("<td>" + (row.dispatched_datetime) + " </td>"));  
-                
                 row_data.append($("<td>" + (row.service_id) + " </td>"));  
-                row_data.append($("<td>" + (row.technician_number) + " </td>"));  
-                row_data.append($("<td>" + (row.total_parts_cost) + " </td>"));  
+                row_data.append($("<td>" + (row.technician_number) + " </td>")); 
+
+                //in the event of null values for total parts cost set the default to blank string 
+                var total_parts_cost = row.total_parts_cost ? ("$" + row.total_parts_cost) : "";
+                row_data.append($("<td>" + (total_parts_cost) + " </td>"));  
+                
+                var parts_button = $("<button id='show_parts_"+row.service_id+"' value='"+row.service_id+"' name='myBtn'>Parts</button>").on('click', function() {
+                    $("#draw_popup_here").empty();
+                    var modal = document.getElementById('popup_model');
+                    modal.style.display = "block";
+
+                    var span = document.getElementsByClassName("close")[0];
+
+                    //model use fucntion
+                    span.onclick = function() {
+                        modal.style.display = "none";
+                    }
+                        
+                    //detect escape to close popup
+                    $(document).keyup(function(event) {
+                    /* Act on the event */
+                    if(event.which == 27){
+                        console.log("escape button detected");    
+                        modal.style.display = "none";
+                        }
+                    });
+                    render_parts_template(['show_parts_'+row.service_id],['draw_popup_here'], 'POST') 
+                }); 
+
+                if(row.total_parts_cost > 0){
+                    row_data.append(parts_button);    
+                }
+
+                 var meters_button = $("<button id='show_meters_"+row.service_id+"' value='"+row.service_id+"' name='meter_button'>Meters</button>").on('click', function() {
+                    $("#draw_popup_here").empty();
+                    var modal = document.getElementById('popup_model');
+                    modal.style.display = "block";
+
+                    var span = document.getElementsByClassName("close")[0];
+
+                    //model use fucntion
+                    span.onclick = function() {
+                        modal.style.display = "none";
+                    }
+                        
+                    //detect escape to close popup
+                    $(document).keyup(function(event) {
+                    /* Act on the event */
+                    if(event.which == 27){
+                        console.log("escape button detected");    
+                        modal.style.display = "none";
+                        }
+                    });
+                    render_meters_template(['show_meters_'+row.service_id],['draw_popup_here'], 'POST') 
+                }); 
+                
+                if(row.total_parts_cost > 0){
+                    row_data.append(meters_button);
+                }
+
                 table_data.append(row_data);
             });
 
            table.append(table_data);
-           if(json.num_rows > 0){
-            if((json.starting_row*100) > json.num_rows){
-                var message = $("<p>Current Set: <span style='color: green;'>"+(json.num_rows) + "</span> out of "+json.num_rows.toString()+"</p>"); 
-                 $("#serial_table").append(message);
-            } else {
-                var message = $("<p>Current Set: <span style='color: green;'>"+(json.starting_row*100) + "</span> out of "+json.num_rows.toString()+"</p>"); 
-                 $("#serial_table").append(message);
-            }
-                
-           } 
-           
-           // var page = $("<li><a id='page' href='javascript:DoPost("+i+","+json.order_by.toString()+","+json.direction.toString()+","+user_input+")'>"+i+"</a></li>");
-            //append pagination
-            $("#results_pagination").empty();
-            var previous = $("<li><a id='page_previous' href='javascript:update_results("+(parseInt(json.starting_row) - 1)+")'>&#9668</a></li>");
-            $("#results_pagination").append(previous);
-            for(i=1; i <= json.total_pages; i++){
 
-               //high light the active one
-               if(i == json.starting_row){
-                var page = $("<li><a class='active' id='page"+i+"' href='javascript:update_results("+(i)+")'>"+i+"</a></li>");
-                $("#results_pagination").append(page);
-               } else {
-                var page = $("<li><a id='page"+i+"' href='javascript:update_results("+(i)+")'>"+i+"</a></li>");
+            //message to user
+            //do not display any message if there are no rows
+            if( json.num_rows > 0 ) 
+            {
+                    var left_range = ( parseInt( starting_page ) * 100 );
+                    var right_range = ( (parseInt(starting_page) * parseInt( json.total_num_rows_on_page )) + parseInt( json.total_num_rows_on_page ) );
+
+                    if( (parseInt(json.current_page) + 1) >= parseInt(json.total_pages)) {
+                        right_range = (parseInt(json.num_rows)).toString();
+                    } 
+
+                    var message = $("<p>Page " + (parseInt(json.starting_page) + 1)  + ": records <span style='color: green;'>" + (left_range).toString() + "-" + (right_range).toString()+"</span> out of "+ (parseInt(json.num_rows)).toString() + " </p>"); 
+                    $("#serial_table").append(message);
+            }   
+
+            //create pagination ui
+            $("#results_pagination").empty();
+            var previous = $("<li><a id='page_previous' href='javascript:update_results( " + ( json.current_page  - 1 ) + ")'>&#9668</a> </li>");
+            if( ( json.current_page - 1 ) < 0 ){
+                previous = $("<li><a id='page_previous'>&#9668</a></li>");
+            }
+            $("#results_pagination").append(previous);
+
+            for(i=0; i < json.total_pages; i++){
+
+                //high light the active one
+                if( i ==  starting_page ) {
+
+                    var page = $("<li><a class='active' id='page" + i + "' href='javascript:update_results( " + i  + ")'>" + (i+1) + "</a></li>");
+                    $("#results_pagination").append(page);
+
+                } else {
+                    var page = $("<li><a id='page" + i + "' href='javascript:update_results( " +  i + " )'>" + (i+1) + "</a></li>");
                 $("#results_pagination").append(page);
                }
-               
             }
-            var next = $("<li><a id='page_next' href='javascript:update_results("+(parseInt(json.starting_row) + 1)+")'>&#9658</a></li>");
-            $("#results_pagination").append(next);
-            $("#serial_table").append(table);
 
+            var next = $("<li><a id='page_next' href='javascript:update_results( " + (parseInt(json.starting_page) + 1) + " )'>&#9658</a></li>");
+            if( ( parseInt( json.starting_page ) + 1 ) >= parseInt(json.total_pages)){
+                next = $("<li><a id='page_next'>&#9658</a></li>");
+            }
+            $("#results_pagination").append(next);    
+            $("#serial_table").append(table);
         }, 'json');
 }
-
-$(document).ready(function(){
-    
-   
-
-    $("#serial_search").keyup(function(event){
-        //get user input
-        user_input = $(this).val();
-
-        if(event.which == 27 || user_input == ""){
-            console.log("escape button detected- changing focus to search: "+  $(this).val());                        
-            $('#rst_form').click();  //clear form
-            $('#serial_table').empty();
-            $("#serial_search").focus();
-            return;
-        }
-
-       update_results(starting_row, selected_column, direction);
-    });  
-
-
- 
-  
-});    
-
-
-
 </script>
+</head>
+<body>
 
 <!-- Enter serial form -->
 <form role="form" role="form" method="POST" accept-charset="UTF-8">
     <div class="form-group">
+      <span class="glyphicon glyphicon-search"></span>
       Serial Search: 
- 
       <input  type="text" id="serial_search" class='form-control' autofocus autocomplete='off'>
       <div style="display='none'; display: none;" ><input type="reset" id="rst_form"></div>
     </div>
 </form>       
 <br>
-
+ 
+<!-- Filter Date form -->
+<p> Filter By Date 
+    <label for="from">From</label>
+    <input type="text" id="datepicker_start" data-date-format='yy-mm-dd' name="from">
+    <button id="clear_start_date"> Clear </button>
+    <label for="to">to</label>
+    <input type="text" id="datepicker_end" data-date-format='yy-mm-dd' name="to">
+    <button id="clear_end_date"> Clear </button>
+</p>
+    
+<!-- popup modal -->
+<div id="popup_model" class="modal">
+    <div class="modal-content">
+        <span class="close">x</span>
+        <div id="draw_popup_here"></div>   
+    </div>
+</div>
 <br>
-<ul id="results_pagination" class="pagination"></ul>
-
- <div id="serial_table"></div>
-
-
-
+<ul align="center" id="results_pagination" class="pagination"></ul>
+<div id="serial_table"></div>
+</body>
 </html>

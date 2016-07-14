@@ -18,39 +18,69 @@
   <!--d3 dashboard -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>
 
-<style>
 
+   <link rel="stylesheet" href="//code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
+     <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+     <script src="https://code.jquery.com/ui/1.12.0/jquery-ui.js"></script>
+<style>
 .active {
     text-decoration: none;
     color: black;
     background-color: white;
 }
+/* The Modal (background) */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    padding-top: 100px; /* Location of the box */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
 
+/* Modal Content */
+.modal-content {
+    background-color: #fefefe;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+}
 
+/* The Close Button */
+.close {
+    color: #aaaaaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+}
 </style>
-
-
-<script>
-
-
-    function export_page(){
-        console.log("exporting page");
-    }
-
-     function export_all(){
-        console.log("exporting all");
-    }
-
-
-</script>
 
 <nav class="navbar navbar-inverse">
   <div class="container-fluid">
     <div class="navbar-header">
-      <a class="navbar-brand" href="">Serial Audit Training Application</a>
+      <li class="navbar-brand dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">&#9776;<span class="caret"></span></a>
+        <ul class="dropdown-menu">
+          <li><a>Dashboard</a></li>
+          <li><a href="">Total Parts</a></li>
+          <li><a href="">Total Calls</a></li>
+        </ul>
+      </li>
     </div>
     <ul class="nav navbar-nav">
-      <li><a href="/cgi-bin/serial_audit/">Home</a></li>
+      <li><a  href="/cgi-bin/serial_audit/"> Home </a></li>
       <li class="active dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Service Calls<span class="caret"></span></a>
         <ul class="dropdown-menu">
           <li><a href="javascript:export_page()">Export Page</a></li>

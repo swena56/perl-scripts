@@ -1,4 +1,4 @@
-[<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
   [% INCLUDE section/header.tpl %]
 
@@ -39,12 +39,9 @@
     console.log("maxDate: ("+max+") " + maxDate);
      var month;
 
-     /* Initalzie jquery datepicker */
+    /*
     $( "#datepicker" ).datepicker({ 
         dateFormat: 'yy-mm-dd',
-        /*setDate: maxDate,*/
-        /*changeMonth: true,
-        changeYear: true,*/
         hideIfNoPrevNext: true,
         minDate: minDate, 
         maxDate: maxDate,
@@ -52,7 +49,7 @@
         onFocus: function(){console.log('datepicker active focus');},
 
     });
-    
+    */
     //contains function for checking if month index exists in available months array
     function contains(a, obj) {
     var i = a.length;
@@ -145,7 +142,7 @@
         <!-- Draw Dashboard -->
         <div class="col-sm-16" id="draw_dash_board_here"></div>
         <br>
-        [% INCLUDE section/serial_audit_search.tpl %]   
+        
         </div>
     </div>
 [% INCLUDE section/footer.tpl %]

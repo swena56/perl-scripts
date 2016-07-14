@@ -13,8 +13,6 @@ use JSON;
 
 use lib qw(/home/ubuntu/perl-scripts/bei-training/Lesson8/lib);
 
-#use lib qw(/home/ubuntu/perl-scripts/bei-training/Lesson6/);
-
 my $template = Template->new(
 	  INCLUDE_PATH => '/home/ubuntu/perl-scripts/bei-training/Lesson8/cgi-bin/serial_audit/templates/'
 	

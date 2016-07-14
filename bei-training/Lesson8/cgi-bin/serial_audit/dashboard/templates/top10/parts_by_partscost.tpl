@@ -12,7 +12,7 @@
         [% FOREACH row IN rendering_info.table_data %]
         <tr id="data-popup-open" data-popup-open="trend_data" target="parts_by_partscost">
                 <td>[%  row.part_number %]</td>
-                <td>[%  row.parts_cost_total %]</td>               
+                <td> $[%  row.parts_cost_total %]</td>               
         </tr>
         [% END %]    
     </table>

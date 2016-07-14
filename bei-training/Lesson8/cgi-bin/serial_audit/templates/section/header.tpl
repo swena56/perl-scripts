@@ -2,8 +2,7 @@
   <meta name="viewport" charset="UTF-8" content="width=device-width, initial-scale=1">
   
 
- <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>-->
-
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
 
   <!-- Latest compiled and minified CSS -->
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
@@ -17,7 +16,6 @@
   <!--d3 dashboard -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>
   
-
 <style>
 
 .active {
@@ -27,11 +25,16 @@
 }
 </style>
 
-
 <nav class="navbar navbar-inverse">
   <div class="container-fluid">
-    <div class="navbar-header">
-      <a class="navbar-brand" href="">Serial Audit Training Application</a>
+     <div class="navbar-header">
+      <li class="navbar-brand dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">&#9776;<span class="caret"></span></a>
+        <ul class="dropdown-menu">
+          <li><a>Dashboard</a></li>
+          <li><a href="">Total Parts</a></li>
+          <li><a href="">Total Calls</a></li>
+        </ul>
+      </li>
     </div>
     <ul class="nav navbar-nav">
       <li class='active'><a href="/cgi-bin/serial_audit/">Home</a></li>

@@ -19,9 +19,6 @@
 <h3> Top Ten Call Types </h3>
 
 
-
-
-
 <div class='bodycontainer'>
     <table id="table_body" class='table table-hover '>
         

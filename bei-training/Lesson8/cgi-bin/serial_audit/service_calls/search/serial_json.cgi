@@ -1,186 +1,130 @@
 #!/usr/bin/perl
 use strict;
-#use CGI;
+use warnings;
 use CGI ':standard';
-use CGI::Pretty;
 use CGI::Carp qw(fatalsToBrowser);
 use Template;
 use CGI::Ajax;
 use Data::Dumper;
- use POSIX;
+use POSIX;
 use XML::Writer;
 use Text::CSV::Hashify;
-use lib qw(/home/ubuntu/perl-scripts/bei-training/Lesson8/lib);
-use lib qw(/home/ubuntu/perl-scripts/bei-training/Lesson8/cgi-bin/serial_audit/templates);
+use File::Copy qw( copy );
+use File::Spec::Functions qw( catfile );
+use JSON;
+use FindBin;
+use lib "$FindBin::Bin/../../../../lib";
+
+my $template = Template->new(
+	  INCLUDE_PATH => 	'$FindBin::Bin/../service_calls/'
+);
 
 use BEI::DB 'connect';
-use JSON;
+use BEI::DB::Service qw(
+	get_service_data 
+	build_service_data_cols
+	buildPagerFromData
+);  #expose to module test this
 
 my $q = CGI->new();
 
-
 my $search_input = $q->param('search_input');
-
-my $response = $q->param('response');
-
 my $direction = $q->param('direction');
-my $page = $q->param('page');
 my $selected_column = $q->param('selected_column');
-my $starting_row = $q->param('starting_row');
-my $starting_page = $q->param('starting_page');
-my $export_csv = $q->param('export_csv');
+my $starting_page = $q->param('starting_page')	|| 	0;
+my $start_date = $q->param('start_date');
+my $end_date = $q->param('end_date');
 
-#make sure we have a starting row
-#make sure we have a starting row
+my $export_csv = $q->param('export_csv');
 my $max_per_page = 100;
 
-#set direction if none is provided, reject anything else
-if(!$direction){
-	$direction = 'DESC';
+if($export_csv eq 'all'){
+	$starting_page = 0;
+	$max_per_page = 0;
 }
-
-if(!$selected_column){
-	$selected_column = "serial_number";
-}
-
-
-
 
 my $dbh = &connect();
-
-my $currency_type = "\\\$";
-
-#get total number of pages
-my $sth = $dbh->prepare("
-SELECT count(*) AS count
-FROM service AS s 
-JOIN serials ON s.serial_id = serials.serial_id
-WHERE serial_number LIKE " . $dbh->quote('%'.$search_input.'%') );
-$sth->execute();
-my $row = $sth->fetchrow_hashref;
-my $num_rows = $row->{count};
-my $total_pages =  0;
+my $args = { 
+	search_input => $search_input,
+	direction =>	$direction,
+	selected_column => $selected_column,
+	max_per_page => 100,
+	start_row => $starting_page,
+};
 
 
-while($max_per_page * $total_pages < $num_rows){
-	$total_pages += 1;
+if( $start_date != "" ){
+	$args->{start_date} .= $start_date;
 }
 
-$starting_row = 1 if(!$starting_row || $starting_row < 0);
-$starting_row = $total_pages if( $starting_row > $total_pages);
-
-#my ($total_records) = $db->selectrow_array("SELECT COUNT(*) FROM ( $sql ) AS sql_src",undef,@binds);
-
-if($export_csv eq 'all'){
-	$starting_row = 0;
-	$max_per_page = $num_rows;
+if( $end_date != "" ){
+	$args->{end_date} .= $end_date;
 }
 
-#query the selected pages
-$sth = $dbh->prepare("
-SELECT serial_number, model_number, call_type, call_datetime, dispatched_datetime, arrival_datetime, completion_datetime, technician_number,
-s.call_id_not_call_type, SUM(cost) AS total_parts_cost, s.service_id
-FROM service AS s 
-JOIN serials ON s.serial_id = serials.serial_id
-JOIN models AS m ON serials.model_id = m.model_id
-JOIN technicians AS t ON s.technician_id = t.technician_id
-JOIN call_types AS c ON s.call_type_id = c.call_type_id
-LEFT JOIN service_parts AS sp ON s.service_id = sp.service_id
-WHERE serial_number LIKE " . $dbh->quote('%'.$search_input.'%') ." 
-GROUP BY s.service_id 
-ORDER BY ".$dbh->quote($selected_column). " limit $starting_row, $max_per_page " );
+my $service_data = &get_service_data($dbh,$args);
 
-$sth->execute();
-my $total_num_rows_on_page = $sth->rows;
+my $cols = &build_service_data_cols();
 
-my $current_row = $starting_row + $total_num_rows_on_page;
+#if( exists $cols->{ $selected_column } ){
+#	if($direction eq "ASC"){
+#		$cols->{ $selected_column } .=  " &#9650";	
+#	} elsif($direction eq "DESC"){
+#		$cols->{ $selected_column } .=   " &#9660";	
+#	}
+#}
 
-my @table_data;
-
-my %column_hash = (
-		'serial_number' => 'Serial Number',
-		'model_number' => 'Model Number',
-		'call_type' => 'Call Type',
-		'call_datetime' => 'Call Date/Time',
-		'dispatched_datetime' => 'Dispatched Date/Time',
-		'arrival_datetime' => 'Arrival Date/Time', 
-		'completion_datetime' => 'Completion Date/Time', 
-		'technician_number' => 'Tech #',
-		'call_id_not_call_type' => 'Call ID', 
-		'total_parts_cost' => 'Total Parts Cost', 
-		'service_id' => 'Service Id',
-	);
-
-
-#append Symbol to column that is data is being ordered by.
-foreach my $key (keys(%column_hash)) {
-    if(!$export_csv && $key eq $selected_column){
-    	if($direction eq "ASC"){
-    		$column_hash{$key} = $column_hash{$key} . " &#9650";	
-    	} elsif($direction eq "DESC"){
-    		$column_hash{$key} = $column_hash{$key} . " &#9660";	
-    	}
-    }
-}
-
-while ($row = $sth->fetchrow_hashref) {	
-	#clean up my data before sending it to the front end
-
-    push @table_data, $row;
-}
-
-my @table_data_sorted;
-
-@table_data_sorted = sort { $a->{$selected_column} <=> $b->{$selected_column} } @table_data if($direction eq "ASC");
-@table_data_sorted = sort { $b->{$selected_column} <=> $a->{$selected_column} } @table_data if($direction eq "DESC");
-
-
-my $debug = "Debug order by this key: $direction, ";
-
-
+my $pager = $service_data->{pager};
+my $test_sql = $service_data->{sql};
+my $debug =  "$test_sql " . Dumper($service_data->{pager});#{}"Debug: " . Dumper($service_data);
 
 if($export_csv){
 
-	print $q->header();
-		
-	foreach my $key (keys(%column_hash)) {
-		print $column_hash{$key} . "," ;
-	}
-
-	foreach my $csv_line (@table_data_sorted){
-		 
-	print $csv_line->{serial_number} .",". $csv_line->{model_number}.",". $csv_line->{call_type}.",". $csv_line->{call_datetime}.",". $csv_line->{dispatched_datetime}.",". $csv_line->{arrival_datetime}.",". $csv_line->{completion_datetime}.",". $csv_line->{technician_number}.",".
-	$csv_line->{call_id_not_call_type}.",". $csv_line->{total_parts_cost}.",". $csv_line->{service_id} . "\n";
-	}
-
+	#append date
+	my $file = "text.txt";
+	my $filepath= "/var/www/html/upload/$file";
 	
+	open(my $fh, '>', $filepath) or die "Could not open file ";
 
 
+	foreach my $key (keys(%{$cols})) {
+		print $fh   $cols->{$key} . "," ;
+	}
+
+	foreach my $csv_line (@{$service_data->{data}}){
+		print $fh   $csv_line->{serial_number} .",". $csv_line->{model_number}.",". $csv_line->{call_type}.",". $csv_line->{call_datetime}.",". $csv_line->{dispatched_datetime}.",". $csv_line->{arrival_datetime}.",". $csv_line->{completion_datetime}.",". $csv_line->{technician_number}.",". $csv_line->{call_id_not_call_type}.",". $csv_line->{total_parts_cost}.",". $csv_line->{service_id} . "\n";
+	}
+	close $fh;
+
+	#print header;
+	#header("Content-type:application/pdf");
+
+	#header("Content-Disposition:attachment;filename='downloaded.pdf'");	
+	#print "<iframe width='1' height='1' style='display:none;' frameborder='0' src='http://localhost/upload/$file'></iframe>";
+	#print '<meta http-equiv="Refresh" content="0;url=\'http://localhost/upload/$file\'">';
+
+		print "Content-Type:application/x-download\n\n";   
+		print "Content-Disposition:attachment;filename='http://localhost/upload/$file'";  
+	#unlink ($filepath);
+exit;
 
 } else {
 
-	#close database connection
-	$sth->finish();
-	#
+	my $pager = $service_data->{pager};
 	my $op = JSON -> new -> utf8 -> pretty(1);
 	my $json = $op -> encode({
-		search => $search_input,
-		num_rows => $num_rows,
-		total_num_rows_on_page => $total_num_rows_on_page,
-		starting_page => $starting_page,
-		columns => \%column_hash,
-		selected_column => $selected_column,
-		result_data => \@table_data_sorted,
-		total_pages => $total_pages,
-		starting_row => $ starting_row,
-		current_page => $page,
-		current_row => $current_row,
-		debug => $debug,
+		search 					=> $search_input,
+		num_rows 				=> $pager->{num_rows},
+		total_num_rows_on_page  => $pager->{total_num_rows_on_page},
+		starting_page 			=> $pager->{starting_row},
+		columns 				=> $cols,
+		result_data 			=> $service_data->{data},
+		total_pages 			=> $pager->{total_pages},
+		current_page 			=> $pager->{current_page},
+		current_row 			=> $pager->{current_row},
+		debug 					=> $debug,
 	});
+
 	print $q->header(-type => "application/json", -charset => "utf-8");
 	print $json;
-
 }
-
-
 exit;

@@ -28,7 +28,7 @@
     <td> [% row.arrival_datetime %]</td>
     <td> [% row.completion_datetime %]</td>
     <td> [% row.technician_number %]</td>
-    <td> [% row.total_parts_cost %]</td>
+    <td> $ [% row.total_parts_cost %]</td>
 </tr> 
 [% END %] 
         
@@ -42,27 +42,6 @@
         console.log("My json Data in results table: [% json %]");
     var number_responses = "[% num_results %]";
     console.log("Number of results for [% search %]: " + number_responses + "{ order_by: [% order_by%] }");
-
-    var selected_column = 'model_number';
-    //column selection
-   $("#serial_number").on('click', function(){
-        var current_text = $("#serial_number").text();
-        selected_column = 'serial_number';
-        console.log("serial_number click- current text: " + current_text);
-
-       // $("#serial_number").text(current_text+ "[% get_direction_symbol('serial_number') %]");
-        update_results();
-    });
-
-   $("#model_number").on('click', function(){
-        var current_text = $("#model_number").text();
-        selected_column = 'model_number';
-        console.log("model_number click- current text: " + current_text);
-
-        update_results();
-    });
-
-  
  });
 
 </script>

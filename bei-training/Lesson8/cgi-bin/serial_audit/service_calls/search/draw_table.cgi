@@ -73,8 +73,6 @@ if(!$json) {
 	$debug .= "No json data";
 }
 
-
-
 my $vars = {
 	debug => $debug,
 	search => $search_input,

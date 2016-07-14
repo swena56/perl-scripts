@@ -12,7 +12,6 @@ use List::Util qw(min max);
 
 my $template = Template->new(
 	  INCLUDE_PATH => '/home/ubuntu/perl-scripts/bei-training/Lesson8/cgi-bin/serial_audit/dashboard/'
-	  				
 );
 
 my $cgi = CGI->new();  
@@ -88,23 +87,6 @@ if($type eq "calltypes_by_totalcalls"){
    $template->process('templates/graphs/horizontal_bar.tpl', $vars,\$output)  || die $template->error();
    print $output;
 
-   my $pie_vars = {
-		title => "",
-		about => "",
-		data_type => "calls",
-		columns => [@columns],
-		data => [@num_calls],
-		height => 150,
-		width => 400,
-		min => ($min-1),
-		max => $max,
-		#debug => $debug,
-	};
-
-	my $pie_output = '';
-   	$template->process('templates/graphs/pie_graph.tpl', $pie_vars,\$pie_output)  || die $template->error();
-   	print $pie_output;
-
    exit;
 }
 if($type eq "models_by_partscost"){
@@ -154,20 +136,6 @@ if($type eq "models_by_partscost"){
 	my $output = '';
    $template->process('templates/graphs/horizontal_bar.tpl', $vars,\$output)  || die $template->error();
    print $output;
-
-    my $pie_vars = {
-		title => "",
-		about => "",
-		data_type => "calls",
-		columns => [@columns],
-		data => [@parts_cost],
-		height => 150,
-		width => 400,
-	};
-
-	my $pie_output = '';
-   	$template->process('templates/graphs/pie_graph.tpl', $pie_vars,\$pie_output)  || die $template->error();
-   	print $pie_output;
    exit;
 }
 if($type eq "models_by_totalcalls"){
@@ -216,21 +184,6 @@ if($type eq "models_by_totalcalls"){
 
    print $output;
 
-     my $pie_vars = {
-		title => "",
-		about => "",
-		data_type => "calls",
-		columns => [@columns],
-		data => [@num_calls],
-		height => 150,
-		width => 400,
-	};
-
-	my $pie_output = '';
-   	$template->process('templates/graphs/pie_graph.tpl', $pie_vars,\$pie_output)  || die $template->error();
-   	print $pie_output;
-
-
    exit;
 }
 if($type eq "parts_by_partscost"){
@@ -275,23 +228,7 @@ if($type eq "parts_by_partscost"){
 
 	my $output = '';
    $template->process('templates/graphs/horizontal_bar.tpl', $vars,\$output)  || die $template->error();
-
    print $output;
-
-
-     my $pie_vars = {
-		title => "",
-		about => "",
-		data_type => "calls",
-		columns => [@columns],
-		data => [@num_calls],
-		height => 150,
-		width => 400,
-	};
-
-	my $pie_output = '';
-   	$template->process('templates/graphs/pie_graph.tpl', $pie_vars,\$pie_output)  || die $template->error();
-   	print $pie_output;
    exit;
 }
 if($type eq "techs_by_partscost"){
@@ -338,27 +275,10 @@ if($type eq "techs_by_partscost"){
    $template->process('templates/graphs/horizontal_bar.tpl', $vars,\$output)  || die $template->error();
 
    print $output;
-
-
-     my $pie_vars = {
-		title => "",
-		about => "",
-		data_type => "calls",
-		columns => [@columns],
-		data => [@part_cost],
-		height => 150,
-		width => 400,
-	};
-
-	my $pie_output = '';
-   	$template->process('templates/graphs/pie_graph.tpl', $pie_vars,\$pie_output)  || die $template->error();
-   	print $pie_output;
    exit;
 }
 if($type eq "techs_by_totalcalls"){
 	#difficult to test, I do not have any data for this, yet to my knowledge
-	print "unimplemented";
-	exit;
 	my $sth = $dbh->prepare("
 	SELECT t.technician_number, SUM(ct.call_type_id) as total_calls, MONTH(s.completion_datetime) as month_index, MONTHNAME(s.completion_datetime) as month
 	FROM service AS s 
@@ -401,24 +321,6 @@ if($type eq "techs_by_totalcalls"){
    $template->process('templates/graphs/horizontal_bar.tpl', $vars,\$output)  || die $template->error();
 
    print $output;
-
-   
-     my $pie_vars = {
-		title => "",
-		about => "",
-		data_type => "calls",
-		columns => [@columns],
-		data => [@num_calls],
-		height => 150,
-		width => 400,
-	};
-
-	my $pie_output = '';
-   	$template->process('templates/graphs/pie_graph.tpl', $pie_vars,\$pie_output)  || die $template->error();
-   	print $pie_output;
    exit;
 }
-
-
 exit;
-
