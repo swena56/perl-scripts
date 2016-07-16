@@ -1,0 +1,2 @@
+mysql> Ctrl-C -- exit!
+Aborted

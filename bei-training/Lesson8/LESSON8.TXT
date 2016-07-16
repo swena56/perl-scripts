@@ -16,7 +16,7 @@ LESSON8.TXT
 [!] Pagination that supports a million pages!
 [!] Extra comma in my csv file, serving.
 [!] export page, export all
-
+[!] Page export order seems goof
 
 [+] Filter by date datepicker
 [!] Change my view total calls, view total parts to be like my exporting of files.
@@ -43,6 +43,7 @@ LESSON8.TXT
 [!] Format Money in top ten graphs
 [!] section off my template folder -  dashboard templates go in a folder called templates within dashboard
 [!] Add index_to_month function in lib
+[!] Parts cost should be a link to the parts popup
 
 Low Priority
 [!] Top ten call types by part cost is returning top ten call types fix this.

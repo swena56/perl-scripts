@@ -1,0 +1,26 @@
+/Project 8
+	/lib
+	/public	#static content
+		/js
+		/css
+		/img
+	/tpls	#dynamic content
+		/serial_audit
+			index.tpl #search form  ajax requests a search from serial_audit.cgi  
+			table.tpl  
+		/layout   #bypass?  use to prevent unncessary loading
+			*.tpl
+		/header
+			*.tpl
+		/common
+			*.tpl
+	/cgi-bin
+		index.cgi  #dashboard  [% PROCESS $page %]
+		/serial_audit
+			/serial_audit.cgi renders serial_audit.tpl
+
+
+
+	#include meter data in search
+
+
